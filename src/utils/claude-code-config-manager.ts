@@ -1,4 +1,4 @@
-import type { CcrConfig } from '../types/ccr'
+import type { CcxConfig } from '../types/ccx'
 import type { ClaudeCodeConfigData, ClaudeCodeProfile, OperationResult } from '../types/claude-code-config'
 import type { ZcfTomlConfig } from '../types/toml-config'
 import dayjs from 'dayjs'
@@ -222,7 +222,7 @@ export class ClaudeCodeConfigManager {
       // Clean model variables upfront; will re-set based on profile below
       clearModelEnv(settings.env)
 
-      let shouldRestartCcr = false
+      let shouldRestartCcx = false
 
       if (profile.authType === 'api_key') {
         settings.env.ANTHROPIC_API_KEY = profile.apiKey
@@ -232,24 +232,23 @@ export class ClaudeCodeConfigManager {
         settings.env.ANTHROPIC_AUTH_TOKEN = profile.apiKey
         delete settings.env.ANTHROPIC_API_KEY
       }
-      else if (profile.authType === 'ccr_proxy') {
-        const { readCcrConfig } = await import('./ccr/config')
-        const ccrConfig = readCcrConfig()
-        if (!ccrConfig) {
-          throw new Error(i18n.t('ccr:ccrNotConfigured') || 'CCR proxy configuration not found')
+      else if (profile.authType === 'ccx_proxy') {
+        const { readCcxEnv } = await import('./ccx/config')
+        const ccxConfig = readCcxEnv()
+        if (!ccxConfig) {
+          throw new Error(i18n.t('ccx:ccxNotConfigured') || 'CCX proxy configuration not found')
         }
 
-        const host = ccrConfig.HOST || '127.0.0.1'
-        const port = ccrConfig.PORT || 3456
-        const apiKey = ccrConfig.APIKEY || 'sk-zcf-x-ccr'
+        const port = ccxConfig.PORT || 3000
+        const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
 
-        settings.env.ANTHROPIC_BASE_URL = `http://${host}:${port}`
+        settings.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${port}`
         settings.env.ANTHROPIC_API_KEY = apiKey
         delete settings.env.ANTHROPIC_AUTH_TOKEN
-        shouldRestartCcr = true
+        shouldRestartCcx = true
       }
 
-      if (profile.authType !== 'ccr_proxy') {
+      if (profile.authType !== 'ccx_proxy') {
         if (profile.baseUrl)
           settings.env.ANTHROPIC_BASE_URL = profile.baseUrl
         else
@@ -285,9 +284,9 @@ export class ClaudeCodeConfigManager {
       setPrimaryApiKey()
       addCompletedOnboarding()
 
-      if (shouldRestartCcr) {
-        const { runCcrRestart } = await import('./ccr/commands')
-        await runCcrRestart()
+      if (shouldRestartCcx) {
+        const { restartCcxService } = await import('./ccx/commands')
+        await restartCcxService()
       }
     }
     catch (error) {
@@ -733,42 +732,42 @@ export class ClaudeCodeConfigManager {
   }
 
   /**
-   * Sync CCR configuration
+   * Sync CCX configuration
    */
-  static async syncCcrProfile(): Promise<void> {
+  static async syncCcxProfile(): Promise<void> {
     try {
-      // 读取CCR配置
-      const { readCcrConfig } = await import('./ccr/config')
-      const ccrConfig = readCcrConfig()
+      // Read CCX configuration
+      const { readCcxEnv } = await import('./ccx/config')
+      const ccxConfig = readCcxEnv()
 
-      if (!ccrConfig) {
-        // 如果没有CCR配置，删除CCR profile（如果存在）
-        await this.ensureCcrProfileExists(ccrConfig)
+      if (!ccxConfig) {
+        // If no CCX config, delete CCX profile if it exists
+        await this.ensureCcxProfileExists(ccxConfig)
         return
       }
 
-      // 确保CCR profile存在且最新
-      await this.ensureCcrProfileExists(ccrConfig)
+      // Ensure CCX profile exists and is up to date
+      await this.ensureCcxProfileExists(ccxConfig)
     }
     catch (error) {
-      console.error('Failed to sync CCR profile:', error)
+      console.error('Failed to sync CCX profile:', error)
     }
   }
 
   /**
-   * 确保CCR配置文件存在
+   * Ensure CCX profile exists
    */
-  private static async ensureCcrProfileExists(ccrConfig: CcrConfig | null): Promise<void> {
+  private static async ensureCcxProfileExists(ccxConfig: CcxConfig | null): Promise<void> {
     const config = this.readConfig() || this.createEmptyConfig()
-    const ccrProfileId = 'ccr-proxy'
-    const existingCcrProfile = config.profiles[ccrProfileId]
+    const ccxProfileId = 'ccx-proxy'
+    const existingCcxProfile = config.profiles[ccxProfileId]
 
-    if (!ccrConfig) {
-      // 删除CCR配置（如果存在）
-      if (existingCcrProfile) {
-        delete config.profiles[ccrProfileId]
-        // 如果删除的是当前配置，切换到其他配置
-        if (config.currentProfileId === ccrProfileId) {
+    if (!ccxConfig) {
+      // Delete CCX profile if it exists
+      if (existingCcxProfile) {
+        delete config.profiles[ccxProfileId]
+        // If the deleted profile was current, switch to another
+        if (config.currentProfileId === ccxProfileId) {
           const remainingIds = Object.keys(config.profiles)
           config.currentProfileId = remainingIds[0] || ''
         }
@@ -777,27 +776,26 @@ export class ClaudeCodeConfigManager {
       return
     }
 
-    const host = ccrConfig.HOST || '127.0.0.1'
-    const port = ccrConfig.PORT || 3456
-    const apiKey = ccrConfig.APIKEY || 'sk-zcf-x-ccr'
-    const baseUrl = `http://${host}:${port}`
+    const port = ccxConfig.PORT || 3000
+    const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
+    const baseUrl = `http://127.0.0.1:${port}`
 
-    // 创建或更新CCR配置
-    const ccrProfile: ClaudeCodeProfile = {
-      name: 'CCR Proxy',
-      authType: 'ccr_proxy',
+    // Create or update CCX profile
+    const ccxProfile: ClaudeCodeProfile = {
+      name: 'CCX Proxy',
+      authType: 'ccx_proxy',
       baseUrl,
       apiKey,
     }
 
-    config.profiles[ccrProfileId] = {
-      ...ccrProfile,
-      id: ccrProfileId,
+    config.profiles[ccxProfileId] = {
+      ...ccxProfile,
+      id: ccxProfileId,
     }
 
-    // 如果没有当前配置，设为当前配置
+    // If no current profile, set as current
     if (!config.currentProfileId) {
-      config.currentProfileId = ccrProfileId
+      config.currentProfileId = ccxProfileId
     }
 
     this.writeConfig(config)
@@ -828,22 +826,22 @@ export class ClaudeCodeConfigManager {
   }
 
   /**
-   * Switch to CCR proxy
+   * Switch to CCX proxy
    */
-  static async switchToCcr(): Promise<OperationResult> {
+  static async switchToCcx(): Promise<OperationResult> {
     try {
-      // 确保CCR配置存在
-      await this.syncCcrProfile()
+      // Ensure CCX profile exists
+      await this.syncCcxProfile()
 
       const config = this.readConfig()
-      if (!config || !config.profiles['ccr-proxy']) {
+      if (!config || !config.profiles['ccx-proxy']) {
         return {
           success: false,
-          error: 'CCR proxy configuration not found. Please configure CCR first.',
+          error: 'CCX proxy configuration not found. Please configure CCX first.',
         }
       }
 
-      return await this.switchProfile('ccr-proxy')
+      return await this.switchProfile('ccx-proxy')
     }
     catch (error) {
       return {
@@ -869,8 +867,8 @@ export class ClaudeCodeConfigManager {
     }
 
     // authType验证
-    if (profile.authType && !['api_key', 'auth_token', 'ccr_proxy'].includes(profile.authType)) {
-      errors.push('Invalid auth type. Must be one of: api_key, auth_token, ccr_proxy')
+    if (profile.authType && !['api_key', 'auth_token', 'ccx_proxy'].includes(profile.authType)) {
+      errors.push('Invalid auth type. Must be one of: api_key, auth_token, ccx_proxy')
     }
 
     // API密钥验证

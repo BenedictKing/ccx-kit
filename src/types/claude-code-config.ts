@@ -4,7 +4,7 @@
 
 export interface ClaudeCodeProfile {
   name: string // Display name
-  authType: 'api_key' | 'auth_token' | 'ccr_proxy'
+  authType: 'api_key' | 'auth_token' | 'ccx_proxy'
   apiKey?: string // API key (stored in plain text)
   baseUrl?: string // Custom API URL
   // Model configuration
@@ -25,7 +25,7 @@ export interface ClaudeCodeConfigData {
 
 export interface ApiConfigDefinition {
   name?: string // Profile name (optional - auto-generated from provider if not provided)
-  type?: 'api_key' | 'auth_token' | 'ccr_proxy' // Auth type (optional - defaults to api_key when provider is specified)
+  type?: 'api_key' | 'auth_token' | 'ccx_proxy' | 'ccr_proxy' // Auth type (optional - defaults to api_key when provider is specified; ccr_proxy kept for backward compatibility)
   key?: string // API key (required for api_key and auth_token, or when provider is custom)
   url?: string // Custom URL (optional - auto-filled from provider preset)
   default?: boolean // Set as default profile (optional)

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { checkAndUpdateTools, execWithSudoIfNeeded, updateCcr, updateClaudeCode, updateCometixLine } from '../../../src/utils/auto-updater'
+import { checkAndUpdateTools, execWithSudoIfNeeded, updateCcx, updateClaudeCode, updateCometixLine } from '../../../src/utils/auto-updater'
 import { promptBoolean } from '../../../src/utils/toggle-prompt'
-import { checkCcrVersion, checkClaudeCodeVersion, checkCometixLineVersion } from '../../../src/utils/version-checker'
+import { checkCcxVersion, checkClaudeCodeVersion, checkCometixLineVersion } from '../../../src/utils/version-checker'
 
 // Mock tinyexec
 const execMock = vi.hoisted(() => vi.fn())
@@ -15,6 +15,13 @@ const shouldUseSudoMock = vi.hoisted(() => vi.fn(() => false))
 
 vi.mock('../../../src/utils/platform', () => ({
   shouldUseSudoForGlobalInstall: shouldUseSudoMock,
+}))
+
+// Mock ccx installer
+const installCcxMock = vi.hoisted(() => vi.fn())
+
+vi.mock('../../../src/utils/ccx/installer', () => ({
+  installCcx: installCcxMock,
 }))
 
 vi.mock('ansis', () => ({
@@ -52,7 +59,7 @@ vi.mock('../../../src/i18n', () => ({
 }))
 
 vi.mock('../../../src/utils/version-checker', () => ({
-  checkCcrVersion: vi.fn(),
+  checkCcxVersion: vi.fn(),
   checkClaudeCodeVersion: vi.fn(),
   checkCometixLineVersion: vi.fn(),
   handleDuplicateInstallations: vi.fn().mockResolvedValue({
@@ -81,10 +88,11 @@ interface MockSpinner {
 interface TestMocks {
   exec: any
   oraSpinner: MockSpinner
-  checkCcrVersion: any
+  checkCcxVersion: any
   checkClaudeCodeVersion: any
   checkCometixLineVersion: any
   shouldUseSudo: any
+  installCcx: any
 }
 
 let testMocks: TestMocks
@@ -106,6 +114,8 @@ describe('auto-updater', () => {
     execMock.mockReset()
     shouldUseSudoMock.mockReset()
     shouldUseSudoMock.mockReturnValue(false)
+    installCcxMock.mockReset()
+    installCcxMock.mockResolvedValue(undefined)
 
     // Setup ora mock to return our controlled spinner
     oraMock.mockReturnValue(mockSpinner)
@@ -113,56 +123,57 @@ describe('auto-updater', () => {
     testMocks = {
       exec: execMock,
       oraSpinner: mockSpinner,
-      checkCcrVersion: (checkCcrVersion as any),
+      checkCcxVersion: (checkCcxVersion as any),
       checkClaudeCodeVersion: (checkClaudeCodeVersion as any),
       checkCometixLineVersion: (checkCometixLineVersion as any),
       shouldUseSudo: shouldUseSudoMock,
+      installCcx: installCcxMock,
     }
   })
 
-  describe('updateCcr', () => {
-    it('should return false when CCR is not installed', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+  describe('updateCcx', () => {
+    it('should return false when CCX is not installed', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: false,
         currentVersion: null,
         latestVersion: '1.0.0',
         needsUpdate: false,
       })
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(testMocks.oraSpinner.stop).toHaveBeenCalled()
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('updater:ccrNotInstalled'),
+        expect.stringContaining('updater:ccxNotInstalled'),
       )
     })
 
-    it('should return true when CCR is up to date and force is false', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+    it('should return true when CCX is up to date and force is false', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         needsUpdate: false,
       })
 
-      const result = await updateCcr(false)
+      const result = await updateCcx(false)
 
       expect(result).toBe(true)
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('updater:ccrUpToDate'),
+        expect.stringContaining('updater:ccxUpToDate'),
       )
     })
 
     it('should return false when cannot check latest version', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: null,
         needsUpdate: true,
       })
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(mockConsoleLog).toHaveBeenCalledWith(
@@ -171,7 +182,7 @@ describe('auto-updater', () => {
     })
 
     it('should return true when user declines update', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
@@ -179,7 +190,7 @@ describe('auto-updater', () => {
       })
       vi.mocked(promptBoolean).mockResolvedValueOnce(false)
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(true)
       expect(mockConsoleLog).toHaveBeenCalledWith(
@@ -187,61 +198,59 @@ describe('auto-updater', () => {
       )
     })
 
-    it('should successfully prompt for CCR update when user confirms', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+    it('should successfully prompt for CCX update when user confirms', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
       vi.mocked(promptBoolean).mockResolvedValueOnce(true)
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(true)
       expect(promptBoolean).toHaveBeenCalledWith(expect.objectContaining({
         message: expect.stringContaining('confirmUpdate'),
       }))
-      expect(testMocks.exec).toHaveBeenCalledWith('npm', ['update', '-g', '@musistudio/claude-code-router'])
+      expect(testMocks.installCcx).toHaveBeenCalled()
     })
 
-    it('should update CCR automatically when skipPrompt is enabled', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+    it('should update CCX automatically when skipPrompt is enabled', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      const result = await updateCcr(false, true)
+      const result = await updateCcx(false, true)
 
       expect(result).toBe(true)
-      expect(testMocks.exec).toHaveBeenCalledWith('npm', ['update', '-g', '@musistudio/claude-code-router'])
+      expect(testMocks.installCcx).toHaveBeenCalled()
     })
 
     it('should handle update execution errors gracefully', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
       vi.mocked(promptBoolean).mockResolvedValueOnce(true)
-      testMocks.exec.mockRejectedValue(new Error('Update failed'))
+      testMocks.installCcx.mockRejectedValue(new Error('Update failed'))
 
       // The function should handle errors gracefully
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(testMocks.oraSpinner.fail).toHaveBeenCalled()
     })
 
     it('should handle version check errors', async () => {
-      testMocks.checkCcrVersion.mockRejectedValue(new Error('Version check failed'))
+      testMocks.checkCcxVersion.mockRejectedValue(new Error('Version check failed'))
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(testMocks.oraSpinner.fail).toHaveBeenCalledWith('updater:checkFailed')
@@ -251,16 +260,15 @@ describe('auto-updater', () => {
     })
 
     it('should force update even when up to date', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
         needsUpdate: false,
       })
       vi.mocked(promptBoolean).mockResolvedValueOnce(true)
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      const result = await updateCcr(true)
+      const result = await updateCcx(true)
 
       expect(result).toBe(true)
       // Should prompt for confirmation
@@ -268,15 +276,14 @@ describe('auto-updater', () => {
     })
 
     it('should skip prompt when skipPrompt is true', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      const result = await updateCcr(false, true)
+      const result = await updateCcx(false, true)
 
       expect(result).toBe(true)
       // Should NOT prompt for confirmation
@@ -286,35 +293,31 @@ describe('auto-updater', () => {
       )
     })
 
-    it('should use sudo when shouldUseSudoForGlobalInstall returns true', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+    it('should call installCcx regardless of sudo setting', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
       testMocks.shouldUseSudo.mockReturnValue(true)
 
-      const result = await updateCcr(false, true)
+      const result = await updateCcx(false, true)
 
       expect(result).toBe(true)
-      expect(testMocks.exec).toHaveBeenCalledWith('sudo', ['npm', 'update', '-g', '@musistudio/claude-code-router'])
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('updater:usingSudo'),
-      )
+      expect(testMocks.installCcx).toHaveBeenCalled()
     })
 
-    it('should fail when command exits with non-zero code', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+    it('should fail when installCcx throws an error', async () => {
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: 'Permission denied', exitCode: 1 })
+      testMocks.installCcx.mockRejectedValue(new Error('Permission denied'))
 
-      const result = await updateCcr(false, true)
+      const result = await updateCcx(false, true)
 
       expect(result).toBe(false)
       expect(testMocks.oraSpinner.fail).toHaveBeenCalled()
@@ -556,7 +559,7 @@ describe('auto-updater', () => {
   describe('checkAndUpdateTools', () => {
     it('should check and update all tools in interactive mode', async () => {
       // Mock all tools to have updates
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
@@ -582,13 +585,13 @@ describe('auto-updater', () => {
       await checkAndUpdateTools(false)
 
       // Should call all three version check functions
-      expect(testMocks.checkCcrVersion).toHaveBeenCalled()
+      expect(testMocks.checkCcxVersion).toHaveBeenCalled()
       expect(testMocks.checkClaudeCodeVersion).toHaveBeenCalled()
       expect(testMocks.checkCometixLineVersion).toHaveBeenCalled()
     })
 
     it('should check and update all tools in skip-prompt mode', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
@@ -621,7 +624,7 @@ describe('auto-updater', () => {
 
     it('should handle individual tool failures and continue with others', async () => {
       // Mock first tool to fail, others to succeed
-      testMocks.checkCcrVersion.mockRejectedValue(new Error('CCR check failed'))
+      testMocks.checkCcxVersion.mockRejectedValue(new Error('CCX check failed'))
       testMocks.checkClaudeCodeVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
@@ -638,20 +641,20 @@ describe('auto-updater', () => {
       // Should not throw, should handle errors gracefully
       await checkAndUpdateTools(true)
 
-      // Should have called all version checks despite CCR failure
-      expect(testMocks.checkCcrVersion).toHaveBeenCalled()
+      // Should have called all version checks despite CCX failure
+      expect(testMocks.checkCcxVersion).toHaveBeenCalled()
       expect(testMocks.checkClaudeCodeVersion).toHaveBeenCalled()
       expect(testMocks.checkCometixLineVersion).toHaveBeenCalled()
 
       // Should show error for failed tool
       expect(mockConsoleError).toHaveBeenCalledWith(
-        expect.stringContaining('CCR check failed'),
+        expect.stringContaining('CCX check failed'),
       )
     })
 
     it('should show update summary with successful tools', async () => {
       // All tools up to date (success)
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
@@ -683,8 +686,8 @@ describe('auto-updater', () => {
     })
 
     it('should show update summary with failed tools', async () => {
-      // CCR fails, others succeed
-      testMocks.checkCcrVersion.mockRejectedValue(new Error('CCR check failed'))
+      // CCX fails, others succeed
+      testMocks.checkCcxVersion.mockRejectedValue(new Error('CCX check failed'))
       testMocks.checkClaudeCodeVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
@@ -704,14 +707,14 @@ describe('auto-updater', () => {
       expect(mockConsoleLog).toHaveBeenCalledWith(
         expect.stringContaining('updater:updateSummary'),
       )
-      // Should show failed status for CCR
+      // Should show failed status for CCX
       expect(mockConsoleLog).toHaveBeenCalledWith(
         expect.stringContaining('updater:failed'),
       )
     })
 
     it('should not show update summary in interactive mode', async () => {
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
@@ -743,7 +746,7 @@ describe('auto-updater', () => {
       const versionCheckerModule = await import('../../../src/utils/version-checker')
       vi.mocked(versionCheckerModule.handleDuplicateInstallations).mockRejectedValueOnce(new Error('duplicate failure'))
 
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '1.0.0',
@@ -770,9 +773,9 @@ describe('auto-updater', () => {
 
   describe('error handling edge cases', () => {
     it('should handle non-Error objects in catch blocks', async () => {
-      testMocks.checkCcrVersion.mockRejectedValue('String error')
+      testMocks.checkCcxVersion.mockRejectedValue('String error')
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(mockConsoleError).toHaveBeenCalledWith(
@@ -781,9 +784,9 @@ describe('auto-updater', () => {
     })
 
     it('should handle null/undefined errors gracefully', async () => {
-      testMocks.checkCcrVersion.mockRejectedValue(null)
+      testMocks.checkCcxVersion.mockRejectedValue(null)
 
-      const result = await updateCcr()
+      const result = await updateCcx()
 
       expect(result).toBe(false)
       expect(mockConsoleError).toHaveBeenCalledWith(
@@ -984,16 +987,17 @@ describe('auto-updater', () => {
       testMocks.shouldUseSudo.mockReturnValue(true)
       testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      // Test CCR update with sudo
-      testMocks.checkCcrVersion.mockResolvedValue({
+      // Test CCX update - uses installCcx(), not exec/sudo
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      await updateCcr(false, true)
-      expect(testMocks.exec).toHaveBeenCalledWith('sudo', ['npm', 'update', '-g', '@musistudio/claude-code-router'])
+      await updateCcx(false, true)
+      expect(testMocks.installCcx).toHaveBeenCalled()
 
+      testMocks.installCcx.mockClear()
       testMocks.exec.mockClear()
 
       // Test Claude Code update with sudo
@@ -1024,16 +1028,17 @@ describe('auto-updater', () => {
       testMocks.shouldUseSudo.mockReturnValue(false)
       testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
 
-      // Test CCR update without sudo
-      testMocks.checkCcrVersion.mockResolvedValue({
+      // Test CCX update without sudo - uses installCcx(), not exec
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
-      await updateCcr(false, true)
-      expect(testMocks.exec).toHaveBeenCalledWith('npm', ['update', '-g', '@musistudio/claude-code-router'])
+      await updateCcx(false, true)
+      expect(testMocks.installCcx).toHaveBeenCalled()
 
+      testMocks.installCcx.mockClear()
       testMocks.exec.mockClear()
 
       // Test Claude Code update without sudo
@@ -1060,21 +1065,18 @@ describe('auto-updater', () => {
       expect(testMocks.exec).toHaveBeenCalledWith('npm', ['update', '-g', '@cometix/ccline'])
     })
 
-    it('should show usingSudo message when sudo is used', async () => {
+    it('should call installCcx for CCX update even when sudo is configured', async () => {
       testMocks.shouldUseSudo.mockReturnValue(true)
-      testMocks.exec.mockResolvedValue({ stdout: '', stderr: '', exitCode: 0 })
-      testMocks.checkCcrVersion.mockResolvedValue({
+      testMocks.checkCcxVersion.mockResolvedValue({
         installed: true,
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
         needsUpdate: true,
       })
 
-      await updateCcr(false, true)
+      await updateCcx(false, true)
 
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('updater:usingSudo'),
-      )
+      expect(testMocks.installCcx).toHaveBeenCalled()
     })
   })
 

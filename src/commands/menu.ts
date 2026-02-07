@@ -19,7 +19,7 @@ import {
 } from '../utils/features'
 import { addNumbersToChoices } from '../utils/prompt-helpers'
 import { promptBoolean } from '../utils/toggle-prompt'
-import { runCcrMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../utils/tools'
+import { runCcxMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../utils/tools'
 import { readZcfConfig, updateZcfConfig } from '../utils/zcf-config'
 import { checkUpdates } from './check-updates'
 import { init } from './init'
@@ -86,7 +86,7 @@ async function handleCodeToolSwitch(current: CodeToolType): Promise<boolean> {
 function printOtherToolsSection(): void {
   console.log(`  --------- ${i18n.t('menu:menuSections.otherTools')} ----------`)
   console.log(
-    `  ${ansis.cyan('R.')} ${i18n.t('menu:menuOptions.ccrManagement')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.ccrManagement')}`)}`,
+    `  ${ansis.cyan('R.')} ${i18n.t('menu:menuOptions.ccxManagement')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.ccxManagement')}`)}`,
   )
   console.log(
     `  ${ansis.cyan('U.')} ${i18n.t('menu:menuOptions.ccusage')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.ccusage')}`)}`,
@@ -130,7 +130,7 @@ async function showClaudeCodeMenu(): Promise<MenuResult> {
     `  ${ansis.cyan('2.')} ${i18n.t('menu:menuOptions.importWorkflow')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.importWorkflow')}`)}`,
   )
   console.log(
-    `  ${ansis.cyan('3.')} ${i18n.t('menu:menuOptions.configureApiOrCcr')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.configureApiOrCcr')}`)}`,
+    `  ${ansis.cyan('3.')} ${i18n.t('menu:menuOptions.configureApiOrCcx')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.configureApiOrCcx')}`)}`,
   )
   console.log(
     `  ${ansis.cyan('4.')} ${i18n.t('menu:menuOptions.configureMcp')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.configureMcp')}`)}`,
@@ -193,7 +193,7 @@ async function showClaudeCodeMenu(): Promise<MenuResult> {
       await configureEnvPermissionFeature()
       break
     case 'r':
-      await runCcrMenuFeature()
+      await runCcxMenuFeature()
       printSeparator()
       return undefined
     case 'u':

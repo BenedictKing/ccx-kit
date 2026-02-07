@@ -87,9 +87,9 @@ describe('cli-setup', () => {
       expect(commandSpy).toHaveBeenCalledWith('', 'Show interactive menu (default)')
       expect(commandSpy).toHaveBeenCalledWith('init', 'Initialize Claude Code configuration')
       expect(commandSpy).toHaveBeenCalledWith('update', 'Update Claude Code prompts only')
-      expect(commandSpy).toHaveBeenCalledWith('ccr', 'Configure Claude Code Router for model proxy')
+      expect(commandSpy).toHaveBeenCalledWith('ccx', 'Configure CCX API proxy')
       expect(commandSpy).toHaveBeenCalledWith('ccu [...args]', 'Run Claude Code usage analysis tool')
-      expect(commandSpy).toHaveBeenCalledWith('check-updates', 'Check and update Claude Code and CCR to latest versions')
+      expect(commandSpy).toHaveBeenCalledWith('check-updates', 'Check and update Claude Code and CCX to latest versions')
 
       // Check help and version were setup
       expect(helpSpy).toHaveBeenCalled()

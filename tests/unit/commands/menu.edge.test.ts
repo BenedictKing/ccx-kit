@@ -46,7 +46,7 @@ vi.mock('../../../src/utils/features', () => ({
 
 vi.mock('../../../src/utils/tools', () => ({
   runCcusageFeature: vi.fn(),
-  runCcrMenuFeature: vi.fn(),
+  runCcxMenuFeature: vi.fn(),
   runCometixMenuFeature: vi.fn(),
 }))
 
@@ -246,19 +246,19 @@ describe('menu command - Edge Cases', () => {
       expect(uninstall).toHaveBeenCalledWith()
     })
 
-    it('should handle CCR menu feature correctly', async () => {
+    it('should handle CCX menu feature correctly', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
-      const { runCcrMenuFeature } = await import('../../../src/utils/tools')
+      const { runCcxMenuFeature } = await import('../../../src/utils/tools')
 
       vi.mocked(inquirer.prompt)
         .mockResolvedValueOnce({ choice: 'r' })
       queuePromptBooleans(false)
 
-      vi.mocked(runCcrMenuFeature).mockResolvedValue(undefined)
+      vi.mocked(runCcxMenuFeature).mockResolvedValue(undefined)
 
       await showMainMenu()
 
-      expect(runCcrMenuFeature).toHaveBeenCalledWith()
+      expect(runCcxMenuFeature).toHaveBeenCalledWith()
     })
 
     it('should handle Cometix menu feature correctly', async () => {

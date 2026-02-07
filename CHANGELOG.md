@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Replace CCR (Claude Code Router, npm package) with CCX (Claude/Codex/Gemini API Proxy, GitHub binary release)
+  - Installation: npm global install → GitHub Release binary download to `~/.local/bin/ccx`
+  - Configuration: JSON (`~/.claude-code-router/config.json`) → `.env` file (`~/.ccx/.env`)
+  - Service management: npm CLI subcommands → process lifecycle (spawn/kill/health check)
+  - Provider configuration: ZCF preset system → CCX Web UI
+  - Version checking: `npm view` → GitHub API
+  - Default port: 3456 → 3000, default key: `sk-zcf-x-ccr` → `sk-zcf-x-ccx`
+- Rename all `ccr_proxy` auth type references to `ccx_proxy` (backward compatible: `ccr_proxy` still accepted in input)
+- Update all i18n translations (14 locale files) from CCR to CCX terminology
+- Update CLI command from `zcf ccr` to `zcf ccx`
+
+### Removed
+
+- Remove CCR npm package integration (`@musistudio/claude-code-router`)
+- Remove CCR preset system (provider configuration now handled by CCX Web UI)
+- Remove `src/utils/ccr/`, `src/types/ccr.ts`, `src/commands/ccr.ts`, `src/utils/tools/ccr-menu.ts`
+- Remove CCR-related test files (10+ files)
+
 ## 3.6.1
 
 ### Patch Changes

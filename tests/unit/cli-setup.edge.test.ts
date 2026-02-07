@@ -15,8 +15,8 @@ vi.mock('../../src/commands/update', () => ({
   update: vi.fn().mockResolvedValue(undefined),
 }))
 
-vi.mock('../../src/commands/ccr', () => ({
-  ccr: vi.fn().mockResolvedValue(undefined),
+vi.mock('../../src/commands/ccx', () => ({
+  ccx: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('../../src/commands/ccu', () => ({
@@ -203,7 +203,7 @@ describe('cli-setup - Edge Cases', () => {
       // Find commands by their descriptions and check aliases
       const initCommand = cli.commands.find(cmd => cmd.description === 'Initialize Claude Code configuration')
       const updateCommand = cli.commands.find(cmd => cmd.description === 'Update Claude Code prompts only')
-      const checkCommand = cli.commands.find(cmd => cmd.description === 'Check and update Claude Code and CCR to latest versions')
+      const checkCommand = cli.commands.find(cmd => cmd.description === 'Check and update Claude Code and CCX to latest versions')
 
       expect(initCommand?.aliasNames).toContain('i')
       expect(updateCommand?.aliasNames).toContain('u')
@@ -216,7 +216,7 @@ describe('cli-setup - Edge Cases', () => {
       // Mock cli.command to throw on specific calls
       const originalCommand = cli.command.bind(cli)
       vi.spyOn(cli, 'command').mockImplementation((name, desc) => {
-        if (name === 'ccr') {
+        if (name === 'ccx') {
           throw new Error('Command registration failed')
         }
         return originalCommand(name, desc)

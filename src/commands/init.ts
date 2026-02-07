@@ -12,8 +12,8 @@ import { WORKFLOW_CONFIG_BASE } from '../config/workflows'
 import { API_DEFAULT_URL, CLAUDE_DIR, CODE_TOOL_BANNERS, DEFAULT_CODE_TOOL_TYPE, SETTINGS_FILE } from '../constants'
 import { i18n } from '../i18n'
 import { displayBannerWithInfo } from '../utils/banner'
-import { backupCcrConfig, configureCcrProxy, createDefaultCcrConfig, readCcrConfig, setupCcrConfiguration, writeCcrConfig } from '../utils/ccr/config'
-import { installCcr, isCcrInstalled } from '../utils/ccr/installer'
+import { backupCcxConfig, configureCcxProxy, createDefaultCcxConfig, readCcxEnv, setupCcxConfiguration, writeCcxEnv } from '../utils/ccx/config'
+import { installCcx, isCcxInstalled } from '../utils/ccx/installer'
 import {
   addCompletedOnboarding,
   backupMcpConfig,
@@ -61,7 +61,7 @@ export interface InitOptions {
   codeType?: CodeToolType | string // Accept abbreviations like 'cc', 'cx'
   // Non-interactive parameters
   configAction?: 'new' | 'backup' | 'merge' | 'docs-only' | 'skip'
-  apiType?: 'auth_token' | 'api_key' | 'ccr_proxy' | 'skip'
+  apiType?: 'auth_token' | 'api_key' | 'ccx_proxy' | 'ccr_proxy' | 'skip'
   apiKey?: string // Used for both API key and auth token
   apiUrl?: string
   apiModel?: string // Primary API model (e.g., claude-sonnet-4-5)
@@ -156,7 +156,7 @@ export async function validateSkipPromptOptions(options: InitOptions): Promise<v
   }
 
   // Validate apiType
-  if (options.apiType && !['auth_token', 'api_key', 'ccr_proxy', 'skip'].includes(options.apiType)) {
+  if (options.apiType && !['auth_token', 'api_key', 'ccx_proxy', 'ccr_proxy', 'skip'].includes(options.apiType)) {
     throw new Error(
       i18n.t('errors:invalidApiType', { value: options.apiType }),
     )
@@ -305,8 +305,8 @@ export async function init(options: InitOptions = {}): Promise<void> {
             value: 'custom',
           },
           {
-            name: i18n.t('api:useCcrProxy'),
-            value: 'ccr',
+            name: i18n.t('api:useCcxProxy'),
+            value: 'ccx',
           },
           {
             name: i18n.t('api:skipApi'),
@@ -663,35 +663,35 @@ export async function init(options: InitOptions = {}): Promise<void> {
           // Save configuration to ZCF TOML config for persistence and switching
           await saveSingleConfigToToml(apiConfig, undefined, options)
         }
-        else if (options.apiType === 'ccr_proxy') {
-          // Handle CCR proxy configuration in skip-prompt mode
-          const ccrStatus = await isCcrInstalled()
-          if (!ccrStatus.hasCorrectPackage) {
-            await installCcr()
+        else if (options.apiType === 'ccx_proxy' || options.apiType === 'ccr_proxy') {
+          // Handle CCX proxy configuration in skip-prompt mode
+          const ccxStatus = await isCcxInstalled()
+          if (!ccxStatus.isInstalled) {
+            await installCcx()
           }
           else {
-            console.log(ansis.green(`✔ ${i18n.t('ccr:ccrAlreadyInstalled')}`))
+            console.log(ansis.green(`✔ ${i18n.t('ccx:ccxAlreadyInstalled')}`))
           }
 
-          // Backup existing CCR config if exists
-          const existingCcrConfig = readCcrConfig()
-          if (existingCcrConfig) {
-            const backupPath = await backupCcrConfig()
+          // Backup existing CCX config if exists
+          const existingCcxConfig = readCcxEnv()
+          if (existingCcxConfig) {
+            const backupPath = await backupCcxConfig()
             if (backupPath) {
-              console.log(ansis.gray(`✔ ${i18n.t('ccr:ccrBackupSuccess')}: ${backupPath}`))
+              console.log(ansis.gray(`✔ ${i18n.t('ccx:ccxBackupSuccess')}: ${backupPath}`))
             }
           }
 
           // Create default skip configuration (empty providers - user configures in UI)
-          const defaultCcrConfig = createDefaultCcrConfig()
+          const defaultCcxConfig = createDefaultCcxConfig()
 
-          // Write CCR config
-          writeCcrConfig(defaultCcrConfig)
-          console.log(ansis.green(`✔ ${i18n.t('ccr:ccrConfigSuccess')}`))
+          // Write CCX config
+          writeCcxEnv(defaultCcxConfig)
+          console.log(ansis.green(`✔ ${i18n.t('ccx:ccxConfigSuccess')}`))
 
           // Configure proxy in settings.json
-          await configureCcrProxy(defaultCcrConfig)
-          console.log(ansis.green(`✔ ${i18n.t('ccr:proxyConfigSuccess')}`))
+          await configureCcxProxy(defaultCcxConfig)
+          console.log(ansis.green(`✔ ${i18n.t('ccx:proxyConfigSuccess')}`))
 
           // Add onboarding flag
           try {
@@ -701,7 +701,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
             console.error(ansis.red(i18n.t('errors:failedToSetOnboarding')), error)
           }
 
-          apiConfig = null // CCR sets up its own proxy config
+          apiConfig = null // CCX sets up its own proxy config
         }
       }
       else {
@@ -730,22 +730,22 @@ export async function init(options: InitOptions = {}): Promise<void> {
             apiConfig = await handleCustomApiConfiguration(existingApiConfig)
             break
 
-          case 'ccr': {
-            // Handle CCR proxy configuration
-            const ccrStatus = await isCcrInstalled()
-            if (!ccrStatus.hasCorrectPackage) {
-              await installCcr()
+          case 'ccx': {
+            // Handle CCX proxy configuration
+            const ccxStatus = await isCcxInstalled()
+            if (!ccxStatus.isInstalled) {
+              await installCcx()
             }
             else {
-              console.log(ansis.green(`✔ ${i18n.t('ccr:ccrAlreadyInstalled')}`))
+              console.log(ansis.green(`✔ ${i18n.t('ccx:ccxAlreadyInstalled')}`))
             }
 
-            // Setup CCR configuration
-            const ccrConfigured = await setupCcrConfiguration()
-            if (ccrConfigured) {
-              console.log(ansis.green(`✔ ${i18n.t('ccr:ccrSetupComplete')}`))
-              // CCR configuration already sets up the proxy in settings.json
-              // addCompletedOnboarding is already called inside setupCcrConfiguration
+            // Setup CCX configuration
+            const ccxConfigured = await setupCcxConfiguration()
+            if (ccxConfigured) {
+              console.log(ansis.green(`✔ ${i18n.t('ccx:ccxSetupComplete')}`))
+              // CCX configuration already sets up the proxy in settings.json
+              // addCompletedOnboarding is already called inside setupCcxConfiguration
               apiConfig = null // No need for traditional API config
             }
             break
@@ -1110,7 +1110,7 @@ export async function validateApiConfigs(configs: ApiConfigDefinition[]): Promis
     }
 
     // Validate type is valid
-    if (!['api_key', 'auth_token', 'ccr_proxy'].includes(config.type!)) {
+    if (!['api_key', 'auth_token', 'ccx_proxy', 'ccr_proxy'].includes(config.type!)) {
       throw new Error(i18n.t('multi-config:invalidAuthType', { type: config.type }))
     }
 
@@ -1120,8 +1120,8 @@ export async function validateApiConfigs(configs: ApiConfigDefinition[]): Promis
     }
     names.add(config.name)
 
-    // Validate API key for non-CCR types
-    if (config.type !== 'ccr_proxy' && !config.key) {
+    // Validate API key for non-CCX types
+    if (config.type !== 'ccx_proxy' && config.type !== 'ccr_proxy' && !config.key) {
       throw new Error(i18n.t('multi-config:configApiKeyRequired', { name: config.name }))
     }
   }
@@ -1136,8 +1136,8 @@ async function handleClaudeCodeConfigs(configs: ApiConfigDefinition[]): Promise<
   const addedProfiles: ClaudeCodeProfile[] = []
 
   for (const config of configs) {
-    if (config.type === 'ccr_proxy') {
-      throw new Error(i18n.t('multi-config:ccrProxyReserved', { name: config.name }))
+    if (config.type === 'ccx_proxy' || config.type === 'ccr_proxy') {
+      throw new Error(i18n.t('multi-config:ccxProxyReserved', { name: config.name }))
     }
 
     const profile = await convertToClaudeCodeProfile(config)
@@ -1174,8 +1174,8 @@ async function handleClaudeCodeConfigs(configs: ApiConfigDefinition[]): Promise<
     }
   }
 
-  // Sync CCR configuration if needed
-  await ClaudeCodeConfigManager.syncCcrProfile()
+  // Sync CCX configuration if needed
+  await ClaudeCodeConfigManager.syncCcxProfile()
 }
 
 /**
@@ -1339,7 +1339,7 @@ async function convertToClaudeCodeProfile(config: ApiConfigDefinition): Promise<
   let defaultHaikuModel = config.defaultHaikuModel
   let defaultSonnetModel = config.defaultSonnetModel
   let defaultOpusModel = config.defaultOpusModel
-  let authType = config.type || 'api_key'
+  let authType: ClaudeCodeProfile['authType'] = config.type === 'ccr_proxy' ? 'ccx_proxy' : (config.type || 'api_key')
 
   if (config.provider && config.provider !== 'custom') {
     const { getProviderPreset } = await import('../config/api-providers')

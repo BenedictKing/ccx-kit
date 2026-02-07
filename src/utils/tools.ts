@@ -4,7 +4,7 @@ import { executeCcusage } from '../commands/ccu'
 import { ensureI18nInitialized, i18n } from '../i18n'
 import { showCometixMenu } from './cometix/menu'
 import { addNumbersToChoices } from './prompt-helpers'
-import { showCcrMenu } from './tools/ccr-menu'
+import { showCcxMenu } from './tools/ccx-menu'
 
 /**
  * Validates and returns a valid language code
@@ -100,8 +100,8 @@ export async function runCcusageFeature(): Promise<void> {
   })
 }
 
-export async function runCcrMenuFeature(): Promise<void> {
-  await showCcrMenu()
+export async function runCcxMenuFeature(): Promise<void> {
+  await showCcxMenu()
 }
 
 export async function runCometixMenuFeature(): Promise<void> {

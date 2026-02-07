@@ -1,5 +1,5 @@
 export { showCometixMenu as runCometixMenuFeature } from '../cometix/menu'
-export { showCcrMenu as runCcrMenuFeature } from './ccr-menu'
+export { showCcxMenu as runCcxMenuFeature } from './ccx-menu'
 
 // For backward compatibility
-export * from './ccr-menu'
+export * from './ccx-menu'

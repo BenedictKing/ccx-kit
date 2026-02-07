@@ -35,14 +35,14 @@ vi.mock('../../../src/utils/claude-code-incremental-manager', () => ({
   configureIncrementalManagement: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/config', () => ({
-  setupCcrConfiguration: vi.fn(),
-  configureCcrProxy: vi.fn(),
+vi.mock('../../../src/utils/ccx/config', () => ({
+  setupCcxConfiguration: vi.fn(),
+  configureCcxProxy: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/installer', () => ({
-  isCcrInstalled: vi.fn(),
-  installCcr: vi.fn(),
+vi.mock('../../../src/utils/ccx/installer', () => ({
+  isCcxInstalled: vi.fn(),
+  installCcx: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/claude-config', () => ({
@@ -192,18 +192,18 @@ describe('features utilities', () => {
       expect(mockPrompt).toHaveBeenCalledTimes(1) // Only mode selection
     })
 
-    it('should handle CCR proxy mode', async () => {
+    it('should handle CCX proxy mode', async () => {
       const { configureApiFeature } = await import('../../../src/utils/features')
-      const ccrConfigModule = await import('../../../src/utils/ccr/config')
-      const ccrInstallerModule = await import('../../../src/utils/ccr/installer')
+      const ccxConfigModule = await import('../../../src/utils/ccx/config')
+      const ccxInstallerModule = await import('../../../src/utils/ccx/installer')
 
-      vi.mocked(inquirer.prompt).mockResolvedValueOnce({ mode: 'ccr' })
-      vi.mocked(ccrInstallerModule.isCcrInstalled).mockResolvedValue({ hasCorrectPackage: true } as any)
-      vi.mocked(ccrConfigModule.setupCcrConfiguration).mockResolvedValue(true as any)
+      vi.mocked(inquirer.prompt).mockResolvedValueOnce({ mode: 'ccx' })
+      vi.mocked(ccxInstallerModule.isCcxInstalled).mockResolvedValue({ hasCorrectPackage: true } as any)
+      vi.mocked(ccxConfigModule.setupCcxConfiguration).mockResolvedValue(true as any)
 
       await configureApiFeature()
 
-      expect(ccrConfigModule.setupCcrConfiguration).toHaveBeenCalled()
+      expect(ccxConfigModule.setupCcxConfiguration).toHaveBeenCalled()
     })
 
     it('should handle skip mode', async () => {

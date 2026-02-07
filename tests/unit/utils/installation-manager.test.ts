@@ -18,9 +18,13 @@ vi.mock('../../../src/utils/zcf-config', () => ({
 }))
 
 // Mock homedir to return consistent test path
-vi.mock('node:os', () => ({
-  homedir: vi.fn(() => '/Users/test'),
-}))
+vi.mock('node:os', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:os')>()
+  return {
+    ...actual,
+    homedir: vi.fn(() => '/Users/test'),
+  }
+})
 
 // Mock ansis for color output
 vi.mock('ansis', () => ({

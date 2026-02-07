@@ -82,13 +82,13 @@ vi.mock('../../../src/utils/banner', () => ({
   displayBannerWithInfo: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/installer', () => ({
-  isCcrInstalled: vi.fn(),
-  installCcr: vi.fn(),
+vi.mock('../../../src/utils/ccx/installer', () => ({
+  isCcxInstalled: vi.fn(),
+  installCcx: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/config', () => ({
-  setupCcrConfiguration: vi.fn(),
+vi.mock('../../../src/utils/ccx/config', () => ({
+  setupCcxConfiguration: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/cometix/installer', () => ({

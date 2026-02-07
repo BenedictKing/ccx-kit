@@ -18,7 +18,7 @@ vi.mock('../../../src/i18n', () => ({
         'multi-config:duplicateName': 'Duplicate config name: {{name}}',
         'multi-config:invalidAuthType': 'Invalid auth type: {{type}}',
         'multi-config:configApiKeyRequired': 'Config "{{name}}" requires API key',
-        'multi-config:ccrProxyReserved': 'CCR proxy type is reserved and cannot be added manually (config: "{{name}}")',
+        'multi-config:ccxProxyReserved': 'CCX proxy type is reserved and cannot be added manually (config: "{{name}}")',
       }
       let template = translations[key] || key
       if (params) {
@@ -48,7 +48,7 @@ vi.mock('../../../src/utils/claude-code-config-manager', () => ({
     addProfile: vi.fn().mockResolvedValue({ success: true }),
     getProfileByName: vi.fn((name: string) => ({ id: `${name}-id`, name, authType: 'api_key' })),
     switchProfile: vi.fn().mockResolvedValue({ success: true }),
-    syncCcrProfile: vi.fn().mockResolvedValue(undefined),
+    syncCcxProfile: vi.fn().mockResolvedValue(undefined),
     generateProfileId: vi.fn().mockReturnValue('test-profile-id'),
     applyProfileSettings: vi.fn(),
   },
@@ -318,7 +318,7 @@ describe('handleMultiConfigurations', () => {
     expect(console.error).toHaveBeenCalled()
   })
 
-  it('should require API key for non-CCR types', async () => {
+  it('should require API key for non-CCX types', async () => {
     const { handleMultiConfigurations } = await import('../../../src/commands/init')
 
     const apiConfigs = JSON.stringify([
@@ -335,11 +335,11 @@ describe('handleMultiConfigurations', () => {
     expect(console.error).toHaveBeenCalled()
   })
 
-  it('should reject manual CCR proxy configuration', async () => {
+  it('should reject manual CCX proxy configuration', async () => {
     const { handleMultiConfigurations } = await import('../../../src/commands/init')
 
     const apiConfigs = JSON.stringify([
-      { name: 'CCR Config', type: 'ccr_proxy' },
+      { name: 'CCX Config', type: 'ccx_proxy' },
     ])
 
     const options: InitOptions = {
@@ -349,7 +349,7 @@ describe('handleMultiConfigurations', () => {
 
     await expect(handleMultiConfigurations(options, 'claude-code'))
       .rejects
-      .toThrow('CCR proxy type is reserved')
+      .toThrow('CCX proxy type is reserved')
 
     const { ClaudeCodeConfigManager } = await import('../../../src/utils/claude-code-config-manager')
     expect(ClaudeCodeConfigManager.addProfile).not.toHaveBeenCalled()

@@ -114,13 +114,13 @@ vi.mock('../../../src/utils/workflow-installer', () => ({
   selectAndInstallWorkflows: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/installer', () => ({
-  isCcrInstalled: vi.fn(),
-  installCcr: vi.fn(),
+vi.mock('../../../src/utils/ccx/installer', () => ({
+  isCcxInstalled: vi.fn(),
+  installCcx: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/ccr/config', () => ({
-  setupCcrConfiguration: vi.fn(),
+vi.mock('../../../src/utils/ccx/config', () => ({
+  setupCcxConfiguration: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/cometix/installer', () => ({
@@ -170,8 +170,8 @@ interface TestMocks {
   getExistingApiConfig: any
   switchToOfficialLogin: any
   promptApiConfigurationAction: any
-  isCcrInstalled: any
-  setupCcrConfiguration: any
+  isCcxInstalled: any
+  setupCcxConfiguration: any
   configureApiCompletely: any
   modifyApiConfigPartially: any
   configureIncrementalManagement: any
@@ -196,8 +196,8 @@ describe('init command', () => {
     const { selectAndInstallWorkflows } = await import('../../../src/utils/workflow-installer')
     const { configureOutputStyle } = await import('../../../src/utils/output-style')
     const { updateZcfConfig, readZcfConfig } = await import('../../../src/utils/zcf-config')
-    const { isCcrInstalled, installCcr: _installCcr } = await import('../../../src/utils/ccr/installer')
-    const { setupCcrConfiguration } = await import('../../../src/utils/ccr/config')
+    const { isCcxInstalled, installCcx: _installCcx } = await import('../../../src/utils/ccx/installer')
+    const { setupCcxConfiguration } = await import('../../../src/utils/ccx/config')
     const { configureApiCompletely, modifyApiConfigPartially } = await import('../../../src/utils/config-operations')
     const { configureIncrementalManagement } = await import('../../../src/utils/claude-code-incremental-manager')
     const { existsSync } = await import('node:fs')
@@ -223,8 +223,8 @@ describe('init command', () => {
       getExistingApiConfig: vi.mocked(getExistingApiConfig),
       switchToOfficialLogin: vi.mocked(switchToOfficialLogin),
       promptApiConfigurationAction: vi.mocked(promptApiConfigurationAction),
-      isCcrInstalled: vi.mocked(isCcrInstalled),
-      setupCcrConfiguration: vi.mocked(setupCcrConfiguration),
+      isCcxInstalled: vi.mocked(isCcxInstalled),
+      setupCcxConfiguration: vi.mocked(setupCcxConfiguration),
       configureApiCompletely: vi.mocked(configureApiCompletely),
       modifyApiConfigPartially: vi.mocked(modifyApiConfigPartially),
       configureIncrementalManagement: vi.mocked(configureIncrementalManagement),
@@ -836,7 +836,7 @@ describe('init command', () => {
             choices: expect.arrayContaining([
               expect.objectContaining({ value: 'official' }),
               expect.objectContaining({ value: 'custom' }),
-              expect.objectContaining({ value: 'ccr' }),
+              expect.objectContaining({ value: 'ccx' }),
               expect.objectContaining({ value: 'skip' }),
             ]),
           }),
@@ -871,7 +871,7 @@ describe('init command', () => {
         expect(testMocks.switchToOfficialLogin).toHaveBeenCalled()
       })
 
-      it('should handle CCR proxy mode selection', async () => {
+      it('should handle CCX proxy mode selection', async () => {
         const { init } = await import('../../../src/commands/init')
 
         testMocks.getInstallationStatus.mockResolvedValue({
@@ -884,11 +884,11 @@ describe('init command', () => {
         } as any)
         testMocks.existsSync.mockReturnValue(false)
         testMocks.getExistingApiConfig.mockReturnValue(null)
-        testMocks.isCcrInstalled.mockResolvedValue({
+        testMocks.isCcxInstalled.mockResolvedValue({
           hasCorrectPackage: true,
         } as any)
-        testMocks.setupCcrConfiguration.mockResolvedValue(true)
-        testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'ccr' }) // Unified menu selection
+        testMocks.setupCcxConfiguration.mockResolvedValue(true)
+        testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'ccx' }) // Unified menu selection
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
         testMocks.updateZcfConfig.mockResolvedValue(undefined)
 
@@ -898,9 +898,9 @@ describe('init command', () => {
           skipPrompt: false,
         })
 
-        // Should check CCR installation and setup CCR configuration
-        expect(testMocks.isCcrInstalled).toHaveBeenCalled()
-        expect(testMocks.setupCcrConfiguration).toHaveBeenCalled()
+        // Should check CCX installation and setup CCX configuration
+        expect(testMocks.isCcxInstalled).toHaveBeenCalled()
+        expect(testMocks.setupCcxConfiguration).toHaveBeenCalled()
       })
 
       it('should handle skip mode selection', async () => {
@@ -926,10 +926,10 @@ describe('init command', () => {
           skipPrompt: false,
         })
 
-        // Should not configure API, CCR, or official login
+        // Should not configure API, CCX, or official login
         expect(testMocks.configureApiCompletely).not.toHaveBeenCalled()
         expect(testMocks.switchToOfficialLogin).not.toHaveBeenCalled()
-        expect(testMocks.setupCcrConfiguration).not.toHaveBeenCalled()
+        expect(testMocks.setupCcxConfiguration).not.toHaveBeenCalled()
       })
 
       it('should handle custom API configuration with existing config', async () => {

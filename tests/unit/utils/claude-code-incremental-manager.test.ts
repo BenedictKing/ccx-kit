@@ -17,7 +17,7 @@ describe('getAuthTypeLabel', () => {
   it('should map known auth types to i18n keys', () => {
     expect(getAuthTypeLabel('api_key')).toBe('multi-config:authType.api_key')
     expect(getAuthTypeLabel('auth_token')).toBe('multi-config:authType.auth_token')
-    expect(getAuthTypeLabel('ccr_proxy')).toBe('multi-config:authType.ccr_proxy')
+    expect(getAuthTypeLabel('ccx_proxy')).toBe('multi-config:authType.ccx_proxy')
   })
 
   it('should return raw value for unknown type', () => {
@@ -481,12 +481,12 @@ describe('claudeCode Incremental Configuration Manager', () => {
       expect(baseUrlQuestion.validate('not-a-url')).toBe('multi-config:baseUrlInvalid')
       expect(baseUrlQuestion.validate('https://valid.example.com')).toBe(true)
     })
-    it('should skip API key and base URL when CCR proxy selected', async () => {
-      const { capturedQuestions } = await captureAddQuestions({ authType: 'ccr_proxy', setAsDefault: false })
+    it('should skip API key and base URL when CCX proxy selected', async () => {
+      const { capturedQuestions } = await captureAddQuestions({ authType: 'ccx_proxy', setAsDefault: false })
       const apiQuestion = capturedQuestions.find(q => q.name === 'apiKey')
       const baseUrlQuestion = capturedQuestions.find(q => q.name === 'baseUrl')
-      expect(apiQuestion.when({ authType: 'ccr_proxy' })).toBe(false)
-      expect(baseUrlQuestion.when({ authType: 'ccr_proxy' })).toBe(false)
+      expect(apiQuestion.when({ authType: 'ccx_proxy' })).toBe(false)
+      expect(baseUrlQuestion.when({ authType: 'ccx_proxy' })).toBe(false)
     })
     it('should validate delete selections to prevent removing all profiles', async () => {
       const mockConfig = {
@@ -815,14 +815,14 @@ describe('claudeCode Incremental Configuration Manager', () => {
       // Should not call switchProfile when setAsDefault is false
       expect(ClaudeCodeConfigManager.switchProfile).not.toHaveBeenCalled()
     })
-    it('should handle editing CCR proxy profile', async () => {
+    it('should handle editing CCX proxy profile', async () => {
       const mockConfig = {
         currentProfileId: 'profile-1',
         profiles: {
           'profile-1': {
             id: 'profile-1',
-            name: 'CCR Profile',
-            authType: 'ccr_proxy' as const,
+            name: 'CCX Profile',
+            authType: 'ccx_proxy' as const,
             createdAt: '2025-01-01T00:00:00Z',
             updatedAt: '2025-01-01T00:00:00Z',
           },
@@ -834,20 +834,20 @@ describe('claudeCode Incremental Configuration Manager', () => {
         .mockResolvedValueOnce({ action: 'edit' })
         .mockResolvedValueOnce({ selectedProfileId: 'profile-1' })
         .mockResolvedValueOnce({
-          profileName: 'Updated CCR Profile',
+          profileName: 'Updated CCX Profile',
         })
       vi.mocked(ClaudeCodeConfigManager.updateProfile).mockResolvedValue({
         success: true,
         backupPath: '/test/backup.json',
         updatedProfile: {
           id: 'profile-1',
-          name: 'Updated CCR Profile',
-          authType: 'ccr_proxy',
+          name: 'Updated CCX Profile',
+          authType: 'ccx_proxy',
         },
       })
       const updatedProfile = {
         ...mockConfig.profiles['profile-1'],
-        name: 'Updated CCR Profile',
+        name: 'Updated CCX Profile',
         updatedAt: expect.any(String),
       }
       vi.mocked(ClaudeCodeConfigManager.getProfileById).mockResolvedValue(updatedProfile)
@@ -855,7 +855,7 @@ describe('claudeCode Incremental Configuration Manager', () => {
       expect(ClaudeCodeConfigManager.updateProfile).toHaveBeenCalledWith(
         'profile-1',
         expect.objectContaining({
-          name: 'Updated CCR Profile',
+          name: 'Updated CCX Profile',
         }),
       )
       const updateArgs = vi.mocked(ClaudeCodeConfigManager.updateProfile).mock.calls.at(-1)?.[1] as Record<string, any>
@@ -1191,14 +1191,14 @@ describe('claudeCode Incremental Configuration Manager', () => {
       expect(ClaudeCodeConfigManager.addProfile).not.toHaveBeenCalled()
     })
 
-    it('should handle copy of CCR proxy profile', async () => {
+    it('should handle copy of CCX proxy profile', async () => {
       const mockConfig = {
         currentProfileId: 'profile-1',
         profiles: {
           'profile-1': {
             id: 'profile-1',
-            name: 'CCR Profile',
-            authType: 'ccr_proxy' as const,
+            name: 'CCX Profile',
+            authType: 'ccx_proxy' as const,
             createdAt: '2025-01-01T00:00:00Z',
             updatedAt: '2025-01-01T00:00:00Z',
           },
@@ -1211,11 +1211,11 @@ describe('claudeCode Incremental Configuration Manager', () => {
         .mockResolvedValueOnce({ action: 'copy' })
         .mockResolvedValueOnce({ selectedProfileId: 'profile-1' })
         .mockResolvedValueOnce({
-          profileName: 'CCR Profile-copy',
+          profileName: 'CCX Profile-copy',
         } as any)
       queuePromptBooleans(false)
 
-      vi.mocked(ClaudeCodeConfigManager.generateProfileId).mockReturnValue('copied-ccr-id')
+      vi.mocked(ClaudeCodeConfigManager.generateProfileId).mockReturnValue('copied-ccx-id')
       vi.mocked(ClaudeCodeConfigManager.addProfile).mockResolvedValue({
         success: true,
         backupPath: '/test/backup.json',
@@ -1225,8 +1225,8 @@ describe('claudeCode Incremental Configuration Manager', () => {
 
       expect(ClaudeCodeConfigManager.addProfile).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: 'CCR Profile-copy',
-          authType: 'ccr_proxy',
+          name: 'CCX Profile-copy',
+          authType: 'ccx_proxy',
         }),
       )
     })

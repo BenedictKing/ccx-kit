@@ -31,7 +31,7 @@ vi.mock('../../../src/utils/claude-code-config-manager', () => ({
     getProfileByName: vi.fn(),
     switchProfile: vi.fn(),
     applyProfileSettings: vi.fn(),
-    syncCcrProfile: vi.fn(),
+    syncCcxProfile: vi.fn(),
     generateProfileId: vi.fn((name: string) => `profile-${name.toLowerCase()}`),
     CONFIG_FILE: 'claude_code_config.json',
   },
@@ -195,7 +195,7 @@ describe('init command - multi-configuration', () => {
       await expect(validateApiConfigs(configs as any)).rejects.toThrow()
     })
 
-    it('should reject config without API key for non-CCR types', async () => {
+    it('should reject config without API key for non-CCX types', async () => {
       const { validateApiConfigs } = await import('../../../src/commands/init')
 
       const configs = [
@@ -321,14 +321,14 @@ describe('init command - multi-configuration', () => {
       expect(ClaudeCodeConfigManager.addProfile).toHaveBeenCalled()
     })
 
-    it('should reject CCR proxy for Claude Code multi-config', async () => {
+    it('should reject CCX proxy for Claude Code multi-config', async () => {
       const { handleMultiConfigurations } = await import('../../../src/commands/init')
 
       const options = {
         apiConfigs: JSON.stringify([
           {
             name: 'Config1',
-            type: 'ccr_proxy',
+            type: 'ccx_proxy',
           },
         ]),
       }

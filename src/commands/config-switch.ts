@@ -165,7 +165,7 @@ async function handleDirectSwitch(codeType: CodeToolType, target: string): Promi
 
 /**
  * Handle direct Claude Code profile switch
- * @param target - Profile ID or special value ('official', 'ccr')
+ * @param target - Profile ID or special value ('official', 'ccx')
  */
 async function handleClaudeCodeDirectSwitch(target: string): Promise<void> {
   if (target === 'official') {
@@ -184,13 +184,13 @@ async function handleClaudeCodeDirectSwitch(target: string): Promise<void> {
       console.log(ansis.red(i18n.t('multi-config:failedToSwitchToOfficial', { error: result.error })))
     }
   }
-  else if (target === 'ccr') {
-    const result = await ClaudeCodeConfigManager.switchToCcr()
+  else if (target === 'ccx') {
+    const result = await ClaudeCodeConfigManager.switchToCcx()
     if (result.success) {
       try {
-        const profile = ClaudeCodeConfigManager.getProfileById('ccr-proxy')
+        const profile = ClaudeCodeConfigManager.getProfileById('ccx-proxy')
         await ClaudeCodeConfigManager.applyProfileSettings(profile)
-        console.log(ansis.green(i18n.t('multi-config:successfullySwitchedToCcr')))
+        console.log(ansis.green(i18n.t('multi-config:successfullySwitchedToCcx')))
       }
       catch (error) {
         const reason = error instanceof Error ? error.message : String(error)
@@ -198,7 +198,7 @@ async function handleClaudeCodeDirectSwitch(target: string): Promise<void> {
       }
     }
     else {
-      console.log(ansis.red(i18n.t('multi-config:failedToSwitchToCcr', { error: result.error })))
+      console.log(ansis.red(i18n.t('multi-config:failedToSwitchToCcx', { error: result.error })))
     }
   }
   else {
@@ -271,7 +271,7 @@ async function handleClaudeCodeInteractiveSwitch(): Promise<void> {
 
   const currentProfileId = config.currentProfileId
 
-  // Create configuration choices (official login + CCR + profiles)
+  // Create configuration choices (official login + CCX + profiles)
   const createClaudeCodeChoices = (profiles: Record<string, any>, currentProfileId?: string): Array<{ name: string, value: string }> => {
     const choices: Array<{ name: string, value: string }> = []
 
@@ -284,18 +284,18 @@ async function handleClaudeCodeInteractiveSwitch(): Promise<void> {
       value: 'official',
     })
 
-    // Add CCR option
-    const isCcrMode = currentProfileId === 'ccr-proxy'
+    // Add CCX option
+    const isCcxMode = currentProfileId === 'ccx-proxy'
     choices.push({
-      name: isCcrMode
-        ? `${ansis.green('● ')}${i18n.t('multi-config:ccrProxyOption')} ${ansis.yellow(`(${i18n.t('common:current')})`)}`
-        : `  ${i18n.t('multi-config:ccrProxyOption')}`,
-      value: 'ccr',
+      name: isCcxMode
+        ? `${ansis.green('● ')}${i18n.t('multi-config:ccxProxyOption')} ${ansis.yellow(`(${i18n.t('common:current')})`)}`
+        : `  ${i18n.t('multi-config:ccxProxyOption')}`,
+      value: 'ccx',
     })
 
     // Add profile options
     Object.values(profiles)
-      .filter((profile: any) => profile.id !== 'ccr-proxy')
+      .filter((profile: any) => profile.id !== 'ccx-proxy')
       .forEach((profile: any) => {
         const isCurrent = profile.id === currentProfileId
         choices.push({

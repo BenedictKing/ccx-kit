@@ -254,18 +254,20 @@ describe('zcfUninstaller', () => {
     })
   })
 
-  describe('uninstallCcr', () => {
-    it('should remove CCR directory and uninstall npm package', async () => {
-      const ccrPath = '/home/user/.claude-code-router'
+  describe('uninstallCcx', () => {
+    it('should remove CCX binary and config directory', async () => {
+      const ccxBinaryPath = '/home/user/.local/bin/ccx'
+      const ccxConfigPath = '/home/user/.ccx'
       mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
-      mockExec.exec.mockResolvedValue({ stdout: 'uninstalled', stderr: '' })
 
-      const result = await uninstaller.uninstallCcr()
+      const result = await uninstaller.uninstallCcx()
 
-      expect(mockTrash.moveToTrash).toHaveBeenCalledWith(ccrPath)
-      expect(mockExec.exec).toHaveBeenCalledWith('npm', ['uninstall', '-g', '@musistudio/claude-code-router'])
+      expect(mockTrash.moveToTrash).toHaveBeenCalledWith(ccxBinaryPath)
+      expect(mockTrash.moveToTrash).toHaveBeenCalledWith(ccxConfigPath)
       expect(result.success).toBe(true)
+      expect(result.removed).toContain('~/.local/bin/ccx')
+      expect(result.removed).toContain('~/.ccx/')
     })
   })
 
@@ -283,6 +285,7 @@ describe('zcfUninstaller', () => {
 
   describe('completeUninstall', () => {
     it('should remove all directories and uninstall all packages', async () => {
+      mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
       mockExec.exec.mockResolvedValue({ stdout: 'uninstalled', stderr: '' })
 
@@ -290,27 +293,28 @@ describe('zcfUninstaller', () => {
 
       expect(mockTrash.moveToTrash).toHaveBeenCalledWith('/home/user/.claude')
       expect(mockTrash.moveToTrash).toHaveBeenCalledWith('/home/user/.claude.json')
-      expect(mockTrash.moveToTrash).toHaveBeenCalledWith('/home/user/.claude-code-router')
+      expect(mockTrash.moveToTrash).toHaveBeenCalledWith('/home/user/.ccx')
+      expect(mockTrash.moveToTrash).toHaveBeenCalledWith('/home/user/.local/bin/ccx')
 
-      expect(mockExec.exec).toHaveBeenCalledWith('npm', ['uninstall', '-g', '@musistudio/claude-code-router'])
       expect(mockExec.exec).toHaveBeenCalledWith('npm', ['uninstall', '-g', '@cometix/ccline'])
       expect(mockExec.exec).toHaveBeenCalledWith('npm', ['uninstall', '-g', '@anthropic-ai/claude-code'])
 
       expect(result.success).toBe(true)
-      expect(result.removed).toHaveLength(6) // 3 directories + 3 packages
+      expect(result.removed).toHaveLength(6) // 4 directories/files + 2 packages
     })
 
     it('should continue uninstalling even if some operations fail', async () => {
+      mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
       mockExec.exec
-        .mockResolvedValueOnce({ stdout: 'uninstalled', stderr: '' }) // CCR success
         .mockRejectedValueOnce(new Error('ccline not found')) // CCLine failed
         .mockResolvedValueOnce({ stdout: 'uninstalled', stderr: '' }) // Claude Code success
 
       const result = await uninstaller.completeUninstall()
 
       expect(result.success).toBe(true)
-      expect(result.removed).toContain('~/.claude-code-router/')
+      expect(result.removed).toContain('~/.ccx/')
+      expect(result.removed).toContain('~/.local/bin/ccx')
       expect(result.removed).toContain('@anthropic-ai/claude-code package')
       expect(result.warnings).toContain('cclinePackageNotFound')
     })

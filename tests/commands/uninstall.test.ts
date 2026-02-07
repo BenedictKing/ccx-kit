@@ -151,7 +151,7 @@ describe('uninstall command', () => {
         expect.objectContaining({ value: 'claude-md' }),
         expect.objectContaining({ value: 'permissions-envs' }),
         expect.objectContaining({ value: 'mcps' }),
-        expect.objectContaining({ value: 'ccr' }),
+        expect.objectContaining({ value: 'ccx' }),
         expect.objectContaining({ value: 'ccline' }),
         expect.objectContaining({ value: 'claude-code' }),
         expect.objectContaining({ value: 'backups' }),

@@ -205,7 +205,7 @@ export function removeApiKeyFromRejected(config: ClaudeConfiguration, apiKey: st
 
 /**
  * Manages API key approval status by reading config, updating it, and writing it back
- * @param apiKey - The API key to ensure is approved (e.g., 'sk-zcf-x-ccr')
+ * @param apiKey - The API key to ensure is approved (e.g., 'sk-zcf-x-ccx')
  */
 export function manageApiKeyApproval(apiKey: string): void {
   try {

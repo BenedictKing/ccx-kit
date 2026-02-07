@@ -145,7 +145,7 @@ describe('npm Package Integration Tests', () => {
     }
 
     // Check all required namespaces
-    const requiredNamespaces = ['api', 'ccr', 'cli', 'cometix', 'configuration', 'errors', 'installation', 'language', 'mcp', 'tools', 'updater', 'workflow']
+    const requiredNamespaces = ['api', 'ccx', 'cli', 'cometix', 'configuration', 'errors', 'installation', 'language', 'mcp', 'tools', 'updater', 'workflow']
     for (const ns of requiredNamespaces) {
       expect(fileNames).toContain(`dist/i18n/locales/zh-CN/${ns}.json`)
       expect(fileNames).toContain(`dist/i18n/locales/en/${ns}.json`)

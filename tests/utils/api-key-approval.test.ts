@@ -23,7 +23,7 @@ vi.mock('../../src/constants', async (importOriginal) => {
 })
 
 describe('aPI Key Approval Management', () => {
-  const CCR_API_KEY = 'sk-zcf-x-ccr'
+  const CCX_API_KEY = 'sk-zcf-x-ccx'
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -41,10 +41,10 @@ describe('aPI Key Approval Management', () => {
         hasCompletedOnboarding: true,
       }
 
-      const result = ensureApiKeyApproved(config, CCR_API_KEY)
+      const result = ensureApiKeyApproved(config, CCX_API_KEY)
 
       expect(result.customApiKeyResponses).toBeDefined()
-      expect(result.customApiKeyResponses?.approved).toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.approved).toContain(CCX_API_KEY)
       expect(result.customApiKeyResponses?.rejected).toEqual([])
     })
 
@@ -58,9 +58,9 @@ describe('aPI Key Approval Management', () => {
         },
       }
 
-      const result = ensureApiKeyApproved(config, CCR_API_KEY)
+      const result = ensureApiKeyApproved(config, CCX_API_KEY)
 
-      expect(result.customApiKeyResponses?.approved).toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.approved).toContain(CCX_API_KEY)
       expect(result.customApiKeyResponses?.rejected).toEqual([])
     })
 
@@ -69,14 +69,14 @@ describe('aPI Key Approval Management', () => {
         mcpServers: {},
         hasCompletedOnboarding: true,
         customApiKeyResponses: {
-          approved: [CCR_API_KEY],
+          approved: [CCX_API_KEY],
           rejected: [],
         },
       }
 
-      const result = ensureApiKeyApproved(config, CCR_API_KEY)
+      const result = ensureApiKeyApproved(config, CCX_API_KEY)
 
-      expect(result.customApiKeyResponses?.approved).toEqual([CCR_API_KEY])
+      expect(result.customApiKeyResponses?.approved).toEqual([CCX_API_KEY])
       expect(result.customApiKeyResponses?.approved.length).toBe(1)
     })
 
@@ -86,14 +86,14 @@ describe('aPI Key Approval Management', () => {
         hasCompletedOnboarding: true,
         customApiKeyResponses: {
           approved: [],
-          rejected: [CCR_API_KEY],
+          rejected: [CCX_API_KEY],
         },
       }
 
-      const result = ensureApiKeyApproved(config, CCR_API_KEY)
+      const result = ensureApiKeyApproved(config, CCX_API_KEY)
 
-      expect(result.customApiKeyResponses?.approved).toContain(CCR_API_KEY)
-      expect(result.customApiKeyResponses?.rejected).not.toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.approved).toContain(CCX_API_KEY)
+      expect(result.customApiKeyResponses?.rejected).not.toContain(CCX_API_KEY)
     })
 
     it('should preserve other API keys when managing specific one', () => {
@@ -103,16 +103,16 @@ describe('aPI Key Approval Management', () => {
         hasCompletedOnboarding: true,
         customApiKeyResponses: {
           approved: [otherApiKey],
-          rejected: [CCR_API_KEY, 'sk-another-rejected'],
+          rejected: [CCX_API_KEY, 'sk-another-rejected'],
         },
       }
 
-      const result = ensureApiKeyApproved(config, CCR_API_KEY)
+      const result = ensureApiKeyApproved(config, CCX_API_KEY)
 
-      expect(result.customApiKeyResponses?.approved).toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.approved).toContain(CCX_API_KEY)
       expect(result.customApiKeyResponses?.approved).toContain(otherApiKey)
       expect(result.customApiKeyResponses?.rejected).toContain('sk-another-rejected')
-      expect(result.customApiKeyResponses?.rejected).not.toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.rejected).not.toContain(CCX_API_KEY)
     })
   })
 
@@ -122,13 +122,13 @@ describe('aPI Key Approval Management', () => {
         mcpServers: {},
         customApiKeyResponses: {
           approved: [],
-          rejected: [CCR_API_KEY, 'other-key'],
+          rejected: [CCX_API_KEY, 'other-key'],
         },
       }
 
-      const result = removeApiKeyFromRejected(config, CCR_API_KEY)
+      const result = removeApiKeyFromRejected(config, CCX_API_KEY)
 
-      expect(result.customApiKeyResponses?.rejected).not.toContain(CCR_API_KEY)
+      expect(result.customApiKeyResponses?.rejected).not.toContain(CCX_API_KEY)
       expect(result.customApiKeyResponses?.rejected).toContain('other-key')
     })
 
@@ -141,7 +141,7 @@ describe('aPI Key Approval Management', () => {
         },
       }
 
-      const result = removeApiKeyFromRejected(config, CCR_API_KEY)
+      const result = removeApiKeyFromRejected(config, CCX_API_KEY)
 
       expect(result.customApiKeyResponses?.rejected).toEqual([])
     })
@@ -151,7 +151,7 @@ describe('aPI Key Approval Management', () => {
         mcpServers: {},
       }
 
-      const result = removeApiKeyFromRejected(config, CCR_API_KEY)
+      const result = removeApiKeyFromRejected(config, CCX_API_KEY)
 
       expect(result).toEqual(config)
     })
@@ -164,19 +164,19 @@ describe('aPI Key Approval Management', () => {
         hasCompletedOnboarding: true,
         customApiKeyResponses: {
           approved: [],
-          rejected: [CCR_API_KEY],
+          rejected: [CCX_API_KEY],
         },
       }
 
       vi.mocked(readJsonConfig).mockReturnValue(mockConfig)
 
-      manageApiKeyApproval(CCR_API_KEY)
+      manageApiKeyApproval(CCX_API_KEY)
 
       expect(readJsonConfig).toHaveBeenCalledWith('/mock/.claude/settings.json')
       expect(writeJsonConfig).toHaveBeenCalledWith('/mock/.claude/settings.json', expect.objectContaining({
         customApiKeyResponses: expect.objectContaining({
-          approved: expect.arrayContaining([CCR_API_KEY]),
-          rejected: expect.not.arrayContaining([CCR_API_KEY]),
+          approved: expect.arrayContaining([CCX_API_KEY]),
+          rejected: expect.not.arrayContaining([CCX_API_KEY]),
         }),
       }))
     })
@@ -184,12 +184,12 @@ describe('aPI Key Approval Management', () => {
     it('should create new config if file does not exist', () => {
       vi.mocked(readJsonConfig).mockReturnValue(null)
 
-      manageApiKeyApproval(CCR_API_KEY)
+      manageApiKeyApproval(CCX_API_KEY)
 
       expect(writeJsonConfig).toHaveBeenCalledWith('/mock/.claude/settings.json', expect.objectContaining({
         mcpServers: {},
         customApiKeyResponses: expect.objectContaining({
-          approved: expect.arrayContaining([CCR_API_KEY]),
+          approved: expect.arrayContaining([CCX_API_KEY]),
           rejected: [],
         }),
       }))
@@ -204,7 +204,7 @@ describe('aPI Key Approval Management', () => {
       })
 
       // Should not throw error, should handle gracefully
-      expect(() => manageApiKeyApproval(CCR_API_KEY)).not.toThrow()
+      expect(() => manageApiKeyApproval(CCX_API_KEY)).not.toThrow()
 
       // Verify error was logged
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -228,7 +228,7 @@ describe('aPI Key Approval Management', () => {
       })
 
       // Should not throw error, should handle gracefully
-      expect(() => manageApiKeyApproval(CCR_API_KEY)).not.toThrow()
+      expect(() => manageApiKeyApproval(CCX_API_KEY)).not.toThrow()
 
       // Verify error was logged
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -263,7 +263,7 @@ describe('aPI Key Approval Management', () => {
         customApiKeyResponses: null, // Malformed
       } as any
 
-      expect(() => ensureApiKeyApproved(malformedConfig, CCR_API_KEY)).not.toThrow()
+      expect(() => ensureApiKeyApproved(malformedConfig, CCX_API_KEY)).not.toThrow()
     })
 
     it('should truncate API key to 20 characters for storage', () => {
@@ -272,8 +272,8 @@ describe('aPI Key Approval Management', () => {
       }
 
       // Test with a long API key (more than 20 characters)
-      const longApiKey = 'sk-zcf-x-ccr-very-long-api-key-that-exceeds-20-characters'
-      const expectedTruncated = longApiKey.substring(0, 20) // 'sk-zcf-x-ccr-very-lo'
+      const longApiKey = 'sk-zcf-x-ccx-very-long-api-key-that-exceeds-20-characters'
+      const expectedTruncated = longApiKey.substring(0, 20) // 'sk-zcf-x-ccx-very-lo'
 
       const result = ensureApiKeyApproved(config, longApiKey)
 
@@ -283,7 +283,7 @@ describe('aPI Key Approval Management', () => {
     })
 
     it('should truncate API key when removing from rejected list', () => {
-      const longApiKey = 'sk-zcf-x-ccr-very-long-api-key-that-exceeds-20-characters'
+      const longApiKey = 'sk-zcf-x-ccx-very-long-api-key-that-exceeds-20-characters'
       const expectedTruncated = longApiKey.substring(0, 20)
 
       const config: ClaudeConfiguration = {
@@ -306,7 +306,7 @@ describe('aPI Key Approval Management', () => {
       }
 
       // Exactly 20 characters
-      const exactApiKey = 'sk-zcf-x-ccr-exact20'
+      const exactApiKey = 'sk-zcf-x-ccx-exact20'
       expect(exactApiKey).toHaveLength(20)
 
       const result = ensureApiKeyApproved(config, exactApiKey)

@@ -5,8 +5,8 @@ import inquirer from 'inquirer'
 import { getMcpServices } from '../config/mcp-services'
 import { LANG_LABELS, SUPPORTED_LANGS } from '../constants'
 import { changeLanguage, ensureI18nInitialized, i18n } from '../i18n'
-import { setupCcrConfiguration } from './ccr/config'
-import { installCcr, isCcrInstalled } from './ccr/installer'
+import { setupCcxConfiguration } from './ccx/config'
+import { installCcx, isCcxInstalled } from './ccx/installer'
 import {
   backupMcpConfig,
   buildMcpServerConfig,
@@ -170,22 +170,22 @@ async function handleCustomApiMode(): Promise<void> {
   }
 }
 
-// Handle CCR proxy mode
-async function handleCcrProxyMode(): Promise<void> {
+// Handle CCX proxy mode
+async function handleCcxProxyMode(): Promise<void> {
   ensureI18nInitialized()
 
-  const ccrStatus = await isCcrInstalled()
-  if (!ccrStatus.hasCorrectPackage) {
-    await installCcr()
+  const ccxStatus = await isCcxInstalled()
+  if (!ccxStatus.isInstalled) {
+    await installCcx()
   }
   else {
-    console.log(ansis.green(`✔ ${i18n.t('ccr:ccrAlreadyInstalled')}`))
+    console.log(ansis.green(`✔ ${i18n.t('ccx:ccxAlreadyInstalled')}`))
   }
 
-  // Setup CCR configuration
-  const ccrConfigured = await setupCcrConfiguration()
-  if (ccrConfigured) {
-    console.log(ansis.green(`✔ ${i18n.t('ccr:ccrSetupComplete')}`))
+  // Setup CCX configuration
+  const ccxConfigured = await setupCcxConfiguration()
+  if (ccxConfigured) {
+    console.log(ansis.green(`✔ ${i18n.t('ccx:ccxSetupComplete')}`))
   }
 }
 
@@ -210,7 +210,7 @@ export async function configureApiFeature(): Promise<void> {
     choices: addNumbersToChoices([
       { name: i18n.t('api:apiModeOfficial'), value: 'official' },
       { name: i18n.t('api:apiModeCustom'), value: 'custom' },
-      { name: i18n.t('api:apiModeCcr'), value: 'ccr' },
+      { name: i18n.t('api:apiModeCcx'), value: 'ccx' },
       { name: i18n.t('api:apiModeSwitch'), value: 'switch' },
       { name: i18n.t('api:apiModeSkip'), value: 'skip' },
     ]),
@@ -228,8 +228,8 @@ export async function configureApiFeature(): Promise<void> {
     case 'custom':
       await handleCustomApiMode()
       break
-    case 'ccr':
-      await handleCcrProxyMode()
+    case 'ccx':
+      await handleCcxProxyMode()
       break
     case 'switch':
       await handleSwitchConfigMode()

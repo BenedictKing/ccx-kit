@@ -478,11 +478,11 @@ describe('version-checker', () => {
         })
 
       const { getInstalledVersion } = await import('../../../src/utils/version-checker')
-      const result = await getInstalledVersion('ccr')
+      const result = await getInstalledVersion('ccx')
 
       expect(result).toBe('2.0.0')
-      expect(mockExecAsync).toHaveBeenCalledWith('ccr -v')
-      expect(mockExecAsync).toHaveBeenCalledWith('ccr --version')
+      expect(mockExecAsync).toHaveBeenCalledWith('ccx -v')
+      expect(mockExecAsync).toHaveBeenCalledWith('ccx --version')
     })
 
     it('should return null after max retries when command fails', async () => {
@@ -615,18 +615,27 @@ describe('version-checker', () => {
     })
   })
 
-  describe('checkCcrVersion', () => {
+  describe('checkCcxVersion', () => {
+    let mockFetch: any
+
     beforeEach(() => {
       mockExecAsync.mockReset()
+      mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({ tag_name: 'v1.1.0' }),
+      } as Response)
     })
 
-    it('should return version info for installed CCR', async () => {
-      mockExecAsync
-        .mockResolvedValueOnce({ stdout: '1.0.0', stderr: '' }) // getInstalledVersion
-        .mockResolvedValueOnce({ stdout: '1.1.0\n', stderr: '' }) // getLatestVersion
+    afterEach(() => {
+      mockFetch.mockRestore()
+    })
 
-      const { checkCcrVersion } = await import('../../../src/utils/version-checker')
-      const result = await checkCcrVersion()
+    it('should return version info for installed CCX', async () => {
+      // Only mock execAsync for getInstalledVersion (ccx -v)
+      mockExecAsync.mockResolvedValueOnce({ stdout: '1.0.0', stderr: '' })
+
+      const { checkCcxVersion } = await import('../../../src/utils/version-checker')
+      const result = await checkCcxVersion()
 
       expect(result.installed).toBe(true)
       expect(result.currentVersion).toBe('1.0.0')
@@ -634,11 +643,11 @@ describe('version-checker', () => {
       expect(result.needsUpdate).toBe(true)
     })
 
-    it('should return not installed when CCR command not found', async () => {
+    it('should return not installed when CCX command not found', async () => {
       mockExecAsync.mockRejectedValue(new Error('Command not found'))
 
-      const { checkCcrVersion } = await import('../../../src/utils/version-checker')
-      const result = await checkCcrVersion()
+      const { checkCcxVersion } = await import('../../../src/utils/version-checker')
+      const result = await checkCcxVersion()
 
       expect(result.installed).toBe(false)
       expect(result.currentVersion).toBeNull()

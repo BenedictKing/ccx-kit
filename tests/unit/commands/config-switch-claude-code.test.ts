@@ -32,8 +32,8 @@ vi.mock('../../../src/i18n', () => ({
         'multi-config:cancelled': '已取消操作',
         'multi-config:successfullySwitchedToOfficial': '成功切换到官方登录',
         'multi-config:failedToSwitchToOfficial': '切换到官方登录失败：{error}',
-        'multi-config:successfullySwitchedToCcr': '成功切换到 CCR 代理',
-        'multi-config:failedToSwitchToCcr': '切换到 CCR 代理失败：{error}',
+        'multi-config:successfullySwitchedToCcx': '成功切换到 CCX 代理',
+        'multi-config:failedToSwitchToCcx': '切换到 CCX 代理失败：{error}',
         'multi-config:successfullySwitchedToProfile': '成功切换到配置文件：{name}',
         'multi-config:failedToSwitchToProfile': '切换到配置文件失败：{error}',
         'multi-config:profileNameNotFound': '未找到配置：{name}',
@@ -63,7 +63,7 @@ vi.mock('../../../src/utils/claude-code-config-manager', () => ({
     readConfig: vi.fn(),
     switchProfile: vi.fn(),
     switchToOfficial: vi.fn(),
-    switchToCcr: vi.fn(),
+    switchToCcx: vi.fn(),
     applyProfileSettings: vi.fn(),
     getProfileById: vi.fn(),
   },
@@ -152,7 +152,7 @@ describe('config-switch command - Claude Code Support', () => {
     mockClaudeCodeConfigManager.getProfileById.mockImplementation((id: string) => (defaultConfig.profiles as Record<string, any>)[id] || null)
     mockClaudeCodeConfigManager.switchProfile.mockResolvedValue({ success: true })
     mockClaudeCodeConfigManager.switchToOfficial.mockResolvedValue({ success: true })
-    mockClaudeCodeConfigManager.switchToCcr.mockResolvedValue({ success: true })
+    mockClaudeCodeConfigManager.switchToCcx.mockResolvedValue({ success: true })
   })
 
   afterEach(() => {
@@ -217,22 +217,22 @@ describe('config-switch command - Claude Code Support', () => {
     })
 
     it('should switch to CCR proxy', async () => {
-      await configSwitchCommand({ target: 'ccr', codeType: 'claude-code' })
+      await configSwitchCommand({ target: 'ccx', codeType: 'claude-code' })
 
-      expect(mockClaudeCodeConfigManager.switchToCcr).toHaveBeenCalled()
+      expect(mockClaudeCodeConfigManager.switchToCcx).toHaveBeenCalled()
       expect(mockClaudeCodeConfigManager.applyProfileSettings).toHaveBeenCalled()
-      expect(mockConsoleLog).toHaveBeenCalledWith('成功切换到 CCR 代理')
+      expect(mockConsoleLog).toHaveBeenCalledWith('成功切换到 CCX 代理')
     })
 
     it('should handle CCR proxy failure', async () => {
-      mockClaudeCodeConfigManager.switchToCcr.mockResolvedValue({
+      mockClaudeCodeConfigManager.switchToCcx.mockResolvedValue({
         success: false,
         error: 'CCR not configured',
       })
 
-      await configSwitchCommand({ target: 'ccr', codeType: 'claude-code' })
+      await configSwitchCommand({ target: 'ccx', codeType: 'claude-code' })
 
-      expect(mockConsoleLog).toHaveBeenCalledWith('切换到 CCR 代理失败：CCR not configured')
+      expect(mockConsoleLog).toHaveBeenCalledWith('切换到 CCX 代理失败：CCR not configured')
     })
 
     it('should switch to profile by ID', async () => {
@@ -278,7 +278,7 @@ describe('config-switch command - Claude Code Support', () => {
         message: '选择 Claude Code 配置：',
         choices: expect.arrayContaining([
           expect.objectContaining({ value: 'official' }),
-          expect.objectContaining({ value: 'ccr' }),
+          expect.objectContaining({ value: 'ccx' }),
           expect.objectContaining({ value: 'profile1' }),
           expect.objectContaining({ value: 'profile2' }),
         ]),
@@ -295,11 +295,11 @@ describe('config-switch command - Claude Code Support', () => {
     })
 
     it('should handle CCR proxy selection in interactive mode', async () => {
-      mockInquirer.prompt.mockResolvedValue({ selectedConfig: 'ccr' })
+      mockInquirer.prompt.mockResolvedValue({ selectedConfig: 'ccx' })
 
       await configSwitchCommand({ codeType: 'claude-code' })
 
-      expect(mockClaudeCodeConfigManager.switchToCcr).toHaveBeenCalled()
+      expect(mockClaudeCodeConfigManager.switchToCcx).toHaveBeenCalled()
     })
 
     it('should handle cancellation in interactive mode', async () => {

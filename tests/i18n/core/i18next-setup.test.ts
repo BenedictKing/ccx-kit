@@ -36,7 +36,7 @@ describe('i18next Setup', () => {
       const expectedNamespaces = [
         'common',
         'api',
-        'ccr',
+        'ccx',
         'cli',
         'cometix',
         'configuration',

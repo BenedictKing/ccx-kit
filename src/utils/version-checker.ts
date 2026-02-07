@@ -638,15 +638,36 @@ export function shouldUpdate(current: string, latest: string): boolean {
   return compareVersions(current, latest) < 0
 }
 
-export async function checkCcrVersion(): Promise<{
+export async function checkCcxVersion(): Promise<{
   installed: boolean
   currentVersion: string | null
   latestVersion: string | null
   needsUpdate: boolean
 }> {
-  const currentVersion = await getInstalledVersion('ccr')
-  // Get the latest version from npm
-  const latestVersion = await getLatestVersion('@musistudio/claude-code-router')
+  const currentVersion = await getInstalledVersion('ccx')
+
+  // Get the latest version from GitHub releases
+  let latestVersion: string | null = null
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
+    const response = await fetch(
+      'https://api.github.com/repos/BenedictKing/ccx/releases/latest',
+      {
+        signal: controller.signal,
+        headers: { Accept: 'application/vnd.github.v3+json' },
+      },
+    )
+    clearTimeout(timeoutId)
+    if (response.ok) {
+      const data = await response.json() as { tag_name?: string }
+      const tag = data.tag_name || ''
+      latestVersion = tag.startsWith('v') ? tag.slice(1) : tag
+    }
+  }
+  catch {
+    latestVersion = null
+  }
 
   return {
     installed: currentVersion !== null,

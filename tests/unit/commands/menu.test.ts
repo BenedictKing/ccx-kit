@@ -42,7 +42,7 @@ vi.mock('../../../src/utils/features', () => ({
 
 vi.mock('../../../src/utils/tools', () => ({
   runCcusageFeature: vi.fn(),
-  runCcrMenuFeature: vi.fn(),
+  runCcxMenuFeature: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/code-tools/codex', () => ({

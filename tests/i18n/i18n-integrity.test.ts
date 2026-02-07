@@ -21,7 +21,7 @@ describe('i18n Integrity Tests', () => {
       const requiredNamespaces = [
         'common',
         'api',
-        'ccr',
+        'ccx',
         'cli',
         'cometix',
         'configuration',
@@ -52,7 +52,7 @@ describe('i18n Integrity Tests', () => {
       const namespaces = [
         'common',
         'api',
-        'ccr',
+        'ccx',
         'cli',
         'cometix',
         'configuration',
@@ -97,7 +97,7 @@ describe('i18n Integrity Tests', () => {
       const requiredNamespaces = [
         'common',
         'api',
-        'ccr',
+        'ccx',
         'cli',
         'cometix',
         'configuration',
@@ -172,7 +172,7 @@ describe('i18n Integrity Tests', () => {
       const menuOptions = [
         'menu:menuOptions.fullInit',
         'menu:menuOptions.importWorkflow',
-        'menu:menuOptions.configureApiOrCcr',
+        'menu:menuOptions.configureApiOrCcx',
         'menu:menuOptions.exit',
       ]
 

@@ -15,7 +15,7 @@ export type UninstallItem
     | 'claude-md'
     | 'permissions-envs'
     | 'mcps'
-    | 'ccr'
+    | 'ccx'
     | 'ccline'
     | 'claude-code'
     | 'backups'
@@ -290,9 +290,9 @@ export class ZcfUninstaller {
   }
 
   /**
-   * 7. Uninstall Claude Code Router and remove configuration
+   * 7. Uninstall CCX and remove configuration
    */
-  async uninstallCcr(): Promise<UninstallResult> {
+  async uninstallCcx(): Promise<UninstallResult> {
     const result: UninstallResult = {
       success: false,
       removed: [],
@@ -302,35 +302,35 @@ export class ZcfUninstaller {
     }
 
     try {
-      // Remove CCR directory
-      const ccrPath = join(homedir(), '.claude-code-router')
+      // Remove CCX binary
+      const ccxBinaryPath = join(homedir(), '.local', 'bin', 'ccx')
 
-      if (await pathExists(ccrPath)) {
-        const trashResult = await moveToTrash(ccrPath)
+      if (await pathExists(ccxBinaryPath)) {
+        const trashResult = await moveToTrash(ccxBinaryPath)
         if (!trashResult[0]?.success) {
           result.warnings.push(trashResult[0]?.error || 'Failed to move to trash')
         }
-        result.removed.push('.claude-code-router/')
+        result.removed.push('~/.local/bin/ccx')
+      }
+      else {
+        result.warnings.push(i18n.t('uninstall:ccxNotFound'))
       }
 
-      // Uninstall npm package
-      try {
-        await exec('npm', ['uninstall', '-g', '@musistudio/claude-code-router'])
-        result.removed.push('@musistudio/claude-code-router package')
-        result.success = true
-      }
-      catch (npmError: any) {
-        if (npmError.message.includes('not found') || npmError.message.includes('not installed')) {
-          result.warnings.push(i18n.t('uninstall:ccrPackageNotFound'))
-          result.success = true
+      // Remove CCX config directory
+      const ccxConfigPath = join(homedir(), '.ccx')
+
+      if (await pathExists(ccxConfigPath)) {
+        const trashResult = await moveToTrash(ccxConfigPath)
+        if (!trashResult[0]?.success) {
+          result.warnings.push(trashResult[0]?.error || 'Failed to move to trash')
         }
-        else {
-          result.errors.push(`Failed to uninstall CCR package: ${npmError.message}`)
-        }
+        result.removed.push('~/.ccx/')
       }
+
+      result.success = true
     }
     catch (error: any) {
-      result.errors.push(`Failed to uninstall CCR: ${error.message}`)
+      result.errors.push(`Failed to uninstall CCX: ${error.message}`)
     }
 
     return result
@@ -504,11 +504,12 @@ export class ZcfUninstaller {
     }
 
     try {
-      // Remove all directories
+      // Remove all directories and files
       const directoriesToRemove = [
         { path: join(homedir(), '.claude'), name: '~/.claude/' },
         { path: join(homedir(), '.claude.json'), name: '~/.claude.json' },
-        { path: join(homedir(), '.claude-code-router'), name: '~/.claude-code-router/' },
+        { path: join(homedir(), '.ccx'), name: '~/.ccx/' },
+        { path: join(homedir(), '.local', 'bin', 'ccx'), name: '~/.local/bin/ccx' },
       ]
 
       for (const dir of directoriesToRemove) {
@@ -528,7 +529,6 @@ export class ZcfUninstaller {
 
       // Uninstall npm packages
       const packagesToUninstall = [
-        '@musistudio/claude-code-router',
         '@cometix/ccline',
         '@anthropic-ai/claude-code',
       ]
@@ -540,10 +540,7 @@ export class ZcfUninstaller {
         }
         catch (error: any) {
           if (error.message.includes('not found') || error.message.includes('not installed')) {
-            if (pkg.includes('claude-code-router')) {
-              result.warnings.push(i18n.t('uninstall:ccrPackageNotFound'))
-            }
-            else if (pkg.includes('ccline')) {
+            if (pkg.includes('ccline')) {
               result.warnings.push(i18n.t('uninstall:cclinePackageNotFound'))
             }
             else {
@@ -630,8 +627,8 @@ export class ZcfUninstaller {
         return await this.removePermissionsAndEnvs()
       case 'mcps':
         return await this.removeMcps()
-      case 'ccr':
-        return await this.uninstallCcr()
+      case 'ccx':
+        return await this.uninstallCcx()
       case 'ccline':
         return await this.uninstallCcline()
       case 'claude-code':

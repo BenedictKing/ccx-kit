@@ -168,8 +168,8 @@ async function showCustomUninstallMenu(uninstaller: ZcfUninstaller): Promise<voi
         value: 'mcps' as const,
       },
       {
-        name: i18n.t('uninstall:ccr'),
-        value: 'ccr' as const,
+        name: i18n.t('uninstall:ccx'),
+        value: 'ccx' as const,
       },
       {
         name: i18n.t('uninstall:ccline'),

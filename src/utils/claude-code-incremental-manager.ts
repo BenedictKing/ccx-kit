@@ -14,8 +14,8 @@ export function getAuthTypeLabel(authType: ClaudeCodeProfile['authType']): strin
       return i18n.t('multi-config:authType.api_key')
     case 'auth_token':
       return i18n.t('multi-config:authType.auth_token')
-    case 'ccr_proxy':
-      return i18n.t('multi-config:authType.ccr_proxy')
+    case 'ccx_proxy':
+      return i18n.t('multi-config:authType.ccx_proxy')
     default:
       return authType
   }
@@ -126,7 +126,7 @@ async function handleAddProfile(): Promise<void> {
 
   const answers = await inquirer.prompt<{
     profileName: string
-    authType: 'api_key' | 'auth_token' | 'ccr_proxy'
+    authType: 'api_key' | 'auth_token' | 'ccx_proxy'
     apiKey: string
     baseUrl: string
     setAsDefault: boolean
@@ -163,7 +163,7 @@ async function handleAddProfile(): Promise<void> {
       name: 'baseUrl',
       message: i18n.t('multi-config:baseUrlPrompt'),
       default: prefilledBaseUrl || 'https://api.anthropic.com',
-      when: (answers: any) => selectedProvider === 'custom' && answers.authType !== 'ccr_proxy',
+      when: (answers: any) => selectedProvider === 'custom' && answers.authType !== 'ccx_proxy',
       validate: (input: string) => {
         const trimmed = input.trim()
         if (!trimmed) {
@@ -186,7 +186,7 @@ async function handleAddProfile(): Promise<void> {
       message: selectedProvider !== 'custom'
         ? i18n.t('api:enterProviderApiKey', { provider: providers.find((p: any) => p.id === selectedProvider)?.name || selectedProvider })
         : i18n.t('multi-config:apiKeyPrompt'),
-      when: (answers: any) => selectedProvider === 'custom' ? answers.authType !== 'ccr_proxy' : true,
+      when: (answers: any) => selectedProvider === 'custom' ? answers.authType !== 'ccx_proxy' : true,
       validate: (input: string) => {
         const trimmed = input.trim()
         if (!trimmed) {
@@ -226,7 +226,7 @@ async function handleAddProfile(): Promise<void> {
     authType: selectedProvider === 'custom' ? answers.authType : prefilledAuthType!,
   }
 
-  if (profile.authType !== 'ccr_proxy') {
+  if (profile.authType !== 'ccx_proxy') {
     profile.apiKey = answers.apiKey.trim()
     profile.baseUrl = selectedProvider === 'custom' ? answers.baseUrl.trim() : prefilledBaseUrl!
   }
@@ -386,7 +386,7 @@ async function handleEditProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
       name: 'baseUrl',
       message: i18n.t('multi-config:baseUrlPrompt'),
       default: selectedProfile.baseUrl || 'https://api.anthropic.com',
-      when: () => selectedProfile.authType !== 'ccr_proxy',
+      when: () => selectedProfile.authType !== 'ccx_proxy',
       validate: (input: string) => {
         const trimmed = input.trim()
         if (!trimmed) {
@@ -407,7 +407,7 @@ async function handleEditProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
       name: 'apiKey',
       message: i18n.t('multi-config:apiKeyPrompt'),
       default: selectedProfile.apiKey,
-      when: () => selectedProfile.authType !== 'ccr_proxy',
+      when: () => selectedProfile.authType !== 'ccx_proxy',
       validate: (input: string) => {
         const trimmed = input.trim()
         if (!trimmed) {
@@ -424,9 +424,9 @@ async function handleEditProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
     },
   ])
 
-  // Prompt for model configuration (for non-CCR profiles)
+  // Prompt for model configuration (for non-CCX profiles)
   let modelConfig: { primaryModel: string, haikuModel: string, sonnetModel: string, opusModel: string } | null = null
-  if (selectedProfile.authType !== 'ccr_proxy') {
+  if (selectedProfile.authType !== 'ccx_proxy') {
     const { promptCustomModels } = await import('./features')
     modelConfig = await promptCustomModels(
       selectedProfile.primaryModel,
@@ -441,7 +441,7 @@ async function handleEditProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
     name: answers.profileName.trim(),
   }
 
-  if (selectedProfile.authType !== 'ccr_proxy') {
+  if (selectedProfile.authType !== 'ccx_proxy') {
     updateData.apiKey = answers.apiKey.trim()
     updateData.baseUrl = answers.baseUrl.trim()
 
@@ -534,8 +534,8 @@ async function handleCopyProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
     },
   ]
 
-  // Only add baseUrl and apiKey questions for non-CCR profiles
-  if (selectedProfile.authType !== 'ccr_proxy') {
+  // Only add baseUrl and apiKey questions for non-CCX profiles
+  if (selectedProfile.authType !== 'ccx_proxy') {
     questions.push(
       {
         type: 'input',
@@ -585,9 +585,9 @@ async function handleCopyProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
     baseUrl?: string
   }>(questions)
 
-  // Prompt for model configuration (for non-CCR profiles)
+  // Prompt for model configuration (for non-CCX profiles)
   let modelConfig: { primaryModel: string, haikuModel: string, sonnetModel: string, opusModel: string } | null = null
-  if (selectedProfile.authType !== 'ccr_proxy') {
+  if (selectedProfile.authType !== 'ccx_proxy') {
     const { promptCustomModels } = await import('./features')
     modelConfig = await promptCustomModels(
       selectedProfile.primaryModel,
@@ -612,7 +612,7 @@ async function handleCopyProfile(profiles: ClaudeCodeProfile[]): Promise<void> {
     authType: selectedProfile.authType,
   }
 
-  if (selectedProfile.authType !== 'ccr_proxy') {
+  if (selectedProfile.authType !== 'ccx_proxy') {
     copiedProfile.apiKey = answers.apiKey!.trim()
     copiedProfile.baseUrl = answers.baseUrl!.trim()
 

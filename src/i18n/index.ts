@@ -14,7 +14,7 @@ export const i18n: I18nInstance = i18next.createInstance()
 const NAMESPACES = [
   'common',
   'api',
-  'ccr',
+  'ccx',
   'cli',
   'cometix',
   'configuration',

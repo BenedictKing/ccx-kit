@@ -4,7 +4,8 @@ import { exec } from 'tinyexec'
 import { ensureI18nInitialized, format, i18n } from '../i18n'
 import { shouldUseSudoForGlobalInstall } from './platform'
 import { promptBoolean } from './toggle-prompt'
-import { checkCcrVersion, checkClaudeCodeVersion, checkCometixLineVersion, handleDuplicateInstallations } from './version-checker'
+import { installCcx } from './ccx/installer'
+import { checkCcxVersion, checkClaudeCodeVersion, checkCometixLineVersion, handleDuplicateInstallations } from './version-checker'
 
 /**
  * Execute a command with sudo support for Linux non-root users.
@@ -33,21 +34,21 @@ export async function execWithSudoIfNeeded(command: string, args: string[]): Pro
   }
 }
 
-export async function updateCcr(force = false, skipPrompt = false): Promise<boolean> {
+export async function updateCcx(force = false, skipPrompt = false): Promise<boolean> {
   ensureI18nInitialized()
   const spinner = ora(i18n.t('updater:checkingVersion')).start()
 
   try {
-    const { installed, currentVersion, latestVersion, needsUpdate } = await checkCcrVersion()
+    const { installed, currentVersion, latestVersion, needsUpdate } = await checkCcxVersion()
     spinner.stop()
 
     if (!installed) {
-      console.log(ansis.yellow(i18n.t('updater:ccrNotInstalled')))
+      console.log(ansis.yellow(i18n.t('updater:ccxNotInstalled')))
       return false
     }
 
     if (!needsUpdate && !force) {
-      console.log(ansis.green(format(i18n.t('updater:ccrUpToDate'), { version: currentVersion || '' })))
+      console.log(ansis.green(format(i18n.t('updater:ccxUpToDate'), { version: currentVersion || '' })))
       return true
     }
 
@@ -64,7 +65,7 @@ export async function updateCcr(force = false, skipPrompt = false): Promise<bool
     if (!skipPrompt) {
       // Interactive mode: Ask for confirmation
       const confirm = await promptBoolean({
-        message: format(i18n.t('updater:confirmUpdate'), { tool: 'CCR' }),
+        message: format(i18n.t('updater:confirmUpdate'), { tool: 'CCX' }),
         defaultValue: true,
       })
 
@@ -75,19 +76,19 @@ export async function updateCcr(force = false, skipPrompt = false): Promise<bool
     }
     else {
       // Skip-prompt mode: Auto-update with notification
-      console.log(ansis.cyan(format(i18n.t('updater:autoUpdating'), { tool: 'CCR' })))
+      console.log(ansis.cyan(format(i18n.t('updater:autoUpdating'), { tool: 'CCX' })))
     }
 
     // Perform update
-    const updateSpinner = ora(format(i18n.t('updater:updating'), { tool: 'CCR' })).start()
+    const updateSpinner = ora(format(i18n.t('updater:updating'), { tool: 'CCX' })).start()
 
     try {
-      await execWithSudoIfNeeded('npm', ['update', '-g', '@musistudio/claude-code-router'])
-      updateSpinner.succeed(format(i18n.t('updater:updateSuccess'), { tool: 'CCR' }))
+      await installCcx()
+      updateSpinner.succeed(format(i18n.t('updater:updateSuccess'), { tool: 'CCX' }))
       return true
     }
     catch (error) {
-      updateSpinner.fail(format(i18n.t('updater:updateFailed'), { tool: 'CCR' }))
+      updateSpinner.fail(format(i18n.t('updater:updateFailed'), { tool: 'CCX' }))
       console.error(ansis.red(error instanceof Error ? error.message : String(error)))
       return false
     }
@@ -261,15 +262,15 @@ export async function checkAndUpdateTools(skipPrompt = false): Promise<void> {
 
   const results: Array<{ tool: string, success: boolean, error?: string }> = []
 
-  // Check and update CCR with error handling
+  // Check and update CCX with error handling
   try {
-    const success = await updateCcr(false, skipPrompt)
-    results.push({ tool: 'CCR', success })
+    const success = await updateCcx(false, skipPrompt)
+    results.push({ tool: 'CCX', success })
   }
   catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error(ansis.red(`❌ ${format(i18n.t('updater:updateFailed'), { tool: 'CCR' })}: ${errorMessage}`))
-    results.push({ tool: 'CCR', success: false, error: errorMessage })
+    console.error(ansis.red(`❌ ${format(i18n.t('updater:updateFailed'), { tool: 'CCX' })}: ${errorMessage}`))
+    results.push({ tool: 'CCX', success: false, error: errorMessage })
   }
 
   console.log() // Empty line

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { executeCcusage } from '../../src/commands/ccu'
 import { resolveCodeType } from '../../src/utils/code-type-resolver'
 import { ToolUpdateScheduler } from '../../src/utils/tool-update-scheduler'
-import { getValidLanguage, runCcrMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../../src/utils/tools'
+import { getValidLanguage, runCcxMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../../src/utils/tools'
 
 // Mock external dependencies
 vi.mock('inquirer')
@@ -19,7 +19,7 @@ vi.mock('ansis', () => ({
 }))
 vi.mock('../../src/commands/ccu')
 vi.mock('../../src/utils/cometix/menu')
-vi.mock('../../src/utils/tools/ccr-menu')
+vi.mock('../../src/utils/tools/ccx-menu')
 vi.mock('../../src/utils/prompt-helpers', () => ({
   addNumbersToChoices: vi.fn(choices => choices),
 }))
@@ -193,25 +193,25 @@ describe('tools', () => {
     })
   })
 
-  describe('runCcrMenuFeature', () => {
-    it('should call showCcrMenu with valid language', async () => {
-      // Mock the showCcrMenu function
-      const { showCcrMenu } = await import('../../src/utils/tools/ccr-menu')
-      const mockShowCcrMenu = vi.mocked(showCcrMenu)
+  describe('runCcxMenuFeature', () => {
+    it('should call showCcxMenu with valid language', async () => {
+      // Mock the showCcxMenu function
+      const { showCcxMenu } = await import('../../src/utils/tools/ccx-menu')
+      const mockShowCcxMenu = vi.mocked(showCcxMenu)
 
-      await runCcrMenuFeature()
+      await runCcxMenuFeature()
 
-      expect(mockShowCcrMenu).toHaveBeenCalledWith()
+      expect(mockShowCcxMenu).toHaveBeenCalledWith()
     })
 
     it('should handle invalid language with fallback', async () => {
-      // Mock the showCcrMenu function
-      const { showCcrMenu } = await import('../../src/utils/tools/ccr-menu')
-      const mockShowCcrMenu = vi.mocked(showCcrMenu)
+      // Mock the showCcxMenu function
+      const { showCcxMenu } = await import('../../src/utils/tools/ccx-menu')
+      const mockShowCcxMenu = vi.mocked(showCcxMenu)
 
-      await runCcrMenuFeature()
+      await runCcxMenuFeature()
 
-      expect(mockShowCcrMenu).toHaveBeenCalledWith()
+      expect(mockShowCcxMenu).toHaveBeenCalledWith()
     })
   })
 

@@ -2,7 +2,7 @@ import type { CAC } from 'cac'
 import type { CodeToolType, SupportedLang } from './constants'
 import ansis from 'ansis'
 import { version } from '../package.json'
-import { ccr } from './commands/ccr'
+import { ccx } from './commands/ccx'
 import { executeCcusage } from './commands/ccu'
 import { checkUpdates } from './commands/check-updates'
 import { configSwitchCommand } from './commands/config-switch'
@@ -119,7 +119,7 @@ export function customizeHelp(sections: any[]): any[] {
         'i',
       )}     ${i18n.t('cli:help.commandDescriptions.initClaudeCodeConfig')}`,
       `  ${ansis.cyan('zcf update')} | ${ansis.cyan('u')}   ${i18n.t('cli:help.commandDescriptions.updateWorkflowFiles')}`,
-      `  ${ansis.cyan('zcf ccr')}          ${i18n.t('cli:help.commandDescriptions.configureCcrProxy')}`,
+      `  ${ansis.cyan('zcf ccx')}          ${i18n.t('cli:help.commandDescriptions.configureCcxProxy')}`,
       `  ${ansis.cyan('zcf ccu')} [args]   ${i18n.t('cli:help.commandDescriptions.claudeCodeUsageAnalysis')}`,
       `  ${ansis.cyan('zcf uninstall')}     ${i18n.t('cli:help.commandDescriptions.uninstallConfigurations')}`,
       `  ${ansis.cyan('zcf check-updates')} ${i18n.t('cli:help.commandDescriptions.checkUpdateVersions')}`,
@@ -143,7 +143,7 @@ export function customizeHelp(sections: any[]): any[] {
       '',
       ansis.gray(`  ${i18n.t('cli:help.nonInteractiveMode')}`),
       `  ${ansis.green('--skip-prompt, -s')}         ${i18n.t('cli:help.optionDescriptions.skipAllPrompts')}`,
-      `  ${ansis.green('--api-type, -t')} <type>      ${i18n.t('cli:help.optionDescriptions.apiType')} (auth_token, api_key, ccr_proxy, skip)`,
+      `  ${ansis.green('--api-type, -t')} <type>      ${i18n.t('cli:help.optionDescriptions.apiType')} (auth_token, api_key, ccx_proxy, skip)`,
       `  ${ansis.green('--api-key, -k')} <key>       ${i18n.t('cli:help.optionDescriptions.apiKey')}`,
       `  ${ansis.green('--api-url, -u')} <url>       ${i18n.t('cli:help.optionDescriptions.customApiUrl')}`,
       `  ${ansis.green('--api-model, -M')} <model>   ${i18n.t('cli:help.optionDescriptions.apiModel')} (e.g., claude-sonnet-4-5)`,
@@ -177,7 +177,7 @@ export function customizeHelp(sections: any[]): any[] {
       `  ${ansis.cyan('npx zcf u')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.configureClaudeCodeRouter')}`),
-      `  ${ansis.cyan('npx zcf ccr')}`,
+      `  ${ansis.cyan('npx zcf ccx')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.runClaudeCodeUsageAnalysis')}`),
       `  ${ansis.cyan('npx zcf ccu')}               ${ansis.gray(`# ${i18n.t('cli:help.defaults.dailyUsage')}`)}`,
@@ -201,7 +201,7 @@ export function customizeHelp(sections: any[]): any[] {
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.nonInteractiveModeCicd')}`),
       `  ${ansis.cyan('npx zcf i --skip-prompt --api-type api_key --api-key "sk-ant-..."')}`,
       `  ${ansis.cyan('npx zcf i --skip-prompt --all-lang zh-CN --api-type api_key --api-key "key"')}`,
-      `  ${ansis.cyan('npx zcf i --skip-prompt --api-type ccr_proxy')}`,
+      `  ${ansis.cyan('npx zcf i --skip-prompt --api-type ccx_proxy')}`,
       '',
     ].join('\n'),
   })
@@ -244,7 +244,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
     .option('--force, -f', 'Force overwrite existing configuration')
     .option('--skip-prompt, -s', 'Skip all interactive prompts (non-interactive mode)')
     .option('--config-action, -r <action>', `Config handling (new/backup/merge/docs-only/skip), ${i18n.t('cli:help.defaults.prefix')} backup`)
-    .option('--api-type, -t <type>', 'API type (auth_token/api_key/ccr_proxy/skip)')
+    .option('--api-type, -t <type>', 'API type (auth_token/api_key/ccx_proxy/skip)')
     .option('--api-key, -k <key>', 'API key (used for both API key and auth token types)')
     .option('--api-url, -u <url>', 'Custom API URL')
     .option('--api-model, -M <model>', 'Primary API model (e.g., claude-sonnet-4-5)')
@@ -276,13 +276,13 @@ export async function setupCommands(cli: CAC): Promise<void> {
       await update(options)
     }))
 
-  // CCR command - Configure Claude Code Router
+  // CCX command - Configure CCX API Proxy
   cli
-    .command('ccr', 'Configure Claude Code Router for model proxy')
+    .command('ccx', 'Configure CCX API proxy')
     .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .action(await withLanguageResolution(async () => {
-      await ccr()
+      await ccx()
     }))
 
   // CCU command - Claude Code usage analysis
@@ -325,7 +325,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
 
   // Check updates command
   cli
-    .command('check-updates', 'Check and update Claude Code and CCR to latest versions')
+    .command('check-updates', 'Check and update Claude Code and CCX to latest versions')
     .alias('check')
     .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')

@@ -286,49 +286,37 @@ describe('zcfUninstaller - Edge Cases', () => {
     })
   })
 
-  describe('uninstallCcr edge cases', () => {
-    it('should handle CCR directory not existing but npm package existing', async () => {
+  describe('uninstallCcx edge cases', () => {
+    it('should handle CCX binary and config not existing', async () => {
       mockFsExtra.pathExists.mockResolvedValue(false)
-      mockExec.exec.mockResolvedValue({ stdout: 'uninstalled', stderr: '' })
 
-      const result = await uninstaller.uninstallCcr()
-
-      expect(result.success).toBe(true)
-      expect(result.removed).not.toContain('.claude-code-router/')
-      expect(result.removed).toContain('@musistudio/claude-code-router package')
-    })
-
-    it('should handle different npm error messages', async () => {
-      mockFsExtra.pathExists.mockResolvedValue(true)
-      mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
-      mockExec.exec.mockRejectedValue(new Error('ENOENT: not installed'))
-
-      const result = await uninstaller.uninstallCcr()
+      const result = await uninstaller.uninstallCcx()
 
       expect(result.success).toBe(true)
-      expect(result.warnings).toContain('ccrPackageNotFound')
+      expect(result.removed).not.toContain('~/.local/bin/ccx')
+      expect(result.removed).not.toContain('~/.ccx/')
+      expect(result.warnings).toContain('ccxNotFound')
     })
 
-    it('should handle npm timeout errors', async () => {
+    it('should handle trash failure for CCX binary', async () => {
       mockFsExtra.pathExists.mockResolvedValue(true)
-      mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
-      mockExec.exec.mockRejectedValue(new Error('npm ERR! timeout'))
+      mockTrash.moveToTrash.mockResolvedValue([{ success: false, error: 'Trash failed' }])
 
-      const result = await uninstaller.uninstallCcr()
+      const result = await uninstaller.uninstallCcx()
 
-      expect(result.success).toBe(false)
-      expect(result.errors[0]).toContain('npm ERR! timeout')
+      expect(result.success).toBe(true)
+      expect(result.warnings).toContain('Trash failed')
     })
 
     it('should handle general uninstall failures', async () => {
       mockFsExtra.pathExists.mockImplementation(() => {
-        throw new Error('General CCR uninstall failure')
+        throw new Error('General CCX uninstall failure')
       })
 
-      const result = await uninstaller.uninstallCcr()
+      const result = await uninstaller.uninstallCcx()
 
       expect(result.success).toBe(false)
-      expect(result.errors[0]).toContain('General CCR uninstall failure')
+      expect(result.errors[0]).toContain('General CCX uninstall failure')
     })
   })
 
@@ -415,10 +403,10 @@ describe('zcfUninstaller - Edge Cases', () => {
       mockTrash.moveToTrash
         .mockResolvedValueOnce([{ success: true }]) // .claude success
         .mockResolvedValueOnce([{ success: false, error: '.claude.json locked' }]) // .claude.json fail
-        .mockResolvedValueOnce([{ success: true }]) // .claude-code-router success
+        .mockResolvedValueOnce([{ success: true }]) // .ccx success
+        .mockResolvedValueOnce([{ success: true }]) // .local/bin/ccx success
 
       mockExec.exec
-        .mockResolvedValueOnce({ stdout: 'ccr uninstalled', stderr: '' }) // CCR success
         .mockRejectedValueOnce(new Error('ccline not found')) // CCline fail
         .mockResolvedValueOnce({ stdout: 'claude-code uninstalled', stderr: '' }) // Claude Code success
 
@@ -426,7 +414,8 @@ describe('zcfUninstaller - Edge Cases', () => {
 
       expect(result.success).toBe(true)
       expect(result.removed).toContain('~/.claude/')
-      expect(result.removed).toContain('~/.claude-code-router/')
+      expect(result.removed).toContain('~/.ccx/')
+      expect(result.removed).toContain('~/.local/bin/ccx')
       expect(result.warnings).toContain('Failed to move ~/.claude.json to trash: .claude.json locked')
       expect(result.warnings).toContain('cclinePackageNotFound')
       expect(result.removed).toContain('@anthropic-ai/claude-code package')
@@ -434,7 +423,7 @@ describe('zcfUninstaller - Edge Cases', () => {
 
     it('should handle pathExists failure during directory checks', async () => {
       mockFsExtra.pathExists.mockImplementation((path) => {
-        if (path.includes('.claude-code-router')) {
+        if (typeof path === 'string' && path.includes('.ccx')) {
           throw new Error('Path check failed')
         }
         return Promise.resolve(true)
@@ -446,7 +435,7 @@ describe('zcfUninstaller - Edge Cases', () => {
       const result = await uninstaller.completeUninstall()
 
       expect(result.success).toBe(true)
-      expect(result.warnings).toContain('Failed to remove ~/.claude-code-router/: Path check failed')
+      expect(result.warnings).toContain('Failed to remove ~/.ccx/: Path check failed')
     })
 
     it('should handle complete failure scenario', async () => {
@@ -467,9 +456,6 @@ describe('zcfUninstaller - Edge Cases', () => {
       mockFsExtra.pathExists.mockResolvedValue(false)
       mockExec.exec.mockImplementation((_cmd, args) => {
         const pkg = args[2]
-        if (pkg.includes('claude-code-router')) {
-          return Promise.reject(new Error('not found'))
-        }
         if (pkg.includes('ccline')) {
           return Promise.reject(new Error('not installed'))
         }
@@ -482,7 +468,6 @@ describe('zcfUninstaller - Edge Cases', () => {
       const result = await uninstaller.completeUninstall()
 
       expect(result.success).toBe(true)
-      expect(result.warnings).toContain('ccrPackageNotFound')
       expect(result.warnings).toContain('cclinePackageNotFound')
       expect(result.warnings).toContain('claudeCodePackageNotFound')
     })
@@ -513,11 +498,11 @@ describe('zcfUninstaller - Edge Cases', () => {
     })
 
     it('should handle complex conflict resolution scenarios', async () => {
-      const items: UninstallItem[] = ['claude-code', 'mcps', 'ccr', 'commands', 'agents']
+      const items: UninstallItem[] = ['claude-code', 'mcps', 'ccx', 'commands', 'agents']
 
       const mockUninstallClaudeCode = vi.spyOn(uninstaller, 'uninstallClaudeCode')
         .mockResolvedValue({ success: true, removed: [], removedConfigs: [], errors: [], warnings: [] })
-      const mockUninstallCcr = vi.spyOn(uninstaller, 'uninstallCcr')
+      const mockUninstallCcx = vi.spyOn(uninstaller, 'uninstallCcx')
         .mockResolvedValue({ success: true, removed: [], removedConfigs: [], errors: [], warnings: [] })
       const mockRemoveCommands = vi.spyOn(uninstaller, 'removeCustomCommands')
         .mockResolvedValue({ success: true, removed: [], removedConfigs: [], errors: [], warnings: [] })
@@ -530,12 +515,12 @@ describe('zcfUninstaller - Edge Cases', () => {
 
       // claude-code should be executed, mcps should be filtered out due to conflict
       expect(mockUninstallClaudeCode).toHaveBeenCalled()
-      expect(mockUninstallCcr).toHaveBeenCalled()
+      expect(mockUninstallCcx).toHaveBeenCalled()
       expect(mockRemoveCommands).toHaveBeenCalled()
       expect(mockRemoveAgents).toHaveBeenCalled()
       expect(mockRemoveMcps).not.toHaveBeenCalled() // Filtered out by conflict resolution
 
-      expect(results).toHaveLength(4) // claude-code, ccr, commands, agents (mcps removed)
+      expect(results).toHaveLength(4) // claude-code, ccx, commands, agents (mcps removed)
     })
   })
 
@@ -548,7 +533,7 @@ describe('zcfUninstaller - Edge Cases', () => {
         'claude-md',
         'permissions-envs',
         'mcps',
-        'ccr',
+        'ccx',
         'ccline',
         'backups',
         'zcf-config',
@@ -562,7 +547,7 @@ describe('zcfUninstaller - Edge Cases', () => {
         'removeClaudeMd',
         'removePermissionsAndEnvs',
         'removeMcps',
-        'uninstallCcr',
+        'uninstallCcx',
         'uninstallCcline',
         'removeBackups',
         'removeZcfConfig',

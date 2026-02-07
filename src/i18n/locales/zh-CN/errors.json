@@ -3,7 +3,7 @@
   "failedToSetOnboarding": "设置入门完成标志失败：",
   "failedToWriteMcpConfig": "写入 MCP 配置失败：",
   "invalidConfigAction": "无效的配置操作值：{value}。必须是 'new', 'backup', 'merge', 'docs-only', 或 'skip'",
-  "invalidApiType": "无效的 API 类型值：{value}。必须是 'auth_token', 'api_key', 'ccr_proxy', 或 'skip'",
+  "invalidApiType": "无效的 API 类型值：{value}。必须是 'auth_token', 'api_key', 'ccx_proxy', 或 'skip'",
   "apiKeyRequiredForApiKey": "当 apiType 为 \"api_key\" 时需要 API key",
   "apiKeyRequiredForAuthToken": "当 apiType 为 \"auth_token\" 时需要 API key",
   "invalidMcpService": "无效的 MCP 服务：{service}。可用的服务：{validServices}",
