@@ -2,7 +2,7 @@
   "alreadyInstalled": "Claude Code 已安装",
   "installFailed": "Claude Code 安装失败",
   "installPrompt": "检测到 Claude Code 未安装，是否自动安装？",
-  "installSuccess": "Claude Code 安装成功",
+  "installSuccess": "安装成功",
   "installing": "正在安装 Claude Code...",
   "usingSudo": "检测到 Linux 非 root 用户，正在使用 sudo 提升权限进行全局安装（可能需要输入密码）。",
   "termuxDetected": "检测到 Termux 环境",
