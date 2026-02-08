@@ -131,6 +131,48 @@ npx zcf uninstall --mode complete                    # Complete uninstallation
 npx zcf uninstall --mode custom --items ccr,backups # Custom uninstallation
 ```
 
+## Testing and Debugging
+
+### Remote Server Testing
+
+Test ZCF on remote servers using local package file:
+
+```bash
+# 1. Build and pack locally
+pnpm build
+npm pack
+
+# 2. Transfer to remote server
+rsync zcf-*.tgz server:~
+
+# 3. Run on remote server (no installation needed)
+ssh server 'source ~/.zshrc && npx --yes file:~/zcf-3.6.1.tgz i --code-type claude-code --skip-prompt --api-type ccx_proxy --mcp-services skip'
+```
+
+### CCX Daemon Process Debugging
+
+CCX runs as a detached daemon process using Node.js spawn:
+
+```bash
+# Check if CCX is running
+lsof -i :3000 | grep LISTEN
+
+# View process details
+ps -p <PID> -o pid,ppid,cmd
+
+# Check PID file
+cat ~/.ccx/ccx.pid
+
+# View CCX configuration
+cat ~/.ccx/.env
+```
+
+**CCX Daemon Implementation:**
+- Uses `spawn(binaryPath, [], { detached: true, stdio: 'ignore' })` + `child.unref()`
+- Process becomes independent daemon, adopted by init (PID 1)
+- PID stored in `~/.ccx/ccx.pid` for management
+- No PM2 or systemd required - pure Node.js detached process
+
 ## Running and Development
 
 ### Build & Run
