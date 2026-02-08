@@ -247,6 +247,25 @@ The project uses Vitest with a comprehensive layered testing approach:
 4. **Integration Tests** (`tests/integration/`) - Cross-module interaction testing
 5. **Coverage Goals**: 80% minimum across lines, functions, branches, and statements
 
+## Version Management
+
+ZCF uses [Changeset](https://github.com/changesets/changesets) for version management:
+
+```bash
+# 1. Create a changeset (describe your changes)
+pnpm changeset
+
+# 2. Update version in package.json
+pnpm version
+
+# 3. Build and publish to npm
+pnpm release
+```
+
+**Version number location:**
+- Primary: `package.json` - `"version": "3.6.1"`
+- Displayed in banner via: `import { version } from '../../package.json'`
+
 ## Development Guidelines
 
 ### Core Principles

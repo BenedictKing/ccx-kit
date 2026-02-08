@@ -436,9 +436,11 @@ export async function init(options: InitOptions = {}): Promise<void> {
           ? 'official'
           : options.apiType === 'api_key'
             ? 'custom'
-            : options.apiType === 'skip'
-              ? 'skip'
-              : options.skipPrompt ? 'skip' : undefined
+            : options.apiType === 'ccx_proxy' || options.apiType === 'ccr_proxy'
+              ? 'ccx'
+              : options.apiType === 'skip'
+                ? 'skip'
+                : options.skipPrompt ? 'skip' : undefined
 
       const customApiConfig = (!hasApiConfigs && options.apiType === 'api_key' && options.apiKey)
         ? {
