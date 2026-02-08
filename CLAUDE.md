@@ -140,7 +140,7 @@ Test ZCF on remote servers using local package file:
 ```bash
 # 1. Build and pack locally
 pnpm build
-npm pack
+pnpm pack  # Use pnpm pack instead of npm pack
 
 # 2. Transfer to remote server
 rsync zcf-*.tgz server:~
