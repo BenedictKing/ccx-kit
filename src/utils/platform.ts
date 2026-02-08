@@ -442,7 +442,7 @@ export function getRecommendedInstallMethods(codeType: CodeType): InstallMethod[
   // Claude Code recommendations
   if (codeType === 'claude-code') {
     if (platform === 'macos') {
-      return ['homebrew', 'curl', 'npm']
+      return ['curl', 'homebrew', 'npm']
     }
     if (platform === 'linux' || wsl) {
       return ['curl', 'npm']
