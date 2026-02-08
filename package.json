@@ -10,12 +10,12 @@
     "url": "https://github.com/WitMiao"
   },
   "license": "MIT",
-  "homepage": "https://github.com/UfoMiao/zcf",
+  "homepage": "https://github.com/BenedictKing/zcf",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UfoMiao/zcf.git"
+    "url": "git+https://github.com/BenedictKing/zcf.git"
   },
-  "bugs": "https://github.com/UfoMiao/zcf/issues",
+  "bugs": "https://github.com/BenedictKing/zcf/issues",
   "keywords": [
     "claude",
     "claude-code",
