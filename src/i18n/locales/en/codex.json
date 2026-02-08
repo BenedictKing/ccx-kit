@@ -119,5 +119,16 @@
   "providerManager.baseUrlRequired": "Base URL is required",
   "providerManager.wireApiInvalid": "Wire API must be \"responses\"",
   "providerManager.unknownError": "Unknown error",
-  "envKeyMigrationComplete": "✔ env_key to temp_env_key migration completed"
+  "envKeyMigrationComplete": "✔ env_key to temp_env_key migration completed",
+  "apiModeCcx": "Use CCX Proxy",
+  "ccxInstalling": "CCX not installed, installing...",
+  "ccxReusing": "Detected CCX already running, reusing existing instance",
+  "ccxConfiguringAndStarting": "Configuring and starting CCX...",
+  "ccxConfigCreated": "CCX configuration file created",
+  "ccxStartFailed": "CCX failed to start, please check logs",
+  "ccxProviderAdded": "CCX provider added to Codex configuration",
+  "ccxAuthConfigured": "CCX authentication configured",
+  "ccxSetAsDefault": "CCX set as default provider",
+  "ccxCodexConfigComplete": "Codex CCX proxy configuration complete",
+  "ccxCodexConfigFailed": "Codex CCX proxy configuration failed"
 }

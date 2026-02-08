@@ -1489,6 +1489,105 @@ async function applyCustomApiConfig(customApiConfig: NonNullable<CodexFullInitOp
   console.log(ansis.green(`✔ ${i18n.t('codex:apiConfigured')}`))
 }
 
+/**
+ * Configure Codex to use CCX proxy
+ * Reuses existing CCX installation and configuration from Claude Code's CCX setup
+ */
+async function configureCodexCcxProxy(): Promise<boolean> {
+  try {
+    // Step 1: Check if CCX is installed
+    const { isCcxInstalled, installCcx } = await import('../ccx/installer')
+    const installStatus = await isCcxInstalled()
+    if (!installStatus.isInstalled) {
+      console.log(ansis.cyan(i18n.t('codex:ccxInstalling')))
+      await installCcx()
+    }
+
+    // Step 2: Read existing CCX config or create default
+    const { readCcxEnv, createDefaultCcxConfig, writeCcxEnv, ensureCcxConfigDir, showConfigurationTips } = await import('../ccx/config')
+    let ccxConfig = readCcxEnv()
+
+    // Step 3: Check if CCX is already running
+    const { isCcxRunning, startCcxService } = await import('../ccx/commands')
+    const port = ccxConfig?.PORT || 3000
+    const running = await isCcxRunning(port)
+
+    if (running) {
+      console.log(ansis.blue(`ℹ ${i18n.t('codex:ccxReusing')}`))
+    }
+    else {
+      console.log(ansis.cyan(i18n.t('codex:ccxConfiguringAndStarting')))
+
+      // Create config if not exists
+      if (!ccxConfig) {
+        ensureCcxConfigDir()
+        ccxConfig = createDefaultCcxConfig()
+        writeCcxEnv(ccxConfig)
+        console.log(ansis.green(`✔ ${i18n.t('codex:ccxConfigCreated')}`))
+      }
+
+      // Start CCX service
+      try {
+        await startCcxService()
+      }
+      catch (error: any) {
+        console.error(ansis.red(`✖ ${i18n.t('codex:ccxStartFailed')}`))
+        console.error(ansis.gray(error.message || error))
+        return false
+      }
+    }
+
+    // Ensure ccxConfig is available
+    if (!ccxConfig) {
+      ccxConfig = createDefaultCcxConfig()
+    }
+
+    const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
+    const ccxPort = ccxConfig.PORT || 3000
+
+    // Step 4: Build Codex provider config
+    const ccxProvider: CodexProvider = {
+      id: 'ccx',
+      name: 'CCX Proxy',
+      baseUrl: `http://127.0.0.1:${ccxPort}`,
+      wireApi: 'responses',
+      tempEnvKey: 'CCX_API_KEY',
+      requiresOpenaiAuth: false,
+    }
+
+    // Step 5: Write provider to config.toml
+    const { upsertCodexProvider, updateCodexApiFields } = await import('./codex-toml-updater')
+    upsertCodexProvider('ccx', ccxProvider)
+    console.log(ansis.green(`✔ ${i18n.t('codex:ccxProviderAdded')}`))
+
+    // Step 6: Write auth file
+    writeAuthFile({ CCX_API_KEY: accessKey })
+    console.log(ansis.green(`✔ ${i18n.t('codex:ccxAuthConfigured')}`))
+
+    // Step 7: Set CCX as default provider
+    updateCodexApiFields({
+      modelProvider: 'ccx',
+      modelProviderCommented: false,
+    })
+    console.log(ansis.green(`✔ ${i18n.t('codex:ccxSetAsDefault')}`))
+
+    // Step 8: Show tips
+    await showConfigurationTips(accessKey)
+
+    console.log(ansis.green(`✔ ${i18n.t('codex:ccxCodexConfigComplete')}`))
+    return true
+  }
+  catch (error: any) {
+    if (error.name === 'ExitPromptError') {
+      console.log(ansis.yellow(i18n.t('common:cancelled')))
+      return false
+    }
+    console.error(ansis.red(`✖ ${i18n.t('codex:ccxCodexConfigFailed')}`))
+    console.error(ansis.gray(error.message || error))
+    return false
+  }
+}
+
 export async function configureCodexApi(options?: CodexFullInitOptions): Promise<void> {
   ensureI18nInitialized()
 
@@ -1517,6 +1616,13 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
       }
       return
     }
+
+    if (apiMode === 'ccx') {
+      const success = await configureCodexCcxProxy()
+      if (success)
+        updateZcfConfig({ codeToolType: 'codex' })
+      return
+    }
   }
 
   // Check if there are existing providers for switch option
@@ -1525,6 +1631,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
   const modeChoices = [
     { name: i18n.t('codex:apiModeOfficial'), value: 'official' },
     { name: i18n.t('codex:apiModeCustom'), value: 'custom' },
+    { name: i18n.t('codex:apiModeCcx'), value: 'ccx' },
   ]
 
   // Add switch option if providers exist
@@ -1532,7 +1639,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
     modeChoices.push({ name: i18n.t('codex:configSwitchMode'), value: 'switch' })
   }
 
-  const { mode } = await inquirer.prompt<{ mode: 'official' | 'custom' | 'switch' }>([{
+  const { mode } = await inquirer.prompt<{ mode: 'official' | 'custom' | 'switch' | 'ccx' }>([{
     type: 'list',
     name: 'mode',
     message: i18n.t('codex:apiModePrompt'),
@@ -1548,6 +1655,14 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
   if (mode === 'official') {
     // Use new official login logic - preserve providers but comment model_provider
     const success = await switchToOfficialLogin()
+    if (success) {
+      updateZcfConfig({ codeToolType: 'codex' })
+    }
+    return
+  }
+
+  if (mode === 'ccx') {
+    const success = await configureCodexCcxProxy()
     if (success) {
       updateZcfConfig({ codeToolType: 'codex' })
     }
@@ -1803,7 +1918,7 @@ export interface CodexFullInitOptions extends CodexWorkflowLanguageOptions {
   // MCP service options
   mcpServices?: string[] | false // Specific MCP services to install, false means skip
   // API configuration options
-  apiMode?: 'official' | 'custom' | 'skip' // API mode selection
+  apiMode?: 'official' | 'custom' | 'skip' | 'ccx' // API mode selection
   customApiConfig?: {
     type: 'auth_token' | 'api_key'
     token?: string
