@@ -19,7 +19,7 @@ import {
 } from '../utils/features'
 import { addNumbersToChoices } from '../utils/prompt-helpers'
 import { promptBoolean } from '../utils/toggle-prompt'
-import { runCcxMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../utils/tools'
+import { runCcusageFeature, runCcxMenuFeature, runCometixMenuFeature } from '../utils/tools'
 import { readZcfConfig, updateZcfConfig } from '../utils/zcf-config'
 import { checkUpdates } from './check-updates'
 import { init } from './init'
@@ -270,6 +270,7 @@ async function showCodexMenu(): Promise<MenuResult> {
     `  ${ansis.cyan('6.')} ${i18n.t('menu:menuOptions.codexConfigureAiMemory')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.codexConfigureAiMemory')}`)}`,
   )
   console.log('')
+  printOtherToolsSection()
   printZcfSection({
     uninstallOption: i18n.t('menu:menuOptions.codexUninstall'),
     uninstallDescription: i18n.t('menu:menuDescriptions.codexUninstall'),
@@ -282,7 +283,7 @@ async function showCodexMenu(): Promise<MenuResult> {
     name: 'choice',
     message: i18n.t('common:enterChoice'),
     validate: (value) => {
-      const valid = ['1', '2', '3', '4', '5', '6', '0', '-', '+', 's', 'S', 'q', 'Q']
+      const valid = ['1', '2', '3', '4', '5', '6', 'r', 'R', 'u', 'U', 'l', 'L', '0', '-', '+', 's', 'S', 'q', 'Q']
       return valid.includes(value) || i18n.t('common:invalidChoice')
     },
   })
@@ -313,6 +314,18 @@ async function showCodexMenu(): Promise<MenuResult> {
     case '6':
       await configureCodexAiMemoryFeature()
       break
+    case 'r':
+      await runCcxMenuFeature()
+      printSeparator()
+      return undefined
+    case 'u':
+      await runCcusageFeature()
+      printSeparator()
+      return undefined
+    case 'l':
+      await runCometixMenuFeature()
+      printSeparator()
+      return undefined
     case '0': {
       const currentLang = i18n.language as SupportedLang
       await changeScriptLanguageFeature(currentLang)
