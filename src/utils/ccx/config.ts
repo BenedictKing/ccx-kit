@@ -1,6 +1,5 @@
 import type { CcxConfig } from '../../types/ccx'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { copyFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import ansis from 'ansis'
 import dayjs from 'dayjs'
@@ -30,7 +29,7 @@ export function ensureCcxConfigDir(): void {
 export function createDefaultCcxConfig(): CcxConfig {
   return {
     PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
-    PORT: 3000,
+    PORT: 3688,
     ENABLE_WEB_UI: true,
   }
 }
@@ -49,10 +48,12 @@ export function readCcxEnv(): CcxConfig | null {
 
     for (const line of content.split('\n')) {
       const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith('#')) continue
+      if (!trimmed || trimmed.startsWith('#'))
+        continue
 
       const eqIndex = trimmed.indexOf('=')
-      if (eqIndex === -1) continue
+      if (eqIndex === -1)
+        continue
 
       const key = trimmed.slice(0, eqIndex).trim()
       const value = trimmed.slice(eqIndex + 1).trim()
@@ -62,7 +63,7 @@ export function readCcxEnv(): CcxConfig | null {
           config.PROXY_ACCESS_KEY = value
           break
         case 'PORT':
-          config.PORT = Number.parseInt(value, 10) || 3000
+          config.PORT = Number.parseInt(value, 10) || 3688
           break
         case 'ENABLE_WEB_UI':
           config.ENABLE_WEB_UI = value.toLowerCase() !== 'false'
@@ -125,7 +126,7 @@ export async function backupCcxConfig(): Promise<string | null> {
 export async function configureCcxProxy(ccxConfig: CcxConfig): Promise<void> {
   const settings = readJsonConfig<any>(SETTINGS_FILE) || {}
 
-  const port = ccxConfig.PORT || 3000
+  const port = ccxConfig.PORT || 3688
   const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
 
   if (!settings.env) {

@@ -19,7 +19,8 @@ const CCX_BINARY_PATH = join(homedir(), '.local', 'bin', CCX_BINARY_NAME)
  */
 function readPid(): number | null {
   try {
-    if (!existsSync(CCX_PID_FILE)) return null
+    if (!existsSync(CCX_PID_FILE))
+      return null
     const pid = Number.parseInt(readFileSync(CCX_PID_FILE, 'utf-8').trim(), 10)
     return Number.isNaN(pid) ? null : pid
   }
@@ -56,7 +57,7 @@ function isProcessRunning(pid: number): boolean {
  */
 export async function isCcxRunning(port?: number): Promise<boolean> {
   const config = readCcxEnv()
-  const targetPort = port || config?.PORT || 3000
+  const targetPort = port || config?.PORT || 3688
 
   try {
     const controller = new AbortController()
@@ -79,7 +80,7 @@ export async function isCcxRunning(port?: number): Promise<boolean> {
  */
 export async function getCcxStatus(): Promise<CcxServiceStatus> {
   const config = readCcxEnv()
-  const port = config?.PORT || 3000
+  const port = config?.PORT || 3688
   const running = await isCcxRunning(port)
   const pid = readPid()
 
@@ -207,7 +208,7 @@ export async function openCcxWebUi(): Promise<void> {
   ensureI18nInitialized()
 
   const config = readCcxEnv()
-  const port = config?.PORT || 3000
+  const port = config?.PORT || 3688
   const url = `http://localhost:${port}`
 
   console.log(ansis.cyan(`\n🖥️  ${i18n.t('ccx:openingWebUi')}`))
@@ -230,7 +231,7 @@ export async function openCcxWebUi(): Promise<void> {
     }
     console.log(ansis.green(`✔ ${i18n.t('ccx:webUiOpened')}`))
   }
-  catch (error: any) {
+  catch {
     console.log(ansis.yellow(`⚠ ${i18n.t('ccx:webUiOpenFailed')}`))
     console.log(ansis.gray(`  ${url}`))
   }
