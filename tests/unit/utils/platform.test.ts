@@ -485,9 +485,9 @@ ID=ubuntu`)
   })
 
   describe('getRecommendedInstallMethods', () => {
-    it('should prefer Homebrew then curl for Claude Code on macOS', () => {
+    it('should prefer curl then Homebrew for Claude Code on macOS', () => {
       vi.mocked(platform).mockReturnValue('darwin')
-      expect(getRecommendedInstallMethods('claude-code')).toEqual(['homebrew', 'curl', 'npm'])
+      expect(getRecommendedInstallMethods('claude-code')).toEqual(['curl', 'homebrew', 'npm'])
     })
 
     it('should recommend Powershell first for Claude Code on Windows', () => {

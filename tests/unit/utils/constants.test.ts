@@ -75,7 +75,7 @@ describe('constants', () => {
 
   describe('code tool constants', () => {
     it('should define supported code tool types', () => {
-      expect(CODE_TOOL_TYPES).toEqual(['claude-code', 'codex'])
+      expect(CODE_TOOL_TYPES).toEqual(['claude-code', 'codex', 'gemini-cli'])
     })
 
     it('should define default code tool type', () => {
@@ -185,7 +185,7 @@ describe('constants', () => {
 
   describe('constants structure validation', () => {
     it('should have correct array lengths for constants', () => {
-      expect(CODE_TOOL_TYPES).toHaveLength(2)
+      expect(CODE_TOOL_TYPES).toHaveLength(3)
       expect(SUPPORTED_LANGS).toHaveLength(2)
     })
 

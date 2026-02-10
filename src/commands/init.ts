@@ -489,6 +489,28 @@ export async function init(options: InitOptions = {}): Promise<void> {
       return
     }
 
+    // Handle Gemini CLI initialization
+    if (codeToolType === 'gemini-cli') {
+      const { runGeminiCliFullInit } = await import('../utils/code-tools/gemini-cli')
+
+      const resolvedAiOutputLang = await runGeminiCliFullInit({
+        aiOutputLang: options.aiOutputLang,
+        skipPrompt: options.skipPrompt,
+      })
+
+      updateZcfConfig({
+        version,
+        preferredLang: i18n.language as SupportedLang,
+        templateLang: configLang,
+        aiOutputLang: resolvedAiOutputLang
+          ?? options.aiOutputLang
+          ?? zcfConfig?.aiOutputLang
+          ?? 'en',
+        codeToolType,
+      })
+      return
+    }
+
     // Step 4: Select AI output language
     const aiOutputLang = await resolveAiOutputLanguage(i18n.language as SupportedLang, options.aiOutputLang, zcfConfig, options.skipPrompt)
 

@@ -432,7 +432,7 @@ export async function findCommandPath(command: string): Promise<string | null> {
  * Get recommended install methods for a code tool based on current platform
  * Returns methods in priority order (most recommended first)
  */
-export type CodeType = 'claude-code' | 'codex'
+export type CodeType = 'claude-code' | 'codex' | 'gemini-cli'
 export type InstallMethod = 'npm' | 'homebrew' | 'curl' | 'powershell' | 'cmd' | 'npm-global' | 'native'
 
 export function getRecommendedInstallMethods(codeType: CodeType): InstallMethod[] {
@@ -460,6 +460,15 @@ export function getRecommendedInstallMethods(codeType: CodeType): InstallMethod[
     if (platform === 'linux' || wsl || platform === 'windows') {
       return ['npm']
     }
+  }
+
+  // Gemini CLI recommendations
+  if (codeType === 'gemini-cli') {
+    if (platform === 'macos') {
+      return ['npm', 'homebrew']
+    }
+    // npm is the primary method for all platforms
+    return ['npm']
   }
 
   // Default fallback

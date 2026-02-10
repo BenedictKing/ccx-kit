@@ -2,6 +2,7 @@ import type { CodeToolType } from '../constants'
 import { ensureI18nInitialized } from '../i18n'
 import { checkAndUpdateTools } from './auto-updater'
 import { runCodexUpdate } from './code-tools/codex'
+import { runGeminiUpdate } from './code-tools/gemini-cli'
 
 /**
  * Tool update scheduler that manages updates for different code tools
@@ -22,6 +23,9 @@ export class ToolUpdateScheduler {
         break
       case 'codex':
         await this.updateCodexTools(skipPrompt)
+        break
+      case 'gemini-cli':
+        await this.updateGeminiCliTools(skipPrompt)
         break
       default:
         throw new Error(`Unsupported code type: ${codeType}`)
@@ -46,6 +50,20 @@ export class ToolUpdateScheduler {
     // The function itself handles logging and error reporting
     if (!success) {
       // Don't throw error for unsuccessful updates, as runCodexUpdate handles error reporting
+      // This maintains consistency with checkAndUpdateTools behavior
+    }
+  }
+
+  /**
+   * Update Gemini CLI tools
+   * @param skipPrompt - Whether to skip interactive prompts
+   */
+  private async updateGeminiCliTools(skipPrompt: boolean): Promise<void> {
+    const success = await runGeminiUpdate(false, skipPrompt)
+    // runGeminiUpdate returns boolean, but we don't need to handle the result
+    // The function itself handles logging and error reporting
+    if (!success) {
+      // Don't throw error for unsuccessful updates, as runGeminiUpdate handles error reporting
       // This maintains consistency with checkAndUpdateTools behavior
     }
   }

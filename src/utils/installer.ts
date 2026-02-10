@@ -139,6 +139,80 @@ export async function isCodexInstalled(): Promise<boolean> {
 }
 
 /**
+ * Check if Gemini CLI is installed
+ */
+export async function isGeminiCliInstalled(): Promise<boolean> {
+  return await commandExists('gemini')
+}
+
+/**
+ * Install Gemini CLI with method selection support
+ * @param skipMethodSelection - If true, use default npm installation
+ */
+export async function installGeminiCli(skipMethodSelection: boolean = false): Promise<void> {
+  ensureI18nInitialized()
+
+  const codeType: CodeType = 'gemini-cli'
+  const codeTypeName = i18n.t('common:geminiCli')
+
+  // Check if already installed
+  const installed = await isGeminiCliInstalled()
+  if (installed) {
+    console.log(ansis.green(`✔ ${codeTypeName} ${i18n.t('installation:alreadyInstalled')}`))
+
+    // Detect and display current version
+    const version = await detectInstalledVersion(codeType)
+    if (version) {
+      console.log(ansis.gray(`  ${i18n.t('installation:detectedVersion', { version })}`))
+    }
+
+    return
+  }
+
+  // If skip method selection, use npm directly (for backwards compatibility)
+  if (skipMethodSelection) {
+    console.log(i18n.t('installation:installingWith', { method: 'npm', codeType: codeTypeName }))
+
+    try {
+      // Use --force to handle EEXIST errors when files already exist
+      const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['install', '-g', '@google/gemini-cli', '--force'])
+      if (usedSudo) {
+        console.log(ansis.yellow(`ℹ ${i18n.t('installation:usingSudo')}`))
+      }
+      await exec(command, args)
+      console.log(ansis.green(`✔ ${codeTypeName} ${i18n.t('installation:installSuccess')}`))
+
+      // Verify installation and create symlink if needed
+      const verification = await verifyInstallation(codeType)
+      displayVerificationResult(verification, codeType)
+    }
+    catch (error) {
+      console.error(ansis.red(`✖ ${codeTypeName} ${i18n.t('installation:installFailed')}`))
+      throw error
+    }
+    return
+  }
+
+  // New flow: select installation method
+  const method = await selectInstallMethod(codeType)
+  if (!method) {
+    console.log(ansis.yellow(i18n.t('common:cancelled')))
+    return
+  }
+
+  const success = await executeInstallMethod(method, codeType)
+
+  if (!success) {
+    // Handle installation failure with retry options
+    const retrySuccess = await handleInstallFailure(codeType, [method])
+    if (!retrySuccess) {
+      console.error(ansis.red(`✖ ${codeTypeName} ${i18n.t('installation:installFailed')}`))
+      throw new Error(i18n.t('installation:installFailed'))
+    }
+  }
+}
+
+/**
  * Install Codex with method selection support
  * @param skipMethodSelection - If true, use default npm installation
  */
@@ -286,7 +360,11 @@ async function getInstallMethodFromConfig(codeType: CodeType): Promise<InstallMe
 export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
   ensureI18nInitialized()
 
-  const codeTypeName = codeType === 'claude-code' ? i18n.t('common:claudeCode') : i18n.t('common:codex')
+  const codeTypeName = codeType === 'claude-code'
+    ? i18n.t('common:claudeCode')
+    : codeType === 'codex'
+      ? i18n.t('common:codex')
+      : i18n.t('common:geminiCli')
 
   // Try to detect install method from config
   type ExtendedInstallMethod = InstallMethod | 'npm-global' | 'native' | 'manual' | null
@@ -318,6 +396,18 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
         // Not installed via Homebrew
       }
     }
+    else if (codeType === 'gemini-cli') {
+      try {
+        // Check if installed via Homebrew formula
+        const result = await exec('brew', ['list', 'gemini-cli'])
+        if (result.exitCode === 0) {
+          method = 'homebrew'
+        }
+      }
+      catch {
+        // Not installed via Homebrew
+      }
+    }
 
     // Default to npm if method still not detected
     if (!method) {
@@ -331,10 +421,17 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
     if (platform === 'macos' || platform === 'linux') {
       // Try Homebrew first, then fall back to manual removal
       try {
-        // Both Claude Code and Codex are installed as casks
-        const testResult = codeType === 'claude-code'
-          ? await exec('brew', ['list', '--cask', 'claude-code'])
-          : await exec('brew', ['list', '--cask', 'codex'])
+        // Claude Code and Codex are installed as casks, Gemini CLI as formula
+        let testResult
+        if (codeType === 'claude-code') {
+          testResult = await exec('brew', ['list', '--cask', 'claude-code'])
+        }
+        else if (codeType === 'codex') {
+          testResult = await exec('brew', ['list', '--cask', 'codex'])
+        }
+        else {
+          testResult = await exec('brew', ['list', 'gemini-cli'])
+        }
         if (testResult.exitCode === 0) {
           method = 'homebrew'
         }
@@ -356,7 +453,11 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
     switch (method) {
       case 'npm':
       case 'npm-global': {
-        const packageName = codeType === 'claude-code' ? '@anthropic-ai/claude-code' : '@openai/codex'
+        const packageName = codeType === 'claude-code'
+          ? '@anthropic-ai/claude-code'
+          : codeType === 'codex'
+            ? '@openai/codex'
+            : '@google/gemini-cli'
         const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['uninstall', '-g', packageName])
         if (usedSudo) {
           spinner.info(i18n.t('installation:usingSudo'))
@@ -370,9 +471,13 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
         if (codeType === 'claude-code') {
           await exec('brew', ['uninstall', '--cask', 'claude-code'])
         }
-        else {
+        else if (codeType === 'codex') {
           // Codex is also installed as a cask
           await exec('brew', ['uninstall', '--cask', 'codex'])
+        }
+        else if (codeType === 'gemini-cli') {
+          // Gemini CLI is installed as a formula
+          await exec('brew', ['uninstall', 'gemini-cli'])
         }
         break
       }
@@ -384,7 +489,7 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
         spinner.warn(i18n.t('installation:manualUninstallRequired', { codeType: codeTypeName }))
 
         // Try to find binary location
-        const command = codeType === 'claude-code' ? 'claude' : 'codex'
+        const command = codeType === 'claude-code' ? 'claude' : codeType === 'codex' ? 'codex' : 'gemini'
         try {
           const whichCmd = getPlatform() === 'windows' ? 'where' : 'which'
           const result = await exec(whichCmd, [command])
@@ -462,7 +567,7 @@ export async function setInstallMethod(method: InstallMethod, codeType: CodeType
  */
 export async function detectInstalledVersion(codeType: CodeType): Promise<string | null> {
   try {
-    const command = codeType === 'claude-code' ? 'claude' : 'codex'
+    const command = codeType === 'claude-code' ? 'claude' : codeType === 'codex' ? 'codex' : 'gemini'
     const result = await exec(command, ['--version'])
 
     if (result.exitCode === 0 && result.stdout) {
@@ -508,8 +613,8 @@ function getInstallMethodOptions(codeType: CodeType, recommendedMethods: Install
 
   // Filter methods by platform availability and code type support
   const availableMethods = allMethods.filter((method) => {
-    // Codex only supports npm and homebrew
-    if (codeType === 'codex' && !['npm', 'homebrew'].includes(method)) {
+    // Codex and Gemini CLI only support npm and homebrew
+    if ((codeType === 'codex' || codeType === 'gemini-cli') && !['npm', 'homebrew'].includes(method)) {
       return false
     }
 
@@ -545,7 +650,11 @@ function getInstallMethodOptions(codeType: CodeType, recommendedMethods: Install
 export async function selectInstallMethod(codeType: CodeType, excludeMethods: InstallMethod[] = []): Promise<InstallMethod | null> {
   ensureI18nInitialized()
 
-  const codeTypeName = codeType === 'claude-code' ? i18n.t('common:claudeCode') : i18n.t('common:codex')
+  const codeTypeName = codeType === 'claude-code'
+    ? i18n.t('common:claudeCode')
+    : codeType === 'codex'
+      ? i18n.t('common:codex')
+      : i18n.t('common:geminiCli')
   const recommendedMethods = getRecommendedInstallMethods(codeType) as InstallMethod[]
   const methodOptions = getInstallMethodOptions(codeType, recommendedMethods)
     .filter(option => !excludeMethods.includes(option.value))
@@ -574,13 +683,21 @@ export async function selectInstallMethod(codeType: CodeType, excludeMethods: In
 export async function executeInstallMethod(method: InstallMethod, codeType: CodeType): Promise<boolean> {
   ensureI18nInitialized()
 
-  const codeTypeName = codeType === 'claude-code' ? i18n.t('common:claudeCode') : i18n.t('common:codex')
+  const codeTypeName = codeType === 'claude-code'
+    ? i18n.t('common:claudeCode')
+    : codeType === 'codex'
+      ? i18n.t('common:codex')
+      : i18n.t('common:geminiCli')
   const spinner = ora(i18n.t('installation:installingWith', { method, codeType: codeTypeName })).start()
 
   try {
     switch (method) {
       case 'npm': {
-        const packageName = codeType === 'claude-code' ? '@anthropic-ai/claude-code' : '@openai/codex'
+        const packageName = codeType === 'claude-code'
+          ? '@anthropic-ai/claude-code'
+          : codeType === 'codex'
+            ? '@openai/codex'
+            : '@google/gemini-cli'
         // Use --force to handle EEXIST errors when files already exist
         const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['install', '-g', packageName, '--force'])
         if (usedSudo) {
@@ -596,9 +713,13 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
         if (codeType === 'claude-code') {
           await exec('brew', ['install', '--cask', 'claude-code'])
         }
-        else {
+        else if (codeType === 'codex') {
           // Codex is also installed as a cask
           await exec('brew', ['install', '--cask', 'codex'])
+        }
+        else if (codeType === 'gemini-cli') {
+          // Gemini CLI is installed as a formula
+          await exec('brew', ['install', 'gemini-cli'])
         }
         await setInstallMethod('homebrew', codeType)
         break
@@ -609,7 +730,7 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
           await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
         }
         else {
-          // Codex doesn't have curl install method, fallback to npm
+          // Codex and Gemini CLI don't have curl install method, fallback to npm
           spinner.stop()
           return await executeInstallMethod('npm', codeType)
         }
@@ -729,7 +850,7 @@ async function isCommandInPath(command: string): Promise<boolean> {
  * If command is not in PATH but found in Homebrew paths, attempt to create symlink
  */
 export async function verifyInstallation(codeType: CodeType): Promise<VerificationResult> {
-  const command = codeType === 'claude-code' ? 'claude' : 'codex'
+  const command = codeType === 'claude-code' ? 'claude' : codeType === 'codex' ? 'codex' : 'gemini'
 
   // Step 1: Check if command is accessible via which (directly in PATH)
   // Use isCommandInPath instead of commandExists to avoid detecting Caskroom paths
@@ -928,7 +1049,11 @@ export async function createHomebrewSymlink(command: string, sourcePath: string)
 export function displayVerificationResult(result: VerificationResult, codeType: CodeType): void {
   ensureI18nInitialized()
 
-  const codeTypeName = codeType === 'claude-code' ? i18n.t('common:claudeCode') : i18n.t('common:codex')
+  const codeTypeName = codeType === 'claude-code'
+    ? i18n.t('common:claudeCode')
+    : codeType === 'codex'
+      ? i18n.t('common:codex')
+      : i18n.t('common:geminiCli')
 
   if (result.success) {
     if (result.symlinkCreated) {

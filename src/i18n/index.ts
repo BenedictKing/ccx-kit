@@ -29,6 +29,7 @@ const NAMESPACES = [
   'updater',
   'workflow',
   'codex',
+  'gemini-cli',
 ] as const
 
 // Ensure i18n is initialized - safety check for utility functions

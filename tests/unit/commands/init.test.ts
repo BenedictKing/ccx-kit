@@ -144,8 +144,9 @@ vi.mock('../../../src/constants', () => ({
   CODE_TOOL_BANNERS: {
     'claude-code': 'ZCF',
     'codex': 'Codex',
+    'gemini-cli': 'Gemini CLI',
   },
-  isCodeToolType: vi.fn((type: string) => ['claude-code', 'codex'].includes(type)),
+  isCodeToolType: vi.fn((type: string) => ['claude-code', 'codex', 'gemini-cli'].includes(type)),
 }))
 
 // Common test setup
