@@ -29,5 +29,9 @@
   "ccxConfigCreated": "CCX configuration created",
   "ccxStartFailed": "CCX startup failed",
   "ccxConfigComplete": "CCX proxy configuration complete",
-  "ccxConfigFailed": "CCX proxy configuration failed"
+  "ccxConfigFailed": "CCX proxy configuration failed",
+  "updatingViaBrew": "Updating Gemini CLI via Homebrew...",
+  "confirmUninstall": "Are you sure you want to uninstall Gemini CLI?",
+  "uninstallSuccess": "Gemini CLI uninstalled successfully",
+  "uninstallFailed": "Gemini CLI uninstall failed"
 }

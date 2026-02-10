@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { executeCcusage } from '../../src/commands/ccu'
 import { resolveCodeType } from '../../src/utils/code-type-resolver'
 import { ToolUpdateScheduler } from '../../src/utils/tool-update-scheduler'
-import { getValidLanguage, runCcxMenuFeature, runCcusageFeature, runCometixMenuFeature } from '../../src/utils/tools'
+import { getValidLanguage, runCcusageFeature, runCcxMenuFeature, runCometixMenuFeature } from '../../src/utils/tools'
 
 // Mock external dependencies
 vi.mock('inquirer')

@@ -2,9 +2,9 @@ import ansis from 'ansis'
 import ora from 'ora'
 import { exec } from 'tinyexec'
 import { ensureI18nInitialized, format, i18n } from '../i18n'
+import { installCcx } from './ccx/installer'
 import { shouldUseSudoForGlobalInstall } from './platform'
 import { promptBoolean } from './toggle-prompt'
-import { installCcx } from './ccx/installer'
 import { checkCcxVersion, checkClaudeCodeVersion, checkCometixLineVersion, handleDuplicateInstallations } from './version-checker'
 
 /**

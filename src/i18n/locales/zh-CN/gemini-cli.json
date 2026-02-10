@@ -29,5 +29,9 @@
   "ccxConfigCreated": "CCX 配置已创建",
   "ccxStartFailed": "CCX 启动失败",
   "ccxConfigComplete": "CCX 代理配置完成",
-  "ccxConfigFailed": "CCX 代理配置失败"
+  "ccxConfigFailed": "CCX 代理配置失败",
+  "updatingViaBrew": "正在通过 Homebrew 更新 Gemini CLI...",
+  "confirmUninstall": "确定要卸载 Gemini CLI 吗？",
+  "uninstallSuccess": "Gemini CLI 卸载成功",
+  "uninstallFailed": "Gemini CLI 卸载失败"
 }

@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix Gemini CLI menu missing individual sub-menu items (Configure API)
+- Fix `update` command falling through to Claude Code flow when code tool is gemini-cli
+- Fix `uninstall` command falling through to Claude Code flow when code tool is gemini-cli
+- Fix `executeGeminiUpdate` always using npm; now detects Homebrew installs and uses `brew upgrade`
+- Fix CCX port fallback using 3000 instead of project default 3688 in Gemini CCX proxy config
+- Fix `runGeminiCliFullInit` overwriting existing `aiOutputLang` with default `'en'`
+- Implement Gemini CLI uninstall (was TODO placeholder)
+
 ### Changed
 
 - Replace CCR (Claude Code Router, npm package) with CCX (Claude/Codex/Gemini API Proxy, GitHub binary release)

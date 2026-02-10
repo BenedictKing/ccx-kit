@@ -128,7 +128,31 @@ export async function checkGeminiUpdate(): Promise<GeminiVersionInfo> {
   }
 }
 
+async function detectGeminiInstallMethod(): Promise<'homebrew' | 'npm'> {
+  try {
+    const result = await x('brew', ['list', 'gemini-cli'], { throwOnError: false })
+    if (result.exitCode === 0) {
+      return 'homebrew'
+    }
+  }
+  catch {
+    // Not installed via Homebrew
+  }
+  return 'npm'
+}
+
 async function executeGeminiUpdate(): Promise<void> {
+  const method = await detectGeminiInstallMethod()
+
+  if (method === 'homebrew') {
+    console.log(ansis.cyan(i18n.t('gemini-cli:updatingViaBrew')))
+    const result = await x('brew', ['upgrade', 'gemini-cli'], { throwOnError: false })
+    if (result.exitCode !== 0) {
+      throw new Error(`Failed to update Gemini CLI via Homebrew: exit code ${result.exitCode}`)
+    }
+    return
+  }
+
   const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['install', '-g', '@google/gemini-cli@latest'])
   if (usedSudo) {
     console.log(ansis.yellow(i18n.t('gemini-cli:usingSudo')))
@@ -215,7 +239,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
 
     // Step 3: Start CCX if not running
     const { isCcxRunning, startCcxService } = await import('../ccx/commands')
-    const port = ccxConfig?.PORT || 3000
+    const port = ccxConfig?.PORT || 3688
     const running = await isCcxRunning(port)
 
     if (running) {
@@ -244,7 +268,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     }
 
     const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
-    const ccxPort = ccxConfig.PORT || 3000
+    const ccxPort = ccxConfig.PORT || 3688
 
     // Step 4: Write Gemini .env
     const envConfig: GeminiEnvConfig = {
@@ -381,7 +405,53 @@ export async function runGeminiCliFullInit(
   // Step 2: Configure API (custom / CCX / skip)
   await configureGeminiApi(options)
 
+  // Preserve existing AI output language setting if not explicitly provided
+  if (!aiOutputLang) {
+    const { readZcfConfig } = await import('../zcf-config')
+    const zcfConfig = readZcfConfig()
+    if (zcfConfig?.aiOutputLang) {
+      console.log(ansis.green(i18n.t('gemini-cli:setupComplete')))
+      return zcfConfig.aiOutputLang
+    }
+  }
+
   const resolvedLang = aiOutputLang ?? 'en'
   console.log(ansis.green(i18n.t('gemini-cli:setupComplete')))
   return resolvedLang
+}
+
+/**
+ * Run Gemini CLI uninstall
+ */
+export async function runGeminiUninstall(): Promise<void> {
+  ensureI18nInitialized()
+
+  const installed = await isGeminiCliInstalled()
+  if (!installed) {
+    console.log(ansis.yellow(i18n.t('gemini-cli:notInstalled')))
+    return
+  }
+
+  const { promptBoolean } = await import('../toggle-prompt')
+  const confirm = await promptBoolean({
+    message: i18n.t('gemini-cli:confirmUninstall'),
+    defaultValue: false,
+  })
+
+  if (!confirm) {
+    console.log(ansis.gray(i18n.t('common:cancelled')))
+    return
+  }
+
+  try {
+    const { uninstallCodeTool } = await import('../installer')
+    const success = await uninstallCodeTool('gemini-cli')
+    if (success) {
+      console.log(ansis.green(i18n.t('gemini-cli:uninstallSuccess')))
+    }
+  }
+  catch (error) {
+    console.error(ansis.red(i18n.t('gemini-cli:uninstallFailed')))
+    console.error(ansis.red(error instanceof Error ? error.message : String(error)))
+  }
 }

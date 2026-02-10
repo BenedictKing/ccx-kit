@@ -24,16 +24,26 @@ function getCcxAssetName(): string {
 
   let osName: string
   switch (os) {
-    case 'darwin': osName = 'darwin'; break
-    case 'linux': osName = 'linux'; break
-    case 'win32': osName = 'windows'; break
+    case 'darwin':
+      osName = 'darwin'
+      break
+    case 'linux':
+      osName = 'linux'
+      break
+    case 'win32':
+      osName = 'windows'
+      break
     default: throw new Error(`Unsupported platform: ${os}`)
   }
 
   let archName: string
   switch (cpuArch) {
-    case 'x64': archName = 'amd64'; break
-    case 'arm64': archName = 'arm64'; break
+    case 'x64':
+      archName = 'amd64'
+      break
+    case 'arm64':
+      archName = 'arm64'
+      break
     default: throw new Error(`Unsupported architecture: ${cpuArch}`)
   }
 
@@ -105,7 +115,8 @@ export async function getLatestCcxVersion(): Promise<string | null> {
     )
     clearTimeout(timeoutId)
 
-    if (!response.ok) return null
+    if (!response.ok)
+      return null
 
     const data = await response.json() as { tag_name?: string }
     const tag = data.tag_name || ''
@@ -183,7 +194,7 @@ export async function installCcx(): Promise<void> {
 
     // Check if ~/.local/bin is in PATH
     const pathDirs = (process.env.PATH || '').split(platform() === 'win32' ? ';' : ':')
-    const isInPath = pathDirs.some(dir => dir === CCX_INSTALL_DIR)
+    const isInPath = pathDirs.includes(CCX_INSTALL_DIR)
     if (!isInPath) {
       console.log(ansis.yellow(`⚠ ${i18n.t('ccx:pathNotInPath')}`))
       console.log(ansis.gray(`  export PATH="$HOME/.local/bin:$PATH"`))

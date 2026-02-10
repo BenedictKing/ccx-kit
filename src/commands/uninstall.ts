@@ -61,6 +61,13 @@ export async function uninstall(options: UninstallOptions = {}): Promise<void> {
       return
     }
 
+    // For Gemini CLI, use Gemini-specific uninstaller
+    if (codeType === 'gemini-cli') {
+      const { runGeminiUninstall } = await import('../utils/code-tools/gemini-cli')
+      await runGeminiUninstall()
+      return
+    }
+
     // For Claude Code, continue with existing logic
     // Handle non-interactive mode
     if (options.mode && options.mode !== 'interactive') {

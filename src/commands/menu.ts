@@ -433,11 +433,12 @@ async function showGeminiCliMenu(): Promise<MenuResult> {
       printSeparator()
       return undefined
     }
-    case '-':
-      // TODO: Implement Gemini CLI uninstall
-      console.log(ansis.yellow('Gemini CLI uninstall not yet implemented'))
+    case '-': {
+      const { runGeminiUninstall } = await import('../utils/code-tools/gemini-cli')
+      await runGeminiUninstall()
       printSeparator()
       return undefined
+    }
     case '+': {
       const { runGeminiUpdate } = await import('../utils/code-tools/gemini-cli')
       await runGeminiUpdate()

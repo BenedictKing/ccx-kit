@@ -1076,7 +1076,7 @@ describe('claudeCodeConfigManager', () => {
     })
   })
 
-  describe('CCX profile同步', () => {
+  describe('cCX profile同步', () => {
     it('syncCcxProfile应该在缺少配置时清理CCX profile', async () => {
       await ClaudeCodeConfigManager.addProfile({
         name: 'Placeholder',

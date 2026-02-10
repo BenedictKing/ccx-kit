@@ -88,8 +88,10 @@ export async function showCcxMenu(): Promise<boolean> {
           console.log(`\n${ansis.bold(i18n.t('ccx:ccxStatusTitle'))}`)
           console.log(`  ${i18n.t('ccx:statusRunning')}: ${status.running ? ansis.green('✔') : ansis.red('✖')}`)
           console.log(`  ${i18n.t('ccx:statusPort')}: ${status.port}`)
-          if (status.pid) console.log(`  PID: ${status.pid}`)
-          if (status.webUiUrl) console.log(`  Web UI: ${ansis.cyan(status.webUiUrl)}`)
+          if (status.pid)
+            console.log(`  PID: ${status.pid}`)
+          if (status.webUiUrl)
+            console.log(`  Web UI: ${ansis.cyan(status.webUiUrl)}`)
         }
         break
       }
