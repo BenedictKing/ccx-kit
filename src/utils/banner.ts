@@ -26,25 +26,29 @@ export function displayBanner(subtitle?: string): void {
   ensureI18nInitialized()
   const defaultSubtitle = i18n.t('cli:banner.subtitle')
   const subtitleText = subtitle || defaultSubtitle
-  const paddedSubtitle = padToDisplayWidth(subtitleText, 30)
-  const paddedTitle = padToDisplayWidth('ccx-kit', 60)
+  const innerWidth = 62
+  const title = 'ccx-kit'
 
-  console.log(
-    ansis.cyan.bold(`
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║   ██████╗ ██████╗ ██╗  ██╗                                 ║
-║   ██╔════╝██╔══██╗╚██╗██╔╝                                 ║
-║   ██║     ██║  ██║ ╚███╔╝                                  ║
-║   ██║     ██║  ██║ ██╔██╗                                  ║
-║   ╚██████╗██████╔╝██╔╝ ██╗                                ║
-║    ╚═════╝╚═════╝ ╚═╝  ╚═╝     ${ansis.gray(paddedSubtitle)} ║
-║                                                              ║
-║   ${ansis.white.bold(paddedTitle)} ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
-`),
-  )
+  const renderLine = (content = ''): string => `║${padToDisplayWidth(content, innerWidth)}║`
+
+  const lines = [
+    '╔══════════════════════════════════════════════════════════════╗',
+    renderLine(),
+    renderLine('   ██████╗ ██████╗██╗  ██╗'),
+    renderLine('  ██╔════╝██╔════╝██║ ██╔╝'),
+    renderLine('  ██║     ██║     █████╔╝'),
+    renderLine('  ██║     ██║     ██╔═██╗'),
+    renderLine('  ╚██████╗╚██████╗██║  ██╗'),
+    renderLine('   ╚═════╝ ╚═════╝╚═╝  ╚═╝'),
+    renderLine(),
+    renderLine(`  ${subtitleText}`),
+    renderLine(),
+    renderLine(`  ${title}`),
+    renderLine(),
+    '╚══════════════════════════════════════════════════════════════╝',
+  ]
+
+  console.log(ansis.cyan.bold(`\n${lines.join('\n')}\n`))
 }
 
 export function displayBannerWithInfo(subtitle?: string): void {
