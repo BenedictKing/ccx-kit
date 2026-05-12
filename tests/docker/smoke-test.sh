@@ -253,38 +253,64 @@ cat > "${CCX_RUNTIME}/.config/config.json" <<'JSON'
 {
   "upstream": [
     {
-      "name": "mimo-messages-priority-1",
+      "name": "mimo-claude-priority-1",
       "baseUrl": "http://127.0.0.1:3999",
       "apiKeys": ["sk-mimo-upstream"],
       "serviceType": "claude",
       "status": "active",
       "priority": 0,
-      "supportedModels": ["mimo-vl-pro", "claude-3-5-sonnet"],
       "modelMapping": {
-        "claude-3-5-sonnet": "mimo-vl-pro"
+        "haiku":  "mimo-v2.5-pro",
+        "opus":   "mimo-v2.5-pro",
+        "sonnet": "mimo-v2.5-pro"
       }
     },
     {
-      "name": "deepseek-messages-priority-2",
+      "name": "deepseek-claude-priority-2",
       "baseUrl": "http://127.0.0.1:3999",
       "apiKeys": ["sk-deepseek-upstream"],
-      "serviceType": "openai",
+      "serviceType": "claude",
       "status": "active",
       "priority": 1,
-      "supportedModels": ["deepseek-chat"]
+      "modelMapping": {
+        "haiku":  "deepseek-v4-flash",
+        "opus":   "deepseek-v4-pro",
+        "sonnet": "deepseek-v4-pro"
+      }
+    },
+    {
+      "name": "deepseek-openai-priority-3",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-deepseek-openai-upstream"],
+      "serviceType": "openai",
+      "status": "active",
+      "priority": 2,
+      "modelMapping": {
+        "haiku":  "gpt-5.3-codex",
+        "opus":   "gpt-5.5",
+        "sonnet": "gpt-5.4"
+      },
+      "reasoningMapping": {
+        "haiku":  "high",
+        "opus":   "xhigh",
+        "sonnet": "xhigh"
+      }
     }
   ],
   "responsesUpstream": [
     {
-      "name": "deepseek-responses-priority-1",
+      "name": "deepseek-openai-responses-priority-1",
       "baseUrl": "http://127.0.0.1:3999",
-      "apiKeys": ["sk-deepseek-upstream"],
+      "apiKeys": ["sk-deepseek-openai-upstream"],
       "serviceType": "openai",
       "status": "active",
       "priority": 0,
-      "supportedModels": ["deepseek-chat", "gpt-5.2"],
       "modelMapping": {
-        "gpt-5.2": "deepseek-chat"
+        "pro":  "deepseek-v4-pro",
+        "mini": "deepseek-v4-flash"
+      },
+      "reasoningMapping": {
+        "pro":  "max"
       }
     },
     {
@@ -294,20 +320,13 @@ cat > "${CCX_RUNTIME}/.config/config.json" <<'JSON'
       "serviceType": "claude",
       "status": "active",
       "priority": 1,
-      "supportedModels": ["mimo-vl-pro"]
+      "modelMapping": {
+        "pro":  "mimo-v2.5-pro",
+        "mini": "mimo-v2.5"
+      }
     }
   ],
-  "chatUpstream": [
-    {
-      "name": "deepseek-chat-priority-1",
-      "baseUrl": "http://127.0.0.1:3999",
-      "apiKeys": ["sk-deepseek-upstream"],
-      "serviceType": "openai",
-      "status": "active",
-      "priority": 0,
-      "supportedModels": ["deepseek-chat"]
-    }
-  ],
+  "chatUpstream": [],
   "geminiUpstream": [],
   "fuzzyModeEnabled": true,
   "stripBillingHeader": true
@@ -366,9 +385,9 @@ if (!res.ok) {
 console.log(text)
 NODE
 ) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Claude Code CLI request failed"; }
-echo "${CLAUDE_RESP}" | grep -q 'mimo-vl-pro' || fail "Claude Code: upstream did not receive modelMapping redirect to mimo-vl-pro"
+echo "${CLAUDE_RESP}" | grep -q 'mimo-v2.5-pro' || fail "Claude Code: upstream did not receive modelMapping redirect to mimo-v2.5-pro"
 echo "${CLAUDE_RESP}" | grep -q 'mimo-ok' || fail "Claude Code: mimo upstream response not received"
-ok "Claude Code CLI: modelMapping redirect verified (claude-3-5-sonnet → mimo-vl-pro via mimo channel)"
+ok "Claude Code CLI: modelMapping redirect verified (claude-3-5-sonnet → mimo-v2.5-pro via mimo channel)"
 
 # ============================================================
 #  9c. Codex CLI simulation
@@ -376,8 +395,9 @@ ok "Claude Code CLI: modelMapping redirect verified (claude-3-5-sonnet → mimo-
 # Codex sends requests to CCX with:
 #   - authorization: Bearer header
 #   - Responses API format (input array, not messages)
-# With modelMapping: gpt-5.2 → deepseek-chat (routed to deepseek channel)
-log "Codex CLI: sending Responses request (model=gpt-5.2, expect deepseek + modelMapping)"
+#   - model alias "pro" → CCX routes to deepseek-openai →
+#     modelMapping: pro → deepseek-v4-pro, reasoning: max
+log "Codex CLI: sending Responses request (model=pro, expect deepseek-openai + modelMapping + reasoning)"
 CODEX_RESP=$(node - <<'NODE'
 const res = await fetch('http://127.0.0.1:3688/v1/responses', {
   method: 'POST',
@@ -386,7 +406,7 @@ const res = await fetch('http://127.0.0.1:3688/v1/responses', {
     'authorization': 'Bearer sk-ccx-kit'
   },
   body: JSON.stringify({
-    model: 'gpt-5.2',
+    model: 'pro',
     stream: false,
     input: [
       { role: 'user', content: [{ type: 'input_text', text: 'hello from Codex CLI' }] }
@@ -401,9 +421,9 @@ if (!res.ok) {
 console.log(text)
 NODE
 ) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Codex CLI request failed"; }
-echo "${CODEX_RESP}" | grep -q 'deepseek-chat' || fail "Codex: upstream did not receive modelMapping redirect to deepseek-chat"
+echo "${CODEX_RESP}" | grep -q 'deepseek-v4-pro' || fail "Codex: upstream did not receive modelMapping redirect to deepseek-v4-pro"
 echo "${CODEX_RESP}" | grep -q 'deepseek-ok' || fail "Codex: deepseek upstream response not received"
-ok "Codex CLI: modelMapping redirect verified (gpt-5.2 → deepseek-chat via deepseek channel)"
+ok "Codex CLI: modelMapping redirect verified (pro → deepseek-v4-pro via deepseek-openai channel)"
 
 # ============================================================
 #  9d. Verify upstream request log
@@ -414,22 +434,23 @@ const fs = require('node:fs')
 const logPath = process.argv[2]
 const rows = fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse)
 
-// Claude Code → mimo: Messages endpoint, mimo key, model redirected to mimo-vl-pro
+// Claude Code → mimo: Messages endpoint, mimo key, model redirected to mimo-v2.5-pro
 const claudeRow = rows.find(r =>
   r.url.includes('/v1/messages') &&
   r.authorization === 'Bearer sk-mimo-upstream' &&
-  r.model === 'mimo-vl-pro'
+  r.model === 'mimo-v2.5-pro'
 )
 
-// Codex → deepseek: OpenAI chat/completions endpoint, deepseek key, model redirected to deepseek-chat
+// Codex → deepseek-openai: OpenAI chat/completions endpoint, deepseek-openai key,
+// model redirected from "pro" to deepseek-v4-pro
 const codexRow = rows.find(r =>
   r.url.includes('/chat/completions') &&
-  r.authorization === 'Bearer sk-deepseek-upstream' &&
-  r.model === 'deepseek-chat'
+  r.authorization === 'Bearer sk-deepseek-openai-upstream' &&
+  r.model === 'deepseek-v4-pro'
 )
 
 if (!claudeRow) {
-  console.error('Missing: Claude Code → mimo request with modelMapping redirect')
+  console.error('Missing: Claude Code → mimo request with modelMapping redirect to mimo-v2.5-pro')
   console.error('Upstream log rows:')
   for (const r of rows) {
     console.error(`  ${r.url} auth=${r.authorization} model=${r.model}`)
@@ -438,7 +459,7 @@ if (!claudeRow) {
 }
 
 if (!codexRow) {
-  console.error('Missing: Codex → deepseek request with modelMapping redirect')
+  console.error('Missing: Codex → deepseek-openai request with modelMapping redirect to deepseek-v4-pro')
   console.error('Upstream log rows:')
   for (const r of rows) {
     console.error(`  ${r.url} auth=${r.authorization} model=${r.model}`)
@@ -451,7 +472,7 @@ console.log(JSON.stringify({
   codex:       { url: codexRow.url,   auth: codexRow.authorization,   model: codexRow.model },
 }))
 NODE
-ok "upstream log confirms: Claude Code → mimo, Codex → deepseek, with correct key routing and modelMapping"
+ok "upstream log confirms: Claude Code → mimo (mimo-v2.5-pro), Codex → deepseek (deepseek-v4-pro), with correct key routing"
 
 # -------- 10. All green --------------------------------------------------
 printf '\n\033[1;32m%s\033[0m\n' "✔ ccx-kit + CCX runtime + CLI simulation smoke test passed"
