@@ -74,7 +74,7 @@ const LANGUAGE_SELECTION_MESSAGES = {
 } as const
 
 /**
- * Select ZCF display language (for first-time users or when config is not found)
+ * Select CCX-Kit display language (for first-time users or when config is not found)
  * Note: Uses hardcoded bilingual messages since i18n is not initialized at this point
  */
 export async function selectScriptLanguage(currentLang?: SupportedLang): Promise<SupportedLang> {

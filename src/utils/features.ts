@@ -57,7 +57,7 @@ async function handleOfficialLoginMode(): Promise<void> {
 async function handleCustomApiMode(): Promise<void> {
   ensureI18nInitialized()
 
-  // Get current code tool type from ZCF config
+  // Get current code tool type from CCX-Kit config
   const appConfig = readAppConfig()
   const codeToolType = appConfig?.codeToolType || 'claude-code'
 

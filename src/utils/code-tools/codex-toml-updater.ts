@@ -182,10 +182,10 @@ export function deleteCodexProvider(providerId: string): void {
  * Only modifies: mcp_servers.{serviceId}
  * Does NOT touch: model_providers, top-level fields, other MCP services
  *
- * IMPORTANT: This preserves existing fields that ZCF doesn't manage (like 'url' for SSE services)
+ * IMPORTANT: This preserves existing fields that CCX-Kit doesn't manage (like 'url' for SSE services)
  *
  * @param serviceId - Service ID
- * @param service - Service configuration (only ZCF-managed fields)
+ * @param service - Service configuration (only CCX-Kit-managed fields)
  */
 export function upsertCodexMcpService(serviceId: string, service: CodexMcpService): void {
   if (!exists(CODEX_CONFIG_FILE)) {

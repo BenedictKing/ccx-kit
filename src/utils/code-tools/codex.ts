@@ -48,7 +48,7 @@ export interface CodexMcpService {
   args: string[]
   env?: Record<string, string>
   startup_timeout_sec?: number
-  // Preserve all extra configuration fields not directly managed by ZCF
+  // Preserve all extra configuration fields not directly managed by CCX-Kit
   extraFields?: Record<string, any>
 }
 
@@ -58,7 +58,7 @@ export interface CodexConfigData {
   providers: CodexProvider[]
   mcpServices: CodexMcpService[]
   managed: boolean
-  otherConfig?: string[] // Lines that are not managed by ZCF
+  otherConfig?: string[] // Lines that are not managed by CCX-Kit
   modelProviderCommented?: boolean // Whether model_provider line should be commented out
 }
 
@@ -357,7 +357,7 @@ export function migrateEnvKeyToTempEnvKey(): boolean {
     // Write migrated content
     writeFile(CODEX_CONFIG_FILE, migratedContent)
 
-    // Update ZCF config to mark migration as complete
+    // Update CCX-Kit config to mark migration as complete
     updateTomlConfig(APP_CONFIG_FILE, {
       codex: {
         envKeyMigrated: true,
@@ -445,7 +445,7 @@ export function migrateEnvKeyInContent(content: string): string {
  * This should be called before any Codex config modification operation
  */
 export function ensureEnvKeyMigration(): void {
-  // Check ZCF config to see if migration has already been done
+  // Check CCX-Kit config to see if migration has already been done
   const tomlConfig = readDefaultTomlConfig()
 
   // Skip if already migrated
@@ -510,13 +510,13 @@ export function parseCodexConfig(content: string): CodexConfigData {
     // Extract MCP services from [mcp_servers.*] sections
     const mcpServices: CodexMcpService[] = []
     if (tomlData.mcp_servers) {
-      // Define known fields that ZCF directly manages
+      // Define known fields that CCX-Kit directly manages
       const KNOWN_MCP_FIELDS = new Set(['command', 'args', 'env', 'startup_timeout_sec'])
 
       for (const [id, mcpData] of Object.entries(tomlData.mcp_servers)) {
         const mcp = mcpData as any
 
-        // Collect extra fields not directly managed by ZCF
+        // Collect extra fields not directly managed by CCX-Kit
         const extraFields: Record<string, any> = {}
         for (const [key, value] of Object.entries(mcp)) {
           if (!KNOWN_MCP_FIELDS.has(key)) {
@@ -567,10 +567,10 @@ export function parseCodexConfig(content: string): CodexConfigData {
           continue
         }
 
-        // Skip comments (but reset inSection flag for ZCF comments)
+        // Skip comments (but reset inSection flag for CCX-Kit comments)
         if (trimmedLine.startsWith('#')) {
           if (trimmedLine.includes('--- model provider added by CCX-Kit ---')) {
-            inSection = false // ZCF comments mark global config area
+            inSection = false // CCX-Kit comments mark global config area
           }
           continue
         }
@@ -593,7 +593,7 @@ export function parseCodexConfig(content: string): CodexConfigData {
       }
     }
 
-    // Preserve other configuration (line-scan, skip ZCF-managed sections/fields)
+    // Preserve other configuration (line-scan, skip CCX-Kit-managed sections/fields)
     const otherConfig: string[] = []
     const lines = content.split('\n')
     let skipCurrentSection = false
@@ -603,7 +603,7 @@ export function parseCodexConfig(content: string): CodexConfigData {
       if (!trimmed)
         continue
 
-      // Skip ZCF managed comments/headers
+      // Skip CCX-Kit managed comments/headers
       if (/^#\s*---\s*model provider added by CCX-Kit\s*---\s*$/i.test(trimmed))
         continue
       if (/^#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/i.test(trimmed))
@@ -616,7 +616,7 @@ export function parseCodexConfig(content: string): CodexConfigData {
       if (sec) {
         const name = sec[1]
         skipCurrentSection = name.startsWith('model_providers.') || name.startsWith('mcp_servers.')
-        // Do not push the section header if it's ZCF-managed; allow non-managed sections to pass
+        // Do not push the section header if it's CCX-Kit-managed; allow non-managed sections to pass
         if (skipCurrentSection)
           continue
         otherConfig.push(line)
@@ -655,7 +655,7 @@ export function parseCodexConfig(content: string): CodexConfigData {
 
     // Clean previously managed sections to avoid duplication on subsequent renders
     const cleaned = content
-      // Remove ZCF headers
+      // Remove CCX-Kit headers
       .replace(/^\s*#\s*---\s*model provider added by CCX-Kit\s*---\s*$/gim, '')
       .replace(/^\s*#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/gim, '')
       // Remove entire [model_providers.*] and [mcp_servers.*] blocks
@@ -814,7 +814,7 @@ export function readCodexConfig(): CodexConfigData | null {
 export function renderCodexConfig(data: CodexConfigData): string {
   const lines: string[] = []
 
-  // CRITICAL: Add ZCF global configuration FIRST to ensure it's truly global
+  // CRITICAL: Add CCX-Kit global configuration FIRST to ensure it's truly global
   // This prevents TOML parser from incorrectly assigning global keys to sections
   if (data.model || data.modelProvider || data.providers.length > 0 || data.modelProviderCommented) {
     lines.push('# --- model provider added by CCX-Kit ---')
@@ -833,13 +833,13 @@ export function renderCodexConfig(data: CodexConfigData): string {
     lines.push('')
   }
 
-  // Add preserved non-ZCF configuration after global config
+  // Add preserved non-CCX-Kit configuration after global config
   if (data.otherConfig && data.otherConfig.length > 0) {
     const preserved = data.otherConfig.filter((raw) => {
       const l = String(raw).trim()
       if (!l)
         return false
-      // Guard: never re-insert any ZCF-managed headers/sections/fields
+      // Guard: never re-insert any CCX-Kit-managed headers/sections/fields
       if (/^#\s*---\s*model provider added by CCX-Kit\s*---\s*$/i.test(l))
         return false
       if (/^#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/i.test(l))
@@ -1215,7 +1215,7 @@ export async function runCodexSystemPromptSelection(skipPrompt = false): Promise
   // Write to AGENTS.md
   writeFile(CODEX_AGENTS_FILE, content)
 
-  // Update ZCF configuration to save the selected system prompt style
+  // Update CCX-Kit configuration to save the selected system prompt style
   try {
     const { updateTomlConfig } = await import('../app-config')
     const { APP_CONFIG_FILE } = await import('../../constants')
@@ -1228,7 +1228,7 @@ export async function runCodexSystemPromptSelection(skipPrompt = false): Promise
   }
   catch (error) {
     // Silently handle config update failure - the main functionality (writing AGENTS.md) has succeeded
-    console.error('Failed to update ZCF config:', error)
+    console.error('Failed to update CCX-Kit config:', error)
   }
 }
 

@@ -273,7 +273,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
   }
 
   try {
-    // Step 2: Read ZCF config once for multiple uses
+    // Step 2: Read CCX-Kit config once for multiple uses
     const appConfig = readAppConfig()
 
     // Step 3: Select code tool
@@ -478,7 +478,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
       })
       updateAppConfig({
         version,
-        preferredLang: i18n.language as SupportedLang, // ZCF界面语言
+        preferredLang: i18n.language as SupportedLang, // CCX-Kit界面语言
         templateLang: configLang, // 模板语言
         aiOutputLang: resolvedAiOutputLang
           ?? options.aiOutputLang
@@ -665,7 +665,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
             options.apiOpusModel = options.apiOpusModel || opus
           }
 
-          // Save configuration to ZCF TOML config for persistence and switching
+          // Save configuration to CCX-Kit TOML config for persistence and switching
           await saveSingleConfigToToml(apiConfig, options.provider, options)
         }
         else if (options.apiType === 'auth_token' && options.apiKey) {
@@ -675,7 +675,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
             url: options.apiUrl || API_DEFAULT_URL,
           }
 
-          // Save configuration to ZCF TOML config for persistence and switching
+          // Save configuration to CCX-Kit TOML config for persistence and switching
           await saveSingleConfigToToml(apiConfig, undefined, options)
         }
         else if (options.apiType === 'api_key' && options.apiKey) {
@@ -685,7 +685,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
             url: options.apiUrl || API_DEFAULT_URL,
           }
 
-          // Save configuration to ZCF TOML config for persistence and switching
+          // Save configuration to CCX-Kit TOML config for persistence and switching
           await saveSingleConfigToToml(apiConfig, undefined, options)
         }
         else if (options.apiType === 'ccx_proxy' || options.apiType === 'ccr_proxy') {
@@ -1022,7 +1022,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
     // Step 12: Save zcf config
     updateAppConfig({
       version,
-      preferredLang: i18n.language as SupportedLang, // ZCF界面语言
+      preferredLang: i18n.language as SupportedLang, // CCX-Kit界面语言
       templateLang: configLang, // 模板语言
       aiOutputLang: aiOutputLang as AiOutputLanguage | string,
       codeToolType,
@@ -1262,7 +1262,7 @@ async function handleCodexConfigs(configs: ApiConfigDefinition[]): Promise<void>
  * @param options - Command line options for models
  */
 /**
- * Save single API configuration to ZCF TOML config
+ * Save single API configuration to CCX-Kit TOML config
  * Handles profile creation, switching, and error reporting
  * @param apiConfig - API configuration object
  * @param apiConfig.authType - API authentication type

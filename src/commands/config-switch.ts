@@ -50,7 +50,7 @@ export async function configSwitchCommand(options: ConfigSwitchOptions): Promise
 }
 
 /**
- * Resolve code type with priority: parameter > ZCF config > default value (claude-code)
+ * Resolve code type with priority: parameter > CCX-Kit config > default value (claude-code)
  * @param codeType - Code type from command line parameter (supports short aliases like 'cc', 'cx')
  */
 function resolveCodeType(codeType?: unknown): CodeToolType {
@@ -60,7 +60,7 @@ function resolveCodeType(codeType?: unknown): CodeToolType {
     return resolved
   }
 
-  // Fall back to ZCF config
+  // Fall back to CCX-Kit config
   const appConfig = readAppConfig()
   if (appConfig?.codeToolType && isCodeToolType(appConfig.codeToolType)) {
     return appConfig.codeToolType

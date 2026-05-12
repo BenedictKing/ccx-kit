@@ -335,7 +335,7 @@ export async function configureOutputStyle(
   // Set global default output style
   setGlobalDefaultOutputStyle(defaultStyle)
 
-  // Update ZCF config
+  // Update CCX-Kit config
   updateAppConfig({
     outputStyles: selectedStyles,
     defaultOutputStyle: defaultStyle,

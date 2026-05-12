@@ -30,7 +30,7 @@ export interface UninstallResult {
 }
 
 /**
- * ZCF Uninstaller - Handles removal of ZCF configurations and tools
+ * CCX-Kit Uninstaller - Handles removal of CCX-Kit configurations and tools
  */
 export class CcxKitUninstaller {
   private _lang: SupportedLang // Reserved for future i18n support
@@ -456,7 +456,7 @@ export class CcxKitUninstaller {
   }
 
   /**
-   * 11. Remove ZCF preference configuration
+   * 11. Remove CCX-Kit preference configuration
    */
   async removeAppConfig(): Promise<UninstallResult> {
     const result: UninstallResult = {

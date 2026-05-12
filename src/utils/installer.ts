@@ -551,7 +551,7 @@ export async function setInstallMethod(method: InstallMethod, codeType: CodeType
       writeMcpConfig(config)
     }
 
-    // Note: ZCF TOML config doesn't have direct TOML read/write functions
+    // Note: CCX-Kit TOML config doesn't have direct TOML read/write functions
     // Installation method tracking is handled through Claude Code config
     // This is intentional to maintain backwards compatibility
   }
