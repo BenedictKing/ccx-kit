@@ -249,21 +249,24 @@ The project uses Vitest with a comprehensive layered testing approach:
 
 ## Version Management
 
-ZCF uses [Changeset](https://github.com/changesets/changesets) for version management:
+ZCF uses a version-bump skill + git tag triggered CI for version management:
 
 ```bash
-# 1. Create a changeset (describe your changes)
-pnpm changeset
+# 1. Update version in package.json
+npm version {patch|minor|major} --no-git-tag-version
 
-# 2. Update version in package.json
-pnpm version
+# 2. Update CHANGELOG.md with bilingual content
 
-# 3. Build and publish to npm
-pnpm release
+# 3. Commit, tag, and push
+git commit -m "chore: bump version to X.Y.Z"
+git tag vX.Y.Z
+git push && git push origin vX.Y.Z
+
+# 4. GitHub Actions auto-publishes to npm on tag push
 ```
 
 **Version number location:**
-- Primary: `package.json` - `"version": "3.6.1"`
+- Primary: `package.json` - `"version": "1.0.0"`
 - Displayed in banner via: `import { version } from '../../package.json'`
 
 ## Development Guidelines
@@ -410,14 +413,15 @@ graph TD
 ## Release & Publishing
 
 ```bash
-# Create a changeset for version updates
-pnpm changeset
+# Bump version (e.g., patch)
+npm version patch --no-git-tag-version
 
-# Update package version based on changesets
-pnpm version
+# Update CHANGELOG.md, commit, tag, and push
+git commit -m "chore: bump version to X.Y.Z"
+git tag vX.Y.Z
+git push && git push origin vX.Y.Z
 
-# Build and publish to npm
-pnpm release
+# GitHub Actions auto-publishes to npm on v* tag push
 ```
 
 ---

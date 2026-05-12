@@ -1,6 +1,6 @@
 ---
-description: Automate version release and code commit using changeset
-allowed-tools: Read(**), Exec(git, pnpm, node, date, cat, gh)
+description: 升级版本号并发布，使用 version-bump skill 流程
+allowed-tools: Bash, Read, Edit
 argument-hint: [-p|--patch] [-mi|--minor] [-ma|--major] [<version>]
 # examples:
 #   - /ccx-kit-release                     # Default patch version bump
@@ -11,9 +11,7 @@ argument-hint: [-p|--patch] [-mi|--minor] [-ma|--major] [<version>]
 #   - /ccx-kit-release 3.0.0-alpha.1       # Pre-release version (→ 3.0.0-alpha.1)
 ---
 
-# CCX-Kit Release - Automated Release and Commit
-
-Automate version release and code commit using changeset.
+# CCX-Kit Version Bump & Release
 
 ## Usage
 
@@ -26,23 +24,7 @@ Automate version release and code commit using changeset.
 - `-p` or `--patch`: Patch version (default) - bug fixes, minor changes
 - `-mi` or `--minor`: Minor version - new features, backward compatible
 - `-ma` or `--major`: Major version - breaking changes, incompatible
-- `<version>`: Specific version number (e.g., 1.2.3, 2.0.0-beta.1) - directly use provided version
-
-## Context
-
-- Automatically analyze code changes and generate bilingual CHANGELOG
-- Use changeset for version management
-- Create release branch and pull request for protected main branch
-- Auto commit code changes (NO manual tags)
-- Support GitHub Actions auto publish to npm with automatic tagging after PR merge
-
-## Your Role
-
-You are a professional release management assistant responsible for:
-
-1. Analyzing code changes
-2. Generating standardized CHANGELOG
-3. Executing version release process
+- `<version>`: Specific version number (e.g., 1.2.3) - directly use provided version
 
 ## Execution Flow
 
@@ -52,416 +34,115 @@ Parse arguments: $ARGUMENTS
 
 ```bash
 VERSION_TYPE="patch"  # Default to patch version
-SPECIFIC_VERSION=""   # For user-specified exact version
+SPECIFIC_VERSION=""
 
-# Check if argument looks like a version number (matches semver pattern)
 if [[ "$ARGUMENTS" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-].*)?$ ]]; then
   SPECIFIC_VERSION="$ARGUMENTS"
   VERSION_TYPE="custom"
-  echo "🚀 Preparing to release exact version: $SPECIFIC_VERSION"
+  echo "Preparing to release exact version: $SPECIFIC_VERSION"
 else
   case "$ARGUMENTS" in
-    -p|--patch)
-      VERSION_TYPE="patch"
-      ;;
-    -mi|--minor)
-      VERSION_TYPE="minor"
-      ;;
-    -ma|--major)
-      VERSION_TYPE="major"
-      ;;
-    "")
-      VERSION_TYPE="patch"
-      ;;
+    -p|--patch)  VERSION_TYPE="patch" ;;
+    -mi|--minor) VERSION_TYPE="minor" ;;
+    -ma|--major) VERSION_TYPE="major" ;;
+    "")          VERSION_TYPE="patch" ;;
     *)
-      echo "❌ Unknown parameter: $ARGUMENTS"
+      echo "Unknown parameter: $ARGUMENTS"
       echo "Usage: /ccx-kit-release [-p|-mi|-ma|<version>]"
-      echo "Examples:"
-      echo "  /ccx-kit-release -p          # Patch version bump"
-      echo "  /ccx-kit-release -mi         # Minor version bump"
-      echo "  /ccx-kit-release -ma         # Major version bump"
-      echo "  /ccx-kit-release 1.2.3       # Exact version"
-      echo "  /ccx-kit-release 2.0.0-beta.1 # Pre-release version"
       exit 1
       ;;
   esac
-  echo "🚀 Preparing to release $VERSION_TYPE version"
+  echo "Preparing to release $VERSION_TYPE version"
 fi
 ```
 
-### 2. Check Working Directory Status
-
-Check if the current working directory meets release conditions:
+### 2. Read Current Version
 
 ```bash
-# Ensure in project root directory
-if [ ! -f "package.json" ]; then
-  echo "❌ Error: package.json not found, please run in project root"
-  exit 1
-fi
-
-# Check for uncommitted changes and handle automatically
-HAS_UNCOMMITTED=false
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "⚠️  Detected uncommitted changes:"
-  git status --short
-  echo ""
-  HAS_UNCOMMITTED=true
-fi
-
-echo "✅ Working directory status OK"
+CURRENT_VERSION=$(node -p "require('./package.json').version")
+echo "Current version: $CURRENT_VERSION"
 ```
 
-### 3. Analyze Version Changes
+### 3. Calculate New Version
 
-Analyze all changes since last release:
+- patch: increment patch number
+- minor: increment minor, reset patch
+- major: increment major, reset minor and patch
+- custom: use the specified version directly
+
+### 4. Update package.json
 
 ```bash
-# Get last release tag
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-if [ -z "$LAST_TAG" ]; then
-  echo "📊 No previous version tag found, analyzing all commits"
-  COMMITS=$(git log --oneline)
-else
-  echo "📊 Last version: $LAST_TAG"
-  echo "Analyzing changes since $LAST_TAG..."
-  COMMITS=$(git log $LAST_TAG..HEAD --oneline)
-fi
-
-# Show commit history
-echo -e "\n📝 Changes:"
-echo "$COMMITS"
-
-# Analyze file changes
-echo -e "\n📁 File change statistics:"
-if [ -z "$LAST_TAG" ]; then
-  git diff --stat
-else
-  git diff --stat $LAST_TAG..HEAD
-fi
+npm version $NEW_VERSION --no-git-tag-version
 ```
 
-### 4. Generate CHANGELOG Content
+### 5. Update CHANGELOG.md
 
-Based on code change analysis, I will generate CHANGELOG following these standards:
-
-**Format Requirements**:
-
-1. English description first, Chinese description second
-2. No mixing Chinese and English on the same line
-3. Organize by category: New Features, Optimization, Fixes, Documentation, etc.
-4. Each entry should be concise and clear
-
-**Example Format**:
+Replace `[Unreleased]` with the new version and date:
 
 ```markdown
-## New Features
+# Before
+## [Unreleased]
 
-- Add technical execution guidelines with command best practices
-- Support automated release command /ccx-kit-release
-- Automatic quote handling for Windows paths
-
-## 新功能
-
-- 添加技术执行指南文档，提供命令执行最佳实践
-- 支持自动化发版命令 /ccx-kit-release
-- Windows 路径自动加引号处理
-
-## Optimization
-
-- Prioritize ripgrep for better search performance
-- Improve template file organization
-
-## 优化
-
-- 优先使用 ripgrep 提升搜索性能
-- 改进模板文件组织结构
-
-## Fixes
-
-- Fix Windows path backslash escaping issue
-
-## 修复
-
-- 修复 Windows 路径反斜杠丢失问题
+# After
+## [$NEW_VERSION] - YYYY-MM-DD
 ```
 
-### 5. Create Changeset
+Then add bilingual change content (English first, Chinese second) based on git log since the last tag.
 
-Create changeset file based on analysis:
+### 6. Build Verification
 
 ```bash
-# Generate timestamp
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
-CHANGESET_FILE=".changeset/release-$TIMESTAMP.md"
-
-# Create changeset file
-echo "📝 Creating changeset file..."
-if [ "$VERSION_TYPE" = "custom" ]; then
-  # For specific version, use the exact version number
-  cat > "$CHANGESET_FILE" << EOF
----
-"zcf": $SPECIFIC_VERSION
----
-
-[Bilingual CHANGELOG content generated based on actual changes]
-EOF
-  echo "✅ Changeset file created with exact version: $SPECIFIC_VERSION"
-else
-  # For version type (patch/minor/major), use the type
-  cat > "$CHANGESET_FILE" << EOF
----
-"zcf": $VERSION_TYPE
----
-
-[Bilingual CHANGELOG content generated based on actual changes]
-EOF
-  echo "✅ Changeset file created with version type: $VERSION_TYPE"
-fi
+pnpm lint && pnpm typecheck && pnpm build
 ```
 
-### 6. Update Version Number
-
-Use changeset to update version number and CHANGELOG:
+### 7. Review Changes
 
 ```bash
-echo "🔄 Updating version number and CHANGELOG..."
-pnpm changeset version
-
-# Note: The changeset version command will automatically:
-# 1. Update package.json version
-# 2. Generate/update CHANGELOG.md
-# 3. DELETE the temporary changeset file in .changeset/ directory
-# No manual cleanup needed!
-
-# Get new version number
-NEW_VERSION=$(node -p "require('./package.json').version")
-if [ "$VERSION_TYPE" = "custom" ]; then
-  echo "📦 New version set to: v$NEW_VERSION (specified: $SPECIFIC_VERSION)"
-else
-  echo "📦 New version: v$NEW_VERSION"
-fi
-
-# Show CHANGELOG update
-echo -e "\n📋 CHANGELOG has been updated, please review the content"
-echo "✅ Temporary changeset file has been automatically deleted"
+git status
+git diff --stat
 ```
 
-### 7. Create Release Branch and Handle Commits
+Show the user pending changes and wait for confirmation.
 
-Create release branch first, then handle commits separately to avoid polluting main branch:
+### 8. Commit
 
-````bash
-echo "🚀 Creating release branch..."
-
-# Create and switch to release branch
-RELEASE_BRANCH="release/v$NEW_VERSION"
-git checkout -b "$RELEASE_BRANCH"
-
-# Handle uncommitted changes first (if any)
-if [ "$HAS_UNCOMMITTED" = true ]; then
-  echo "📝 Committing pre-release changes..."
-  
-  # Stage only the uncommitted changes (exclude changeset modifications)
-  git add .
-  git reset HEAD package.json CHANGELOG.md 2>/dev/null || true
-  
-  # Check if there are still changes to commit after reset
-  if ! git diff --quiet --staged; then
-    # Analyze the staged changes to generate appropriate commit message
-    echo "🔍 Analyzing uncommitted changes..."
-    CHANGED_FILES=$(git diff --staged --name-only)
-    
-    # Generate commit message based on changed files
-    COMMIT_TYPE="chore"
-    COMMIT_SCOPE=""
-    COMMIT_DESCRIPTION="pre-release changes"
-    
-    # Analyze file patterns to determine commit type and scope
-    if echo "$CHANGED_FILES" | grep -E "\.(md|txt)$" >/dev/null; then
-      if echo "$CHANGED_FILES" | grep -i "readme" >/dev/null; then
-        COMMIT_TYPE="docs"
-        COMMIT_SCOPE="readme"
-        COMMIT_DESCRIPTION="update README documentation"
-      elif echo "$CHANGED_FILES" | grep -E "\.claude/" >/dev/null; then
-        COMMIT_TYPE="docs"
-        COMMIT_SCOPE="commands"
-        COMMIT_DESCRIPTION="update command documentation"
-      else
-        COMMIT_TYPE="docs"
-        COMMIT_DESCRIPTION="update documentation"
-      fi
-    elif echo "$CHANGED_FILES" | grep -E "\.(ts|js|tsx|jsx)$" >/dev/null; then
-      if echo "$CHANGED_FILES" | grep -E "test|spec" >/dev/null; then
-        COMMIT_TYPE="test"
-        COMMIT_DESCRIPTION="update tests"
-      else
-        COMMIT_TYPE="feat"
-        COMMIT_DESCRIPTION="code changes"
-      fi
-    elif echo "$CHANGED_FILES" | grep -E "\.json$" >/dev/null; then
-      if echo "$CHANGED_FILES" | grep "package" >/dev/null; then
-        COMMIT_TYPE="chore"
-        COMMIT_DESCRIPTION="update dependencies"
-      else
-        COMMIT_TYPE="chore"
-        COMMIT_DESCRIPTION="update configuration"
-      fi
-    fi
-    
-    # Build commit message
-    if [ -n "$COMMIT_SCOPE" ]; then
-      COMMIT_MSG="${COMMIT_TYPE}(${COMMIT_SCOPE}): ${COMMIT_DESCRIPTION}"
-    else
-      COMMIT_MSG="${COMMIT_TYPE}: ${COMMIT_DESCRIPTION}"
-    fi
-    
-    # Add file list to commit body
-    COMMIT_BODY=""
-    for file in $CHANGED_FILES; do
-      COMMIT_BODY="${COMMIT_BODY}- Update ${file}
-"
-    done
-    COMMIT_BODY="${COMMIT_BODY}
-🤖 Generated with [Claude Code](https://claude.ai/code)
-    
-    # Create the commit
-    git commit -m "${COMMIT_MSG}
-
-${COMMIT_BODY}"
-    
-    echo "✅ Pre-release changes committed: $COMMIT_MSG"
-  else
-    echo "ℹ️  No additional changes to commit after version update"
-  fi
-fi
-
-echo "💾 Committing release version changes..."
-
-# Add version-related changes
+```bash
 git add package.json CHANGELOG.md
+git commit -m "chore: bump version to $NEW_VERSION"
+```
 
-# Create release version commit
-git commit -m "chore: release v$NEW_VERSION
-
-- Update version to $NEW_VERSION
-- Update CHANGELOG.md
-- Generated by /ccx-kit-release command"
-
-# Push release branch to remote and set upstream tracking
-git push -u origin "$RELEASE_BRANCH"
-
-# If push fails due to conflicts, use force-with-lease to safely overwrite
-# git push --force-with-lease origin "$RELEASE_BRANCH"
-
-# Set upstream tracking if not set automatically
-git branch --set-upstream-to=origin/$RELEASE_BRANCH $RELEASE_BRANCH
-
-### 8. Create Pull Request
+### 9. Create Tag
 
 ```bash
-echo "📋 Creating pull request..."
+git tag v$NEW_VERSION
+```
 
-# Create pull request using gh CLI following the project's PR template
-gh pr create --title "🚀 Release v$NEW_VERSION" --body "$(cat <<'EOF'
-## Description
+Note: tag uses `v` prefix (e.g., `v1.0.0`), package.json does not.
 
-Release version v$NEW_VERSION with automated version bump and CHANGELOG update.
+### 10. Push
 
-This release includes important changes, please review CHANGELOG.md for details.
+```bash
+git push
+git push origin v$NEW_VERSION
+```
 
-## Type of Change
+### 11. Remind about npm publish
 
-- [x] New feature
-- [ ] Bug fix
-- [ ] Breaking change
-- [x] Documentation update
+npm publish requires OTP authentication, cannot be automated. Output reminder:
 
-## Testing
-
-- [x] Tests added/updated
-- [x] All tests pass
-- [x] Coverage maintained
-
-## Checklist
-
-- [x] Code follows style guidelines
-- [x] Self-review completed
-- [x] Documentation updated
-- [x] No new warnings introduced
-
-## Release Notes
-
-⚠️ **IMPORTANT**: After merge, GitHub Actions will automatically:
-- Create release tag
-- Publish to npm  
-- Generate GitHub Release
-
-🤖 Generated by /ccx-kit-release command
-EOF
-)"
-
-echo -e "\n✅ Release preparation complete!"
-echo "📦 Version v$NEW_VERSION is ready"
-echo "🔗 Pull request created successfully"
-echo ""
-echo "⚠️  IMPORTANT: Review and merge the PR to trigger the release"
-echo "⚠️  Do NOT create or push tags manually!"
-echo "🤖 After PR merge, GitHub Actions will automatically:"
-echo "   - Create the release tag"
-echo "   - Publish to npm"
-echo "   - Generate GitHub Release"
-echo "👀 View release status: https://github.com/UfoMiao/zcf/actions"
-````
-
-## Complete Workflow Summary
-
-1. **Preparation Phase**: Check parameters (version type or exact version), working directory status
-2. **Analysis Phase**: Analyze commit history and file changes
-3. **Generation Phase**: Create bilingual CHANGELOG
-4. **Execution Phase**: Update version (automatic bump or exact version)
-5. **Branch Creation Phase**: Create release branch BEFORE committing
-6. **Commit Phase**: Commit changes on release branch
-7. **PR Creation Phase**: Push release branch and create pull request
-8. **Review & Release Phase**: Manual PR review and merge, then GitHub Actions auto publish
+```
+请手动执行 `pnpm publish` 完成 npm 发布。
+```
 
 ## Important Notes
 
-⚠️ **CRITICAL**: **NEVER create or push Git tags manually!** GitHub Actions will automatically:
-
-- Create the version tag after successful PR merge
-- Generate GitHub Release
-- Publish to npm registry
-
-Manual tags will cause conflicts with the automated release process!
-
-### New Protected Branch Workflow:
-
-- 🛡️ **Main branch is protected**: Cannot push directly to main
-- 🌿 **Release branch created**: Automatic creation of `release/v{version}` branch
-- 📋 **Pull Request required**: All releases must go through PR review process
-- ✅ **Manual approval needed**: PR must be reviewed and merged manually
-- 🤖 **Auto-release after merge**: GitHub Actions triggers after PR merge
-
-### Additional Notes:
-
-- Ensure all code has been tested before running release command
-- CHANGELOG must follow bilingual format standards
-- When using version types (-p/-mi/-ma), choose the correct type for your changes
-- When providing exact version numbers, ensure they follow semantic versioning (e.g., 1.2.3, 2.0.0-beta.1)
-- Exact version numbers bypass automatic version determination - use carefully
-- Carefully review CHANGELOG content in the created PR before merging
-- **No manual cleanup needed**: `changeset version` automatically deletes temporary changeset files
-- The `.changeset/` directory should only contain config files, not temporary release files
-- **Requires `gh` CLI**: Ensure GitHub CLI is installed and authenticated for PR creation
-
-**Version Parameter Examples**:
-- `/ccx-kit-release` or `/ccx-kit-release -p` - Auto patch bump (2.9.11 → 2.9.12)
-- `/ccx-kit-release -mi` - Auto minor bump (2.9.11 → 2.10.0)  
-- `/ccx-kit-release -ma` - Auto major bump (2.9.11 → 3.0.0)
-- `/ccx-kit-release 1.5.0` - Exact version (→ 1.5.0)
-- `/ccx-kit-release 3.0.0-alpha.1` - Pre-release version (→ 3.0.0-alpha.1)
+- package.json version has no `v` prefix, git tag has `v` prefix
+- Must pass `pnpm lint && pnpm typecheck && pnpm build` before commit
+- Follow Conventional Commits: `chore: bump version to {version}`
+- CHANGELOG uses bilingual format: English first, Chinese second
+- `[Unreleased]` section must exist in CHANGELOG.md for replacement to work
+- GitHub Actions will auto-publish to npm when a `v*` tag is pushed
 
 ---
 

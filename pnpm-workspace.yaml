@@ -39,7 +39,6 @@ catalogs:
     glob: ^11.0.3
     vitest: ^3.2.4
   tooling:
-    '@changesets/cli': ^2.29.7
     '@commitlint/cli': ^19.8.1
     '@commitlint/config-conventional': ^19.8.1
     '@commitlint/types': ^19.8.1
