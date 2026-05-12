@@ -174,12 +174,15 @@ const server = http.createServer((req, res) => {
   req.setEncoding('utf8')
   req.on('data', chunk => { body += chunk })
   req.on('end', () => {
+    const parsed = body ? JSON.parse(body) : null
     const entry = {
+      ts: new Date().toISOString(),
       method: req.method,
       url: req.url,
       authorization: req.headers.authorization || '',
       xApiKey: req.headers['x-api-key'] || '',
-      body: body ? JSON.parse(body) : null,
+      model: parsed?.model || null,
+      body: parsed,
     }
     fs.appendFileSync(logFile, `${JSON.stringify(entry)}\n`)
 
@@ -189,7 +192,7 @@ const server = http.createServer((req, res) => {
         id: 'msg_fake_mimo',
         type: 'message',
         role: 'assistant',
-        content: [{ type: 'text', text: 'mimo-ok' }],
+        content: [{ type: 'text', text: `mimo-ok(${parsed?.model || 'unknown'})` }],
         stop_reason: 'end_turn',
         usage: { input_tokens: 1, output_tokens: 1 },
       }))
@@ -199,8 +202,8 @@ const server = http.createServer((req, res) => {
     if (req.url.includes('/chat/completions')) {
       res.end(JSON.stringify({
         id: 'chatcmpl_fake_deepseek',
-        model: 'deepseek-chat',
-        choices: [{ message: { role: 'assistant', content: 'deepseek-ok' }, finish_reason: 'stop' }],
+        model: parsed?.model || 'deepseek-chat',
+        choices: [{ message: { role: 'assistant', content: `deepseek-ok(${parsed?.model || 'unknown'})` }, finish_reason: 'stop' }],
         usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
       }))
       return
@@ -209,9 +212,9 @@ const server = http.createServer((req, res) => {
     if (req.url.includes('/responses')) {
       res.end(JSON.stringify({
         id: 'resp_fake',
-        model: 'gpt-5.2',
+        model: parsed?.model || 'gpt-5.2',
         status: 'completed',
-        output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: 'responses-ok' }] }],
+        output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: `responses-ok(${parsed?.model || 'unknown'})` }] }],
         usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
       }))
       return
@@ -256,7 +259,10 @@ cat > "${CCX_RUNTIME}/.config/config.json" <<'JSON'
       "serviceType": "claude",
       "status": "active",
       "priority": 0,
-      "supportedModels": ["mimo-vl-pro", "claude-3-5-sonnet"]
+      "supportedModels": ["mimo-vl-pro", "claude-3-5-sonnet"],
+      "modelMapping": {
+        "claude-3-5-sonnet": "mimo-vl-pro"
+      }
     },
     {
       "name": "deepseek-messages-priority-2",
@@ -276,7 +282,10 @@ cat > "${CCX_RUNTIME}/.config/config.json" <<'JSON'
       "serviceType": "openai",
       "status": "active",
       "priority": 0,
-      "supportedModels": ["deepseek-chat", "gpt-5.2"]
+      "supportedModels": ["deepseek-chat", "gpt-5.2"],
+      "modelMapping": {
+        "gpt-5.2": "deepseek-chat"
+      }
     },
     {
       "name": "mimo-responses-priority-2",
@@ -319,33 +328,56 @@ node -e "fetch('http://127.0.0.1:3688/health').then(r=>{if(!r.ok)process.exit(1)
   || { tail -80 "${CCX_LOG}" >&2 || true; fail "CCX did not become healthy"; }
 ok "CCX health endpoint is ready"
 
-log "sending Claude Messages request through CCX (expected upstream: mimo first)"
+# ============================================================
+#  9b. Claude Code CLI simulation
+# ============================================================
+# Claude Code sends requests to CCX with:
+#   - x-api-key header (proxy access key)
+#   - anthropic-version header
+#   - model in Messages format
+# With modelMapping: claude-3-5-sonnet → mimo-vl-pro (routed to mimo channel)
+log "Claude Code CLI: sending Messages request (model=claude-3-5-sonnet, expect mimo + modelMapping)"
 CLAUDE_RESP=$(node - <<'NODE'
 const res = await fetch('http://127.0.0.1:3688/v1/messages', {
   method: 'POST',
   headers: {
     'content-type': 'application/json',
     'x-api-key': 'sk-ccx-kit',
-    'anthropic-version': '2023-06-01'
+    'anthropic-version': '2023-06-01',
+    'anthropic-beta': 'claude-code-20250219,prompt-caching-2024-07-31'
   },
   body: JSON.stringify({
-    model: 'mimo-vl-pro',
-    max_tokens: 32,
-    messages: [{ role: 'user', content: [{ type: 'text', text: 'ping from claude-code' }] }]
+    model: 'claude-3-5-sonnet',
+    max_tokens: 64,
+    stream: false,
+    system: [
+      { type: 'text', text: 'You are a helpful assistant.', cache_control: { type: 'ephemeral' } }
+    ],
+    messages: [
+      { role: 'user', content: [{ type: 'text', text: 'hello from Claude Code CLI' }] }
+    ]
   })
 })
 const text = await res.text()
 if (!res.ok) {
-  console.error(text)
+  console.error(`status=${res.status} body=${text}`)
   process.exit(1)
 }
 console.log(text)
 NODE
-) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Claude Messages request failed"; }
-echo "${CLAUDE_RESP}" | grep -q 'mimo-ok' || fail "Claude response did not contain mimo-ok"
-ok "Claude Messages request succeeded"
+) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Claude Code CLI request failed"; }
+echo "${CLAUDE_RESP}" | grep -q 'mimo-vl-pro' || fail "Claude Code: upstream did not receive modelMapping redirect to mimo-vl-pro"
+echo "${CLAUDE_RESP}" | grep -q 'mimo-ok' || fail "Claude Code: mimo upstream response not received"
+ok "Claude Code CLI: modelMapping redirect verified (claude-3-5-sonnet → mimo-vl-pro via mimo channel)"
 
-log "sending Codex Responses request through CCX (expected upstream: deepseek first)"
+# ============================================================
+#  9c. Codex CLI simulation
+# ============================================================
+# Codex sends requests to CCX with:
+#   - authorization: Bearer header
+#   - Responses API format (input array, not messages)
+# With modelMapping: gpt-5.2 → deepseek-chat (routed to deepseek channel)
+log "Codex CLI: sending Responses request (model=gpt-5.2, expect deepseek + modelMapping)"
 CODEX_RESP=$(node - <<'NODE'
 const res = await fetch('http://127.0.0.1:3688/v1/responses', {
   method: 'POST',
@@ -354,34 +386,72 @@ const res = await fetch('http://127.0.0.1:3688/v1/responses', {
     'authorization': 'Bearer sk-ccx-kit'
   },
   body: JSON.stringify({
-    model: 'deepseek-chat',
-    input: [{ role: 'user', content: [{ type: 'input_text', text: 'ping from codex' }] }]
+    model: 'gpt-5.2',
+    stream: false,
+    input: [
+      { role: 'user', content: [{ type: 'input_text', text: 'hello from Codex CLI' }] }
+    ]
   })
 })
 const text = await res.text()
 if (!res.ok) {
-  console.error(text)
+  console.error(`status=${res.status} body=${text}`)
   process.exit(1)
 }
 console.log(text)
 NODE
-) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Codex Responses request failed"; }
-echo "${CODEX_RESP}" | grep -q 'deepseek-ok' || fail "Codex response did not contain deepseek-ok"
-ok "Codex Responses request succeeded"
+) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Codex CLI request failed"; }
+echo "${CODEX_RESP}" | grep -q 'deepseek-chat' || fail "Codex: upstream did not receive modelMapping redirect to deepseek-chat"
+echo "${CODEX_RESP}" | grep -q 'deepseek-ok' || fail "Codex: deepseek upstream response not received"
+ok "Codex CLI: modelMapping redirect verified (gpt-5.2 → deepseek-chat via deepseek channel)"
 
-log "verifying fake upstream received both mimo/deepseek requests"
+# ============================================================
+#  9d. Verify upstream request log
+# ============================================================
+log "verifying fake upstream received all routed requests with correct keys and models"
 node - "${UPSTREAM_LOG}" <<'NODE'
 const fs = require('node:fs')
 const logPath = process.argv[2]
 const rows = fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse)
-const sawMimo = rows.some(r => r.url.includes('/v1/messages') && r.authorization === 'Bearer sk-mimo-upstream')
-const sawDeepseek = rows.some(r => r.url.includes('/v1/chat/completions') && r.authorization === 'Bearer sk-deepseek-upstream')
-if (!sawMimo || !sawDeepseek) {
-  console.error(JSON.stringify({ sawMimo, sawDeepseek, rows }, null, 2))
+
+// Claude Code → mimo: Messages endpoint, mimo key, model redirected to mimo-vl-pro
+const claudeRow = rows.find(r =>
+  r.url.includes('/v1/messages') &&
+  r.authorization === 'Bearer sk-mimo-upstream' &&
+  r.model === 'mimo-vl-pro'
+)
+
+// Codex → deepseek: OpenAI chat/completions endpoint, deepseek key, model redirected to deepseek-chat
+const codexRow = rows.find(r =>
+  r.url.includes('/chat/completions') &&
+  r.authorization === 'Bearer sk-deepseek-upstream' &&
+  r.model === 'deepseek-chat'
+)
+
+if (!claudeRow) {
+  console.error('Missing: Claude Code → mimo request with modelMapping redirect')
+  console.error('Upstream log rows:')
+  for (const r of rows) {
+    console.error(`  ${r.url} auth=${r.authorization} model=${r.model}`)
+  }
   process.exit(1)
 }
+
+if (!codexRow) {
+  console.error('Missing: Codex → deepseek request with modelMapping redirect')
+  console.error('Upstream log rows:')
+  for (const r of rows) {
+    console.error(`  ${r.url} auth=${r.authorization} model=${r.model}`)
+  }
+  process.exit(1)
+}
+
+console.log(JSON.stringify({
+  claude_code: { url: claudeRow.url, auth: claudeRow.authorization, model: claudeRow.model },
+  codex:       { url: codexRow.url,   auth: codexRow.authorization,   model: codexRow.model },
+}))
 NODE
-ok "fake upstream received mimo and deepseek routed requests"
+ok "upstream log confirms: Claude Code → mimo, Codex → deepseek, with correct key routing and modelMapping"
 
 # -------- 10. All green --------------------------------------------------
-printf '\n\033[1;32m%s\033[0m\n' "✔ ccx-kit + CCX runtime smoke test passed"
+printf '\n\033[1;32m%s\033[0m\n' "✔ ccx-kit + CCX runtime + CLI simulation smoke test passed"
