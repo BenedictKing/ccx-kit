@@ -295,6 +295,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
         type: 'list',
         name: 'apiMode',
         message: i18n.t('api:selectApiMode'),
+        default: 'ccx',
         choices: [
           {
             name: i18n.t('api:useOfficialLogin'),

@@ -281,11 +281,10 @@ describe('installer utilities', () => {
       await installClaudeCode(true)
 
       expect(platform.getWSLInfo).toHaveBeenCalled()
-      // npm install now includes --force to handle EEXIST errors
-      expect(exec).toHaveBeenCalledWith('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
+      expect(exec).toHaveBeenCalledWith('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
     })
 
-    it('should install successfully using npm', async () => {
+    it('should install successfully using curl', async () => {
       vi.mocked(platform.isTermux).mockReturnValue(false)
       vi.mocked(exec).mockResolvedValue({
         exitCode: 0,
@@ -295,28 +294,17 @@ describe('installer utilities', () => {
 
       await installClaudeCode(true)
 
-      // npm install now includes --force to handle EEXIST errors
-      expect(exec).toHaveBeenCalledWith('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
+      expect(exec).toHaveBeenCalledWith('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('✔'))
     })
 
-    it('should use sudo when installing globally on linux as non-root user', async () => {
-      const originalGetuid = (process as any).getuid
-      let getuidSpy: any
-      if (typeof originalGetuid === 'function') {
-        getuidSpy = vi.spyOn(process as any, 'getuid').mockReturnValue(1000)
-      }
-      else {
-        getuidSpy = vi.fn().mockReturnValue(1000)
-        ;(process as any).getuid = getuidSpy
-      }
-
-      vi.mocked(platform.commandExists).mockResolvedValue(false)
-      vi.mocked(platform.getPlatform).mockReturnValue('linux')
+    it('should use npm on Windows when skipMethodSelection', async () => {
+      vi.mocked(platform.isTermux).mockReturnValue(false)
+      vi.mocked(platform.getPlatform).mockReturnValue('windows')
       vi.mocked(platform.wrapCommandWithSudo).mockImplementation((command, args) => ({
-        command: 'sudo',
-        args: [command, ...args],
-        usedSudo: true,
+        command,
+        args,
+        usedSudo: false,
       }))
       vi.mocked(exec).mockResolvedValue({
         exitCode: 0,
@@ -326,15 +314,7 @@ describe('installer utilities', () => {
 
       await installClaudeCode(true)
 
-      // npm install now includes --force to handle EEXIST errors
-      expect(exec).toHaveBeenCalledWith('sudo', ['npm', 'install', '-g', '@anthropic-ai/claude-code', '--force'])
-
-      if (typeof originalGetuid === 'function') {
-        getuidSpy.mockRestore()
-      }
-      else {
-        delete (process as NodeJS.Process & { getuid?: () => number }).getuid
-      }
+      expect(exec).toHaveBeenCalledWith('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
     })
 
     it('should show Termux-specific messages when in Termux', async () => {
@@ -381,8 +361,7 @@ describe('installer utilities', () => {
 
       await installClaudeCode(true)
 
-      // npm install now includes --force to handle EEXIST errors
-      expect(exec).toHaveBeenCalledWith('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
+      expect(exec).toHaveBeenCalledWith('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('✔'))
     })
 
@@ -1099,40 +1078,10 @@ describe('installer utilities', () => {
   })
 
   describe('executeInstallMethod - additional scenarios', () => {
-    it('should install Claude Code via curl from cache', async () => {
+    it('should install Claude Code via official curl script', async () => {
       vi.mocked(exec).mockResolvedValue({ exitCode: 0 } as any)
       vi.mocked(platform.commandExists).mockResolvedValue(true)
       claudeConfigMock.readMcpConfig.mockReturnValue({})
-      installCacheMock.getCachedPath.mockReturnValue('/home/tester/.local/share/ccx-kit-cache/claude.ai/install.sh')
-
-      const success = await executeInstallMethod('curl', 'claude-code')
-
-      expect(success).toBe(true)
-      expect(exec).toHaveBeenCalledWith('bash', ['/home/tester/.local/share/ccx-kit-cache/claude.ai/install.sh'])
-    })
-
-    it('should download and cache install script on curl cache miss', async () => {
-      vi.mocked(exec).mockResolvedValue({ exitCode: 0 } as any)
-      vi.mocked(platform.commandExists).mockResolvedValue(true)
-      claudeConfigMock.readMcpConfig.mockReturnValue({})
-      installCacheMock.getCachedPath
-        .mockReturnValueOnce(null) // first check: miss
-        .mockReturnValueOnce(null) // second check after download: still null (cacheFile was called)
-      installCacheMock.downloadToCache.mockResolvedValue('/home/tester/.local/share/ccx-kit-cache/claude.ai/install.sh')
-
-      const success = await executeInstallMethod('curl', 'claude-code')
-
-      expect(success).toBe(true)
-      expect(installCacheMock.downloadToCache).toHaveBeenCalledWith('https://claude.ai/install.sh')
-      expect(exec).toHaveBeenCalledWith('bash', ['/home/tester/.local/share/ccx-kit-cache/claude.ai/install.sh'])
-    })
-
-    it('should fall back to direct curl when cache and download both fail', async () => {
-      vi.mocked(exec).mockResolvedValue({ exitCode: 0 } as any)
-      vi.mocked(platform.commandExists).mockResolvedValue(true)
-      claudeConfigMock.readMcpConfig.mockReturnValue({})
-      installCacheMock.getCachedPath.mockReturnValue(null)
-      installCacheMock.downloadToCache.mockResolvedValue(null)
 
       const success = await executeInstallMethod('curl', 'claude-code')
 
@@ -1140,28 +1089,26 @@ describe('installer utilities', () => {
       expect(exec).toHaveBeenCalledWith('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
     })
 
-    it('should install Claude Code via powershell from cache', async () => {
+    it('should install Claude Code via powershell', async () => {
       vi.mocked(exec).mockResolvedValue({ exitCode: 0 } as any)
       vi.mocked(platform.commandExists).mockResolvedValue(true)
       claudeConfigMock.readMcpConfig.mockReturnValue({})
-      installCacheMock.getCachedPath.mockReturnValue('/home/tester/.local/share/ccx-kit-cache/claude.ai/install.ps1')
 
       const success = await executeInstallMethod('powershell', 'claude-code')
 
       expect(success).toBe(true)
-      expect(exec).toHaveBeenCalledWith('powershell', ['-Command', '/home/tester/.local/share/ccx-kit-cache/claude.ai/install.ps1'])
+      expect(exec).toHaveBeenCalledWith('powershell', ['-Command', 'irm https://claude.ai/install.ps1 | iex'])
     })
 
-    it('should install Claude Code via cmd from cache', async () => {
+    it('should install Claude Code via cmd', async () => {
       vi.mocked(exec).mockResolvedValue({ exitCode: 0 } as any)
       vi.mocked(platform.commandExists).mockResolvedValue(true)
       claudeConfigMock.readMcpConfig.mockReturnValue({})
-      installCacheMock.getCachedPath.mockReturnValue('/home/tester/.local/share/ccx-kit-cache/claude.ai/install.cmd')
 
       const success = await executeInstallMethod('cmd', 'claude-code')
 
       expect(success).toBe(true)
-      expect(exec).toHaveBeenCalledWith('cmd', ['/c', '/home/tester/.local/share/ccx-kit-cache/claude.ai/install.cmd'])
+      expect(exec).toHaveBeenCalledWith('cmd', ['/c', 'curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd'])
     })
 
     it('should fall back to npm for Codex with powershell method', async () => {

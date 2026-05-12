@@ -4,10 +4,13 @@
 #   # 1. Build tarball on host first:
 #   pnpm build && pnpm pack
 #
-#   # 2. Run the smoke test:
+#   # 2. Start mitmproxy (optional, for caching):
+#   ./scripts/start-mitmproxy.sh
+#
+#   # 3. Run the smoke test:
 #   docker compose -f tests/docker/docker-compose.yml run --rm smoke-test
 #
-#   # 3. Or drop into interactive shell:
+#   # 4. Or drop into interactive shell:
 #   docker compose -f tests/docker/docker-compose.yml run --rm smoke-test bash
 
 services:
@@ -15,26 +18,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        # Override with a registry mirror if docker.io is blocked, e.g.
-        #   NODE_IMAGE=docker.m.daocloud.io/library/node:22-bookworm
-        NODE_IMAGE: ${NODE_IMAGE:-node:22-bookworm}
     image: ccx-kit-smoke-test:latest
     container_name: ccx-kit-smoke
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
-      # Mount the repo root so the tarball and test script are accessible.
-      # Mounted read-only: container should never mutate the host repo.
       - ../..:/home/tester/work:ro
-      # Local visible caches, mirroring ob1-inspector's cache/ approach.
-      # This avoids repeated downloads across smoke-test runs.
       - ./cache/npm:/home/tester/.npm
       - ./cache/corepack:/home/tester/.cache/node/corepack
       - ./cache/ccx:/home/tester/.local/share/ccx-kit-cache
+      # mitmproxy CA cert for HTTPS interception
+      - ${MITM_CA_CERT:-~/.mitmproxy/mitmproxy-ca-cert.pem}:/mitm-certs/mitmproxy-ca-cert.pem:ro
     environment:
-      # Avoid interactive color/TTY assumptions inside the container.
       - CI=true
       - NO_COLOR=1
-      # Use skip-prompt mode everywhere so the script stays non-interactive.
       - CCX_KIT_SKIP_PROMPT=1
-    # Run the smoke test script by default
+      # Proxy (mitmproxy on host)
+      - HTTP_PROXY=http://host.docker.internal:${CCX_KIT_PROXY_PORT:-18082}
+      - HTTPS_PROXY=http://host.docker.internal:${CCX_KIT_PROXY_PORT:-18082}
+      - http_proxy=http://host.docker.internal:${CCX_KIT_PROXY_PORT:-18082}
+      - https_proxy=http://host.docker.internal:${CCX_KIT_PROXY_PORT:-18082}
+      - NO_PROXY=localhost,127.0.0.1,host.docker.internal
+      # CA cert trust for all tools (curl, Node.js, Python)
+      - SSL_CERT_FILE=/usr/local/share/ca-certificates/mitmproxy-ca.crt
+      - CURL_CA_BUNDLE=/usr/local/share/ca-certificates/mitmproxy-ca.crt
+      - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/mitmproxy-ca.crt
+    stdin_open: true
+    tty: true
     command: [bash, /home/tester/work/tests/docker/smoke-test.sh]

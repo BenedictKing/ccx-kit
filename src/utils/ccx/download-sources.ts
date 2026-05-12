@@ -1,16 +1,5 @@
-/**
- * Multi-source download for CCX binary
- *
- * Provides fallback mechanism to download CCX binary from multiple sources:
- * 1. GitHub Releases (primary)
- * 2. GitHub Proxy (ghproxy.com - acceleration for China)
- * 3. GitHub Mirror (mirror.ghproxy.com - backup proxy)
- */
-
 import type { DownloadSource } from '../../types/ccx'
-import { createWriteStream } from 'node:fs'
-import { Readable } from 'node:stream'
-import { pipeline } from 'node:stream/promises'
+import { exec } from 'tinyexec'
 
 const DOWNLOAD_SOURCES: DownloadSource[] = [
   {
@@ -41,18 +30,8 @@ export function getCcxDownloadUrls(repo: string, tag: string, assetName: string)
 }
 
 /**
- * Download CCX binary from multiple sources with fallback
- *
- * Tries each source in order until one succeeds. This provides resilience against:
- * - GitHub CDN issues
- * - Network restrictions in certain regions
- * - Download failures due to temporary outages
- *
- * @param repo - GitHub repository (e.g., 'BenedictKing/ccx')
- * @param tag - Release tag (e.g., '1.0.0')
- * @param assetName - Binary asset filename
- * @param destPath - Destination file path
- * @returns true if download succeeded, false if all sources failed
+ * Download CCX binary from multiple sources with fallback.
+ * Uses curl so HTTP_PROXY/HTTPS_PROXY are honored for mitmproxy caching.
  */
 export async function downloadCcxFromSources(
   repo: string,
@@ -63,23 +42,14 @@ export async function downloadCcxFromSources(
   for (const source of DOWNLOAD_SOURCES) {
     try {
       const url = source.getUrl(repo, tag, assetName)
-
-      const controller = new AbortController()
-      const timeoutId = setTimeout(
-        () => controller.abort(),
-        source.timeout || 30000,
-      )
-
-      const response = await fetch(url, { signal: controller.signal })
-      clearTimeout(timeoutId)
-
-      if (!response.ok || !response.body) {
-        continue
-      }
-
-      const fileStream = createWriteStream(destPath)
-      await pipeline(Readable.fromWeb(response.body as any), fileStream)
-
+      await exec('curl', [
+        '-fL',
+        '--connect-timeout',
+        String(Math.ceil((source.timeout || 30000) / 1000)),
+        url,
+        '-o',
+        destPath,
+      ])
       return true
     }
     catch {

@@ -10,7 +10,6 @@ import { exec } from 'tinyexec'
 import { ensureI18nInitialized, i18n } from '../i18n'
 import { updateClaudeCode } from './auto-updater'
 import { exists, isExecutable, remove } from './fs-operations'
-import { cacheFile, downloadToCache, getCachedPath } from './install-cache'
 import { commandExists, findCommandPath, getHomebrewCommandPaths, getPlatform, getRecommendedInstallMethods, getTermuxPrefix, getWSLInfo, isTermux, isWSL, wrapCommandWithSudo } from './platform'
 
 export async function isClaudeCodeInstalled(): Promise<boolean> {
@@ -70,19 +69,23 @@ export async function installClaudeCode(skipMethodSelection: boolean = false): P
     console.log(ansis.gray(i18n.t('installation:wslPathInfo', { path: `${homedir()}/.claude/` })))
   }
 
-  // If skip method selection, use npm directly (for backwards compatibility)
+  // If skip method selection, use official install script (curl) by default
   if (skipMethodSelection) {
     console.log(i18n.t('installation:installing'))
 
     try {
-      // Use --force to handle EEXIST errors when files already exist
-      const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
-      if (usedSudo) {
-        console.log(ansis.yellow(`ℹ ${i18n.t('installation:usingSudo')}`))
+      if (getPlatform() !== 'windows') {
+        await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
       }
-      await exec(command, args)
+      else {
+        const { command, args, usedSudo } = wrapCommandWithSudo('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
+        if (usedSudo) {
+          console.log(ansis.yellow(`ℹ ${i18n.t('installation:usingSudo')}`))
+        }
+        await exec(command, args)
+      }
       console.log(`✔ ${i18n.t('installation:installSuccess')}`)
-      await setInstallMethod('npm')
+      await setInstallMethod('curl')
 
       // Verify installation and create symlink if needed
       const verification = await verifyInstallation(codeType)
@@ -629,10 +632,19 @@ function getInstallMethodOptions(codeType: CodeType, recommendedMethods: Install
     return true // npm is always available
   })
 
+  // Sort: recommended methods first (in priority order), then the rest
+  const sortedMethods = [...availableMethods].sort((a, b) => {
+    const aIdx = recommendedMethods.indexOf(a)
+    const bIdx = recommendedMethods.indexOf(b)
+    const aRank = aIdx === -1 ? 999 : aIdx
+    const bRank = bIdx === -1 ? 999 : bIdx
+    return aRank - bRank
+  })
+
   // Only mark the first recommended method (highest priority)
   const topRecommended = recommendedMethods.length > 0 ? recommendedMethods[0] : null
 
-  return availableMethods.map((method) => {
+  return sortedMethods.map((method) => {
     const isTopRecommended = method === topRecommended
     const methodLabel = getInstallMethodLabel(method)
     const title = isTopRecommended
@@ -729,28 +741,7 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'curl': {
         if (codeType === 'claude-code') {
-          const installUrl = 'https://claude.ai/install.sh'
-          let cachedScript = getCachedPath(installUrl)
-
-          if (!cachedScript) {
-            // Download to cache first
-            cachedScript = await downloadToCache(installUrl)
-          }
-
-          if (cachedScript) {
-            await exec('bash', [cachedScript])
-            // Ensure script is cached for next time
-            if (!getCachedPath(installUrl)) {
-              try {
-                await cacheFile(installUrl, cachedScript)
-              }
-              catch {}
-            }
-          }
-          else {
-            // Fallback to direct curl if caching fails
-            await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
-          }
+          await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
         }
         else {
           // Codex and Gemini CLI don't have curl install method, fallback to npm
@@ -763,19 +754,7 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'powershell': {
         if (codeType === 'claude-code') {
-          const installUrl = 'https://claude.ai/install.ps1'
-          let cachedScript = getCachedPath(installUrl)
-
-          if (!cachedScript) {
-            cachedScript = await downloadToCache(installUrl)
-          }
-
-          if (cachedScript) {
-            await exec('powershell', ['-Command', cachedScript])
-          }
-          else {
-            await exec('powershell', ['-Command', 'irm https://claude.ai/install.ps1 | iex'])
-          }
+          await exec('powershell', ['-Command', 'irm https://claude.ai/install.ps1 | iex'])
         }
         else {
           spinner.stop()
@@ -787,19 +766,7 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'cmd': {
         if (codeType === 'claude-code') {
-          const installUrl = 'https://claude.ai/install.cmd'
-          let cachedScript = getCachedPath(installUrl)
-
-          if (!cachedScript) {
-            cachedScript = await downloadToCache(installUrl)
-          }
-
-          if (cachedScript) {
-            await exec('cmd', ['/c', `${cachedScript}`])
-          }
-          else {
-            await exec('cmd', ['/c', 'curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd'])
-          }
+          await exec('cmd', ['/c', 'curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd'])
         }
         else {
           spinner.stop()
