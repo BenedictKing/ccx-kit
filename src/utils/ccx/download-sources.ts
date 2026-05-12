@@ -34,6 +34,13 @@ const DOWNLOAD_SOURCES: DownloadSource[] = [
 ]
 
 /**
+ * Get all download URLs for a CCX asset across all sources
+ */
+export function getCcxDownloadUrls(repo: string, tag: string, assetName: string): string[] {
+  return DOWNLOAD_SOURCES.map(source => source.getUrl(repo, tag, assetName))
+}
+
+/**
  * Download CCX binary from multiple sources with fallback
  *
  * Tries each source in order until one succeeds. This provides resilience against:

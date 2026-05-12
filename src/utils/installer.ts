@@ -10,6 +10,7 @@ import { exec } from 'tinyexec'
 import { ensureI18nInitialized, i18n } from '../i18n'
 import { updateClaudeCode } from './auto-updater'
 import { exists, isExecutable, remove } from './fs-operations'
+import { cacheFile, downloadToCache, getCachedPath } from './install-cache'
 import { commandExists, findCommandPath, getHomebrewCommandPaths, getPlatform, getRecommendedInstallMethods, getTermuxPrefix, getWSLInfo, isTermux, isWSL, wrapCommandWithSudo } from './platform'
 
 export async function isClaudeCodeInstalled(): Promise<boolean> {
@@ -728,7 +729,28 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'curl': {
         if (codeType === 'claude-code') {
-          await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
+          const installUrl = 'https://claude.ai/install.sh'
+          let cachedScript = getCachedPath(installUrl)
+
+          if (!cachedScript) {
+            // Download to cache first
+            cachedScript = await downloadToCache(installUrl)
+          }
+
+          if (cachedScript) {
+            await exec('bash', [cachedScript])
+            // Ensure script is cached for next time
+            if (!getCachedPath(installUrl)) {
+              try {
+                await cacheFile(installUrl, cachedScript)
+              }
+              catch {}
+            }
+          }
+          else {
+            // Fallback to direct curl if caching fails
+            await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
+          }
         }
         else {
           // Codex and Gemini CLI don't have curl install method, fallback to npm
@@ -741,7 +763,19 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'powershell': {
         if (codeType === 'claude-code') {
-          await exec('powershell', ['-Command', 'irm https://claude.ai/install.ps1 | iex'])
+          const installUrl = 'https://claude.ai/install.ps1'
+          let cachedScript = getCachedPath(installUrl)
+
+          if (!cachedScript) {
+            cachedScript = await downloadToCache(installUrl)
+          }
+
+          if (cachedScript) {
+            await exec('powershell', ['-Command', cachedScript])
+          }
+          else {
+            await exec('powershell', ['-Command', 'irm https://claude.ai/install.ps1 | iex'])
+          }
         }
         else {
           spinner.stop()
@@ -753,7 +787,19 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'cmd': {
         if (codeType === 'claude-code') {
-          await exec('cmd', ['/c', 'curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd'])
+          const installUrl = 'https://claude.ai/install.cmd'
+          let cachedScript = getCachedPath(installUrl)
+
+          if (!cachedScript) {
+            cachedScript = await downloadToCache(installUrl)
+          }
+
+          if (cachedScript) {
+            await exec('cmd', ['/c', `${cachedScript}`])
+          }
+          else {
+            await exec('cmd', ['/c', 'curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd'])
+          }
         }
         else {
           spinner.stop()

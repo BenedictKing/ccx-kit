@@ -1,13 +1,14 @@
 import type { CcxInstallStatus } from '../../types/ccx'
 import { existsSync } from 'node:fs'
-import { chmod, mkdir } from 'node:fs/promises'
+import { chmod, copyFile, mkdir } from 'node:fs/promises'
 import { arch, homedir, platform } from 'node:os'
 import process from 'node:process'
 import ansis from 'ansis'
 import { join } from 'pathe'
 import { exec } from 'tinyexec'
 import { ensureI18nInitialized, i18n } from '../../i18n'
-import { downloadCcxFromSources } from './download-sources'
+import { cacheFile, getCachedPath } from '../install-cache'
+import { downloadCcxFromSources, getCcxDownloadUrls } from './download-sources'
 import { getLatestCcxVersionFromSources } from './version-sources'
 
 const CCX_GITHUB_REPO = 'BenedictKing/ccx'
@@ -132,18 +133,41 @@ export async function installCcx(): Promise<void> {
     // Ensure install directory exists
     await mkdir(CCX_INSTALL_DIR, { recursive: true })
 
-    // Download binary from multiple sources
-    console.log(ansis.cyan(`  ${i18n.t('ccx:downloading')} ${assetName}...`))
+    // Check local cache first (URL-to-path mapping)
+    const downloadUrls = getCcxDownloadUrls(CCX_GITHUB_REPO, latestVersion, assetName)
+    let installedFromCache = false
+    for (const url of downloadUrls) {
+      const cached = getCachedPath(url)
+      if (cached) {
+        console.log(ansis.green(`  ${i18n.t('ccx:downloading')} ${assetName} (from cache)...`))
+        await copyFile(cached, CCX_BINARY_PATH)
+        installedFromCache = true
+        break
+      }
+    }
 
-    const success = await downloadCcxFromSources(
-      CCX_GITHUB_REPO,
-      latestVersion,
-      assetName,
-      CCX_BINARY_PATH,
-    )
+    if (!installedFromCache) {
+      // Download binary from multiple sources
+      console.log(ansis.cyan(`  ${i18n.t('ccx:downloading')} ${assetName}...`))
 
-    if (!success) {
-      throw new Error('Failed to download from all sources')
+      const success = await downloadCcxFromSources(
+        CCX_GITHUB_REPO,
+        latestVersion,
+        assetName,
+        CCX_BINARY_PATH,
+      )
+
+      if (!success) {
+        throw new Error('Failed to download from all sources')
+      }
+
+      // Cache the downloaded binary for future installs
+      try {
+        await cacheFile(downloadUrls[0], CCX_BINARY_PATH)
+      }
+      catch {
+        // Caching is best-effort, don't fail the install
+      }
     }
 
     // Set executable permission on non-Windows
