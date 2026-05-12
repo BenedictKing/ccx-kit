@@ -95,5 +95,29 @@
   "upgrade.rollbackSuccess": "Rollback successful",
   "upgrade.rollbackFailed": "Rollback failed",
   "upgrade.notInstalled": "CCX is not installed. Please initialize first.",
-  "upgrade.checkFailed": "Failed to check for updates"
+  "upgrade.checkFailed": "Failed to check for updates",
+
+  "statusSummary.installation": "Installation",
+  "statusSummary.notInstalled": "not installed",
+  "statusSummary.config": "Config",
+  "statusSummary.notConfigured": "not configured",
+  "statusSummary.port": "port",
+  "statusSummary.key": "key",
+  "statusSummary.webUi": "Web UI",
+  "statusSummary.on": "on",
+  "statusSummary.off": "off",
+  "statusSummary.service": "Service",
+  "statusSummary.running": "running",
+  "statusSummary.stopped": "stopped",
+  "statusSummary.pid": "PID",
+
+  "accessKeyPrompt.title": "Current access key: {key}",
+  "accessKeyPrompt.keepExisting": "Keep existing key",
+  "accessKeyPrompt.setNew": "Set new key",
+  "accessKeyPrompt.enterNewKey": "Enter new access key (leave empty for default):",
+
+  "settingsDiff.title": "The following settings.json changes will be made:",
+  "settingsDiff.confirm": "Apply these changes?",
+  "settingsDiff.skipped": "Skipped settings.json changes",
+  "settingsDiff.willBeRemoved": "(will be removed)"
 }

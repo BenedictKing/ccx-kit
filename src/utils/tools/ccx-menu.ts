@@ -10,7 +10,7 @@ import {
   startCcxService,
   stopCcxService,
 } from '../ccx/commands'
-import { configureCcxFeature, readCcxEnv } from '../ccx/config'
+import { configureCcxFeature, formatMaskedKey, readCcxEnv } from '../ccx/config'
 import { installCcx, isCcxInstalled } from '../ccx/installer'
 import { getAllPresets } from '../ccx/presets'
 import { checkAndUpgradeCcx } from '../ccx/upgrade'
@@ -23,6 +23,59 @@ function isCcxConfigured(): boolean {
   return config !== null
 }
 
+/**
+ * Display a compact status summary for CCX (install, config, service)
+ */
+export async function displayCcxStatusSummary(): Promise<void> {
+  try {
+    const installStatus = await isCcxInstalled()
+    const config = readCcxEnv()
+
+    // Installation line
+    if (installStatus.isInstalled) {
+      const versionStr = installStatus.version ? `  v${installStatus.version}` : ''
+      const pathStr = installStatus.binaryPath ? `  (${installStatus.binaryPath})` : ''
+      console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.installation')}:`)} ${ansis.green(i18n.t('ccx:ccxAlreadyInstalled'))}${versionStr}${pathStr}`)
+    }
+    else {
+      console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.installation')}:`)} ${ansis.yellow(i18n.t('ccx:statusSummary.notInstalled'))}`)
+    }
+
+    // Config line
+    if (config) {
+      const port = config.PORT || 3688
+      const maskedKey = formatMaskedKey(config.PROXY_ACCESS_KEY)
+      const webUi = config.ENABLE_WEB_UI ? i18n.t('ccx:statusSummary.on') : i18n.t('ccx:statusSummary.off')
+      console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.config')}:`)}     ${i18n.t('ccx:statusSummary.port')} ${port} | ${i18n.t('ccx:statusSummary.key')} ${maskedKey} | ${i18n.t('ccx:statusSummary.webUi')}: ${webUi}`)
+    }
+    else {
+      console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.config')}:`)}     ${ansis.yellow(i18n.t('ccx:statusSummary.notConfigured'))}`)
+    }
+
+    // Service line (only if configured)
+    if (config) {
+      try {
+        const status = await getCcxStatus()
+        if (status.running) {
+          const pidStr = status.pid ? ` (${i18n.t('ccx:statusSummary.pid')} ${status.pid})` : ''
+          console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.service')}:`)}    ${ansis.green(i18n.t('ccx:statusSummary.running'))}${pidStr}`)
+        }
+        else {
+          console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.service')}:`)}    ${ansis.red(i18n.t('ccx:statusSummary.stopped'))}`)
+        }
+      }
+      catch {
+        // Status check failed (e.g. network timeout), don't block menu
+      }
+    }
+
+    console.log('')
+  }
+  catch {
+    // Status display is informational; failure should not block the menu
+  }
+}
+
 export async function showCcxMenu(): Promise<boolean> {
   try {
     // Initialize i18next
@@ -32,6 +85,9 @@ export async function showCcxMenu(): Promise<boolean> {
     console.log(`\n${ansis.cyan('═'.repeat(50))}`)
     console.log(ansis.bold.cyan(`  ${i18n.t('ccx:ccxMenuTitle')}`))
     console.log(`${ansis.cyan('═'.repeat(50))}\n`)
+
+    // Display status summary
+    await displayCcxStatusSummary()
 
     // Display menu options
     console.log(`  ${ansis.cyan('1.')} ${i18n.t('ccx:ccxMenuOptions.initCcx')} ${ansis.gray(`- ${i18n.t('ccx:ccxMenuDescriptions.initCcx')}`)}`)

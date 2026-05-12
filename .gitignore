@@ -49,3 +49,5 @@ ccx-kit-*.tgz
 
 # VitePress
 docs/.vitepress/cache/**
+.serena/
+

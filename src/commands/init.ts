@@ -714,7 +714,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
           console.log(ansis.green(`✔ ${i18n.t('ccx:ccxConfigSuccess')}`))
 
           // Configure proxy in settings.json
-          await configureCcxProxy(defaultCcxConfig)
+          await configureCcxProxy(defaultCcxConfig, { skipConfirm: true })
           console.log(ansis.green(`✔ ${i18n.t('ccx:proxyConfigSuccess')}`))
 
           // Add onboarding flag

@@ -95,5 +95,29 @@
   "upgrade.rollbackSuccess": "回滚成功",
   "upgrade.rollbackFailed": "回滚失败",
   "upgrade.notInstalled": "CCX 未安装，请先初始化",
-  "upgrade.checkFailed": "检查更新失败"
+  "upgrade.checkFailed": "检查更新失败",
+
+  "statusSummary.installation": "安装状态",
+  "statusSummary.notInstalled": "未安装",
+  "statusSummary.config": "配置",
+  "statusSummary.notConfigured": "未配置",
+  "statusSummary.port": "端口",
+  "statusSummary.key": "密钥",
+  "statusSummary.webUi": "Web UI",
+  "statusSummary.on": "开启",
+  "statusSummary.off": "关闭",
+  "statusSummary.service": "服务",
+  "statusSummary.running": "运行中",
+  "statusSummary.stopped": "已停止",
+  "statusSummary.pid": "PID",
+
+  "accessKeyPrompt.title": "当前访问密钥：{key}",
+  "accessKeyPrompt.keepExisting": "保留现有密钥",
+  "accessKeyPrompt.setNew": "设置新密钥",
+  "accessKeyPrompt.enterNewKey": "输入新的访问密钥（留空使用默认值）：",
+
+  "settingsDiff.title": "以下 settings.json 将被修改：",
+  "settingsDiff.confirm": "是否应用这些更改？",
+  "settingsDiff.skipped": "已跳过 settings.json 更改",
+  "settingsDiff.willBeRemoved": "（将被删除）"
 }
