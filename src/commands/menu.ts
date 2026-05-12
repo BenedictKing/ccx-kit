@@ -104,7 +104,7 @@ function printZcfSection(options: {
   updateOption: string
   updateDescription: string
 }): void {
-  console.log('  ------------ ZCF ------------')
+  console.log('  ---------- CCX-Kit ----------')
   console.log(
     `  ${ansis.cyan('0.')} ${i18n.t('menu:menuOptions.changeLanguage')} ${ansis.gray(`- ${i18n.t('menu:menuDescriptions.changeLanguage')}`)}`,
   )
