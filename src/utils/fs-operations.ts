@@ -2,6 +2,7 @@ import type { Stats } from 'node:fs'
 import {
   copyFileSync,
   existsSync,
+  lstatSync,
   mkdirSync,
   readdirSync,
   readFileSync,
@@ -194,10 +195,49 @@ export function copyDir(src: string, dest: string, options: CopyDirOptions = {})
   for (const entry of entries) {
     const srcPath = `${src}/${entry}`
     const destPath = `${dest}/${entry}`
-    const stats = getStats(srcPath)
+
+    // Use lstatSync to handle symlinks without following them
+    // This prevents errors on dangling symlinks
+    let stats: Stats
+    try {
+      stats = lstatSync(srcPath)
+    }
+    catch (error) {
+      // Skip files that disappeared during traversal (race condition)
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        continue
+      }
+      throw error
+    }
 
     // Apply filter if provided
     if (filter && !filter(srcPath, stats)) {
+      continue
+    }
+
+    // Handle symlinks: skip dangling symlinks (target doesn't exist)
+    // but preserve valid symlinks (for dotfiles-managed setups)
+    if (stats.isSymbolicLink()) {
+      try {
+        // Check if symlink target exists
+        existsSync(srcPath) // This follows the symlink
+        // If exists, copy the symlink target content (not the symlink itself)
+        // For valid symlinks, use statSync to get target stats
+        const targetStats = statSync(srcPath)
+        if (targetStats.isDirectory()) {
+          copyDir(srcPath, destPath, options)
+        }
+        else {
+          if (!overwrite && exists(destPath)) {
+            continue
+          }
+          copyFile(srcPath, destPath)
+        }
+      }
+      catch {
+        // Dangling symlink - skip it
+        continue
+      }
       continue
     }
 
