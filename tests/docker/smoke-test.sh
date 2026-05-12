@@ -144,5 +144,244 @@ HELP_OUT=$(npx --yes "file:${LOCAL_TARBALL}" i --help 2>&1 || true)
 echo "${HELP_OUT}" | grep -qi 'provider' || fail "init --help missing provider flag"
 ok "provider flag documented"
 
-# -------- 9. All green ---------------------------------------------------
-printf '\n\033[1;32m%s\033[0m\n' "✔ ccx-kit smoke test passed"
+# -------- 9. Start real CCX and verify proxy requests -------------------
+# Runtime must not use any proxy. The proxy may be used by the host only to
+# pre-download tests/docker/cache/ccx/ccx-linux-arm64.
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+
+CCX_CACHE_BIN="/home/tester/.local/share/ccx-kit-cache/ccx-linux-arm64"
+CCX_BIN="${TEST_HOME}/.local/bin/ccx"
+CCX_RUNTIME="${WORK_DIR}/ccx-runtime"
+UPSTREAM_LOG="${CCX_RUNTIME}/fake-upstream.ndjson"
+FAKE_UPSTREAM_JS="${CCX_RUNTIME}/fake-upstream.mjs"
+CCX_LOG="${CCX_RUNTIME}/ccx.log"
+
+log "installing cached CCX linux binary"
+[[ -x "${CCX_CACHE_BIN}" ]] || fail "cached CCX binary missing: ${CCX_CACHE_BIN}. Download it on host first."
+cp "${CCX_CACHE_BIN}" "${CCX_BIN}"
+chmod +x "${CCX_BIN}"
+ok "CCX binary installed"
+
+log "starting fake upstream for mimo/deepseek"
+mkdir -p "${CCX_RUNTIME}/.config"
+cat > "${FAKE_UPSTREAM_JS}" <<'NODE'
+import http from 'node:http'
+import fs from 'node:fs'
+
+const logFile = process.env.UPSTREAM_LOG
+const server = http.createServer((req, res) => {
+  let body = ''
+  req.setEncoding('utf8')
+  req.on('data', chunk => { body += chunk })
+  req.on('end', () => {
+    const entry = {
+      method: req.method,
+      url: req.url,
+      authorization: req.headers.authorization || '',
+      xApiKey: req.headers['x-api-key'] || '',
+      body: body ? JSON.parse(body) : null,
+    }
+    fs.appendFileSync(logFile, `${JSON.stringify(entry)}\n`)
+
+    res.setHeader('content-type', 'application/json')
+    if (req.url.includes('/messages')) {
+      res.end(JSON.stringify({
+        id: 'msg_fake_mimo',
+        type: 'message',
+        role: 'assistant',
+        content: [{ type: 'text', text: 'mimo-ok' }],
+        stop_reason: 'end_turn',
+        usage: { input_tokens: 1, output_tokens: 1 },
+      }))
+      return
+    }
+
+    if (req.url.includes('/chat/completions')) {
+      res.end(JSON.stringify({
+        id: 'chatcmpl_fake_deepseek',
+        model: 'deepseek-chat',
+        choices: [{ message: { role: 'assistant', content: 'deepseek-ok' }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
+      }))
+      return
+    }
+
+    if (req.url.includes('/responses')) {
+      res.end(JSON.stringify({
+        id: 'resp_fake',
+        model: 'gpt-5.2',
+        status: 'completed',
+        output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: 'responses-ok' }] }],
+        usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
+      }))
+      return
+    }
+
+    res.statusCode = 404
+    res.end(JSON.stringify({ error: 'unexpected path', path: req.url }))
+  })
+})
+server.listen(3999, '127.0.0.1', () => console.log('fake upstream listening on 3999'))
+NODE
+
+UPSTREAM_LOG="${UPSTREAM_LOG}" node "${FAKE_UPSTREAM_JS}" > "${CCX_RUNTIME}/fake-upstream.log" 2>&1 &
+FAKE_PID=$!
+trap 'kill ${FAKE_PID:-0} ${CCX_PID:-0} >/dev/null 2>&1 || true' EXIT
+
+for _ in {1..30}; do
+  if node -e "fetch('http://127.0.0.1:3999/health').catch(()=>process.exit(1))" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 0.2
+done
+
+cat > "${CCX_RUNTIME}/.env" <<'ENV'
+PORT=3688
+PROXY_ACCESS_KEY=sk-ccx-kit
+ENABLE_WEB_UI=false
+ENV=development
+LOG_LEVEL=debug
+ENABLE_REQUEST_LOGS=true
+ENABLE_RESPONSE_LOGS=true
+METRICS_PERSISTENCE_ENABLED=false
+ENV
+
+cat > "${CCX_RUNTIME}/.config/config.json" <<'JSON'
+{
+  "upstream": [
+    {
+      "name": "mimo-messages-priority-1",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-mimo-upstream"],
+      "serviceType": "claude",
+      "status": "active",
+      "priority": 0,
+      "supportedModels": ["mimo-vl-pro", "claude-3-5-sonnet"]
+    },
+    {
+      "name": "deepseek-messages-priority-2",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-deepseek-upstream"],
+      "serviceType": "openai",
+      "status": "active",
+      "priority": 1,
+      "supportedModels": ["deepseek-chat"]
+    }
+  ],
+  "responsesUpstream": [
+    {
+      "name": "deepseek-responses-priority-1",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-deepseek-upstream"],
+      "serviceType": "openai",
+      "status": "active",
+      "priority": 0,
+      "supportedModels": ["deepseek-chat", "gpt-5.2"]
+    },
+    {
+      "name": "mimo-responses-priority-2",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-mimo-upstream"],
+      "serviceType": "claude",
+      "status": "active",
+      "priority": 1,
+      "supportedModels": ["mimo-vl-pro"]
+    }
+  ],
+  "chatUpstream": [
+    {
+      "name": "deepseek-chat-priority-1",
+      "baseUrl": "http://127.0.0.1:3999",
+      "apiKeys": ["sk-deepseek-upstream"],
+      "serviceType": "openai",
+      "status": "active",
+      "priority": 0,
+      "supportedModels": ["deepseek-chat"]
+    }
+  ],
+  "geminiUpstream": [],
+  "fuzzyModeEnabled": true,
+  "stripBillingHeader": true
+}
+JSON
+
+log "starting real CCX runtime without proxy env"
+(cd "${CCX_RUNTIME}" && "${CCX_BIN}" > "${CCX_LOG}" 2>&1) &
+CCX_PID=$!
+
+for _ in {1..60}; do
+  if node -e "fetch('http://127.0.0.1:3688/health').then(r=>r.ok?0:process.exit(1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 0.25
+done
+node -e "fetch('http://127.0.0.1:3688/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))" \
+  || { tail -80 "${CCX_LOG}" >&2 || true; fail "CCX did not become healthy"; }
+ok "CCX health endpoint is ready"
+
+log "sending Claude Messages request through CCX (expected upstream: mimo first)"
+CLAUDE_RESP=$(node - <<'NODE'
+const res = await fetch('http://127.0.0.1:3688/v1/messages', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    'x-api-key': 'sk-ccx-kit',
+    'anthropic-version': '2023-06-01'
+  },
+  body: JSON.stringify({
+    model: 'mimo-vl-pro',
+    max_tokens: 32,
+    messages: [{ role: 'user', content: [{ type: 'text', text: 'ping from claude-code' }] }]
+  })
+})
+const text = await res.text()
+if (!res.ok) {
+  console.error(text)
+  process.exit(1)
+}
+console.log(text)
+NODE
+) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Claude Messages request failed"; }
+echo "${CLAUDE_RESP}" | grep -q 'mimo-ok' || fail "Claude response did not contain mimo-ok"
+ok "Claude Messages request succeeded"
+
+log "sending Codex Responses request through CCX (expected upstream: deepseek first)"
+CODEX_RESP=$(node - <<'NODE'
+const res = await fetch('http://127.0.0.1:3688/v1/responses', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    'authorization': 'Bearer sk-ccx-kit'
+  },
+  body: JSON.stringify({
+    model: 'deepseek-chat',
+    input: [{ role: 'user', content: [{ type: 'input_text', text: 'ping from codex' }] }]
+  })
+})
+const text = await res.text()
+if (!res.ok) {
+  console.error(text)
+  process.exit(1)
+}
+console.log(text)
+NODE
+) || { tail -120 "${CCX_LOG}" >&2 || true; fail "Codex Responses request failed"; }
+echo "${CODEX_RESP}" | grep -q 'deepseek-ok' || fail "Codex response did not contain deepseek-ok"
+ok "Codex Responses request succeeded"
+
+log "verifying fake upstream received both mimo/deepseek requests"
+node - "${UPSTREAM_LOG}" <<'NODE'
+const fs = require('node:fs')
+const logPath = process.argv[2]
+const rows = fs.readFileSync(logPath, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse)
+const sawMimo = rows.some(r => r.url.includes('/v1/messages') && r.authorization === 'Bearer sk-mimo-upstream')
+const sawDeepseek = rows.some(r => r.url.includes('/v1/chat/completions') && r.authorization === 'Bearer sk-deepseek-upstream')
+if (!sawMimo || !sawDeepseek) {
+  console.error(JSON.stringify({ sawMimo, sawDeepseek, rows }, null, 2))
+  process.exit(1)
+}
+NODE
+ok "fake upstream received mimo and deepseek routed requests"
+
+# -------- 10. All green --------------------------------------------------
+printf '\n\033[1;32m%s\033[0m\n' "✔ ccx-kit + CCX runtime smoke test passed"
