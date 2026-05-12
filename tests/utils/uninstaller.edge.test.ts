@@ -1,6 +1,6 @@
 import type { UninstallItem } from '../../src/utils/uninstaller'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ZcfUninstaller } from '../../src/utils/uninstaller'
+import { CcxKitUninstaller } from '../../src/utils/uninstaller'
 
 // Mock dependencies - more comprehensive edge case mocking
 vi.mock('node:fs')
@@ -67,8 +67,8 @@ const mockUninstallCodeTool = vi.mocked(installerModule.uninstallCodeTool)
 
 // Mock constants
 vi.mock('../../src/constants', () => ({
-  ZCF_CONFIG_FILE: '/home/user/.ufomiao/zcf/config.json',
-  ZCF_CONFIG_DIR: '/home/user/.ufomiao/zcf',
+  APP_CONFIG_FILE: '/home/user/.ccx-kit/config.json',
+  APP_CONFIG_DIR: '/home/user/.ccx-kit',
   CLAUDE_DIR: '/home/user/.claude',
   SETTINGS_FILE: '/home/user/.claude/settings.json',
   ClAUDE_CONFIG_FILE: '/home/user/.claude.json',
@@ -76,10 +76,10 @@ vi.mock('../../src/constants', () => ({
 }))
 
 describe('zcfUninstaller - Edge Cases', () => {
-  let uninstaller: ZcfUninstaller
+  let uninstaller: CcxKitUninstaller
 
   beforeEach(() => {
-    uninstaller = new ZcfUninstaller()
+    uninstaller = new CcxKitUninstaller()
     vi.clearAllMocks()
     // Reset all mocks to default resolved states
     mockFsExtra.pathExists.mockResolvedValue(false)
@@ -92,13 +92,13 @@ describe('zcfUninstaller - Edge Cases', () => {
 
   describe('constructor edge cases', () => {
     it('should initialize with Chinese language', () => {
-      const chineseUninstaller = new ZcfUninstaller('zh-CN')
-      expect(chineseUninstaller).toBeInstanceOf(ZcfUninstaller)
+      const chineseUninstaller = new CcxKitUninstaller('zh-CN')
+      expect(chineseUninstaller).toBeInstanceOf(CcxKitUninstaller)
     })
 
     it('should handle conflict resolution setup correctly', () => {
       // Test private conflictResolution map functionality indirectly
-      expect(uninstaller).toBeInstanceOf(ZcfUninstaller)
+      expect(uninstaller).toBeInstanceOf(CcxKitUninstaller)
     })
   })
 
@@ -385,12 +385,12 @@ describe('zcfUninstaller - Edge Cases', () => {
     })
   })
 
-  describe('removeZcfConfig edge cases', () => {
+  describe('removeAppConfig edge cases', () => {
     it('should handle zcf config file access issues', async () => {
       mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: false, error: 'File is locked' }])
 
-      const result = await uninstaller.removeZcfConfig()
+      const result = await uninstaller.removeAppConfig()
 
       expect(result.success).toBe(true)
       expect(result.warnings).toContain('File is locked')
@@ -536,7 +536,7 @@ describe('zcfUninstaller - Edge Cases', () => {
         'ccx',
         'ccline',
         'backups',
-        'zcf-config',
+        'app-config',
       ]
 
       // Mock all methods to return success
@@ -550,7 +550,7 @@ describe('zcfUninstaller - Edge Cases', () => {
         'uninstallCcx',
         'uninstallCcline',
         'removeBackups',
-        'removeZcfConfig',
+        'removeAppConfig',
       ]
 
       mockMethods.forEach((method) => {

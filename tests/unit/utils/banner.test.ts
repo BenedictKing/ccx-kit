@@ -19,10 +19,10 @@ describe('banner utilities', () => {
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('╔'))
     })
 
-    it('should display Zero-Config Code Flow', () => {
+    it('should display ccx-kit', () => {
       displayBanner()
       expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining('Zero-Config Code Flow'),
+        expect.stringContaining('ccx-kit'),
       )
     })
 

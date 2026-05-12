@@ -29,9 +29,9 @@ vi.mock('../../../../src/utils/json-config', () => ({
   writeJsonConfig: vi.fn(),
 }))
 
-vi.mock('../../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
   updateTomlConfig: vi.fn(),
   readDefaultTomlConfig: vi.fn(),
 }))
@@ -170,8 +170,8 @@ requires_openai_auth = true
       const writeFileMock = vi.mocked(fsOps.writeFile)
       writeFileMock.mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { migrateEnvKeyToTempEnvKey } = await import('../../../../src/utils/code-tools/codex')
       const result = migrateEnvKeyToTempEnvKey()
@@ -185,7 +185,7 @@ requires_openai_auth = true
       expect(writtenContent).not.toMatch(/^env_key\s*=/m)
 
       // Verify ZCF config was updated to mark migration complete
-      expect(zcfConfig.updateTomlConfig).toHaveBeenCalledWith(
+      expect(appConfig.updateTomlConfig).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           codex: expect.objectContaining({
@@ -208,8 +208,8 @@ env_key = "TEST_API_KEY"
       copyFileMock.mockImplementation(() => {})
       vi.mocked(fsOps.writeFile).mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { migrateEnvKeyToTempEnvKey } = await import('../../../../src/utils/code-tools/codex')
       migrateEnvKeyToTempEnvKey()
@@ -240,8 +240,8 @@ env_key = "PROVIDER3_API_KEY"
       const writeFileMock = vi.mocked(fsOps.writeFile)
       writeFileMock.mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { migrateEnvKeyToTempEnvKey } = await import('../../../../src/utils/code-tools/codex')
       const result = migrateEnvKeyToTempEnvKey()
@@ -278,8 +278,8 @@ env_key = "OLD2_API_KEY"
       const writeFileMock = vi.mocked(fsOps.writeFile)
       writeFileMock.mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { migrateEnvKeyToTempEnvKey } = await import('../../../../src/utils/code-tools/codex')
       const result = migrateEnvKeyToTempEnvKey()
@@ -319,8 +319,8 @@ temp_env_key = "NEW_ONLY_KEY"
       const writeFileMock = vi.mocked(fsOps.writeFile)
       writeFileMock.mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { migrateEnvKeyToTempEnvKey } = await import('../../../../src/utils/code-tools/codex')
       const result = migrateEnvKeyToTempEnvKey()
@@ -441,8 +441,8 @@ name = "Test"
 
   describe('ensureEnvKeyMigration', () => {
     it('should skip migration when already migrated', async () => {
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.readDefaultTomlConfig).mockReturnValue({
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.readDefaultTomlConfig).mockReturnValue({
         version: '1.0.0',
         lastUpdated: new Date().toISOString(),
         general: {
@@ -476,8 +476,8 @@ env_key = "TEST_API_KEY"
     })
 
     it('should perform migration when not yet migrated', async () => {
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.readDefaultTomlConfig).mockReturnValue({
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.readDefaultTomlConfig).mockReturnValue({
         version: '1.0.0',
         lastUpdated: new Date().toISOString(),
         general: {
@@ -495,7 +495,7 @@ env_key = "TEST_API_KEY"
           // envKeyMigrated not set
         },
       })
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const fsOps = await import('../../../../src/utils/fs-operations')
       vi.mocked(fsOps.exists).mockReturnValue(true)
@@ -515,8 +515,8 @@ env_key = "TEST_API_KEY"
     })
 
     it('should skip migration when no config file exists', async () => {
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.readDefaultTomlConfig).mockReturnValue(null)
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.readDefaultTomlConfig).mockReturnValue(null)
 
       const fsOps = await import('../../../../src/utils/fs-operations')
       vi.mocked(fsOps.exists).mockReturnValue(false)
@@ -604,8 +604,8 @@ env_key = "TEST_API_KEY"
       vi.mocked(fsOps.copyFile).mockImplementation(() => {})
       vi.mocked(fsOps.writeFile).mockImplementation(() => {})
 
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      vi.mocked(zcfConfig.readDefaultTomlConfig).mockReturnValue({
+      const appConfig = await import('../../../../src/utils/app-config')
+      vi.mocked(appConfig.readDefaultTomlConfig).mockReturnValue({
         version: '1.0.0',
         lastUpdated: new Date().toISOString(),
         general: {
@@ -623,13 +623,13 @@ env_key = "TEST_API_KEY"
           // Not migrated yet
         },
       })
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => ({} as any))
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => ({} as any))
 
       const { readCodexConfig } = await import('../../../../src/utils/code-tools/codex')
       readCodexConfig()
 
       // Migration should have been triggered
-      expect(zcfConfig.updateTomlConfig).toHaveBeenCalledWith(
+      expect(appConfig.updateTomlConfig).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           codex: expect.objectContaining({
@@ -669,9 +669,9 @@ env_key = "TEST_API_KEY"
         writeJsonConfig: vi.fn(),
       }))
 
-      vi.doMock('../../../../src/utils/zcf-config', () => ({
-        readZcfConfig: vi.fn(),
-        updateZcfConfig: vi.fn(),
+      vi.doMock('../../../../src/utils/app-config', () => ({
+        readAppConfig: vi.fn(),
+        updateAppConfig: vi.fn(),
         updateTomlConfig: vi.fn(),
         readDefaultTomlConfig: vi.fn(),
       }))
@@ -730,9 +730,9 @@ env_key = "TEST_API_KEY"
         writeJsonConfig: vi.fn(),
       }))
 
-      vi.doMock('../../../../src/utils/zcf-config', () => ({
-        readZcfConfig: vi.fn(),
-        updateZcfConfig: vi.fn(),
+      vi.doMock('../../../../src/utils/app-config', () => ({
+        readAppConfig: vi.fn(),
+        updateAppConfig: vi.fn(),
         updateTomlConfig: vi.fn(),
         readDefaultTomlConfig: vi.fn(),
       }))

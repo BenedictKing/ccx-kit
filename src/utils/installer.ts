@@ -535,7 +535,7 @@ export async function uninstallCodeTool(codeType: CodeType): Promise<boolean> {
 }
 
 /**
- * Set installMethod in both ~/.claude.json and zcf-config
+ * Set installMethod in both ~/.claude.json and app-config
  * This ensures Claude Code knows it was installed via npm for proper auto-updates
  */
 export async function setInstallMethod(method: InstallMethod, codeType: CodeType = 'claude-code'): Promise<void> {

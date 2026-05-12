@@ -1,11 +1,11 @@
 import inquirer from 'inquirer'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { readAppConfig, updateAppConfig } from '../../../../src/utils/app-config'
 import { configureCodexApi, configureCodexMcp, runCodexWorkflowImportWithLanguageSelection, runCodexWorkflowSelection } from '../../../../src/utils/code-tools/codex'
 import { applyAiLanguageDirective } from '../../../../src/utils/config'
 import { exists, readFile, writeFile } from '../../../../src/utils/fs-operations'
 import { resolveAiOutputLanguage, resolveTemplateLanguage } from '../../../../src/utils/prompts'
-import { readZcfConfig, updateZcfConfig } from '../../../../src/utils/zcf-config'
 
 // Mock i18n
 vi.mock('../../../../src/i18n', () => ({
@@ -46,10 +46,10 @@ vi.mock('../../../../src/utils/prompts', () => ({
   resolveSystemPromptStyle: vi.fn(),
 }))
 
-// Mock zcf-config
-vi.mock('../../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+// Mock app-config
+vi.mock('../../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
   updateTomlConfig: vi.fn(),
   readDefaultTomlConfig: vi.fn(),
 }))
@@ -220,8 +220,8 @@ model_provider = "official"
       // Assert - should not write config.toml with MCP servers
       expect(inquirer.prompt).not.toHaveBeenCalled()
       // Verify workflow selection was still called
-      const zcfConfig = await import('../../../../src/utils/zcf-config')
-      expect(vi.mocked(zcfConfig.updateZcfConfig)).toHaveBeenCalled()
+      const appConfig = await import('../../../../src/utils/app-config')
+      expect(vi.mocked(appConfig.updateAppConfig)).toHaveBeenCalled()
     })
 
     it('should use provided mcpServices array when specified', async () => {
@@ -323,7 +323,7 @@ model_provider = "official"
   describe('runCodexWorkflowImportWithLanguageSelection', () => {
     it('should select AI output language before system prompt selection', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'zh-CN' as const,
         version: '2.12.13',
         codeToolType: 'codex' as const,
@@ -331,7 +331,7 @@ model_provider = "official"
       }
       const mockAiOutputLang = 'zh-CN'
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockResolvedValue(mockAiOutputLang)
       vi.mocked(exists).mockReturnValue(true)
       vi.mocked(readFile).mockReturnValue('# System prompt content')
@@ -344,11 +344,11 @@ model_provider = "official"
       expect(resolveAiOutputLanguage).toHaveBeenCalledWith(
         'zh-CN',
         undefined,
-        mockZcfConfig,
+        mockAppConfig,
         false, // skipPrompt = false for interactive mode
       )
-      expect(updateZcfConfig).toHaveBeenCalledWith({ aiOutputLang: mockAiOutputLang })
-      expect(updateZcfConfig).toHaveBeenCalledWith({ templateLang: 'zh-CN' })
+      expect(updateAppConfig).toHaveBeenCalledWith({ aiOutputLang: mockAiOutputLang })
+      expect(updateAppConfig).toHaveBeenCalledWith({ templateLang: 'zh-CN' })
       expect(applyAiLanguageDirective).toHaveBeenCalledWith(mockAiOutputLang)
 
       const agentsWriteCall = vi.mocked(writeFile).mock.calls.find(call => call[0]?.includes('AGENTS.md'))
@@ -357,7 +357,7 @@ model_provider = "official"
 
     it('should use saved AI output language from config if available', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'en' as const,
         aiOutputLang: 'en',
         version: '2.12.13',
@@ -365,7 +365,7 @@ model_provider = "official"
         lastUpdated: '2025-01-15',
       }
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockResolvedValue('en') // Should return saved config
       vi.mocked(exists).mockReturnValue(true)
       vi.mocked(readFile).mockReturnValue('# System prompt content')
@@ -378,16 +378,16 @@ model_provider = "official"
       expect(resolveAiOutputLanguage).toHaveBeenCalledWith(
         'zh-CN', // Mock i18n.language is 'zh-CN'
         undefined,
-        mockZcfConfig,
+        mockAppConfig,
         false, // skipPrompt = false for interactive mode
       )
-      expect(updateZcfConfig).toHaveBeenCalledWith({ templateLang: 'zh-CN' })
+      expect(updateAppConfig).toHaveBeenCalledWith({ templateLang: 'zh-CN' })
       // Should not prompt for AI language again since it's saved
     })
 
     it('should respect ZCF config language priority in skip-prompt mode', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'zh-CN' as const,
         templateLang: 'zh-CN' as const,
         aiOutputLang: 'zh-CN' as const,
@@ -396,7 +396,7 @@ model_provider = "official"
         lastUpdated: '2025-01-15',
       }
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockResolvedValue('zh-CN') // Should return saved config
       vi.mocked(exists).mockReturnValue(true)
       vi.mocked(readFile).mockReturnValue('# System prompt content')
@@ -409,22 +409,22 @@ model_provider = "official"
       expect(resolveAiOutputLanguage).toHaveBeenCalledWith(
         'zh-CN', // Mock i18n.language is 'zh-CN'
         undefined, // No command line option
-        mockZcfConfig,
+        mockAppConfig,
         true, // skipPrompt = true
       )
-      expect(updateZcfConfig).toHaveBeenCalledWith({ aiOutputLang: 'zh-CN' })
+      expect(updateAppConfig).toHaveBeenCalledWith({ aiOutputLang: 'zh-CN' })
     })
 
     it('should use correct template language directory based on preferredLang', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'en' as const,
         version: '2.12.13',
         codeToolType: 'codex' as const,
         lastUpdated: '2025-01-15',
       }
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockResolvedValue('en')
       vi.mocked(exists).mockImplementation((path: string) => {
         return path.includes('/en/') || path.includes('system-prompt') || path.includes('workflow') // English template exists
@@ -447,14 +447,14 @@ model_provider = "official"
 
     it('should fallback to zh-CN template if preferred language template does not exist', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'en' as const,
         version: '2.12.13',
         codeToolType: 'codex' as const,
         lastUpdated: '2025-01-15',
       }
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockResolvedValue('en')
       vi.mocked(exists).mockImplementation((path: string) => {
         // Base workflow directory exists
@@ -494,14 +494,14 @@ model_provider = "official"
 
     it('should handle error when AI output language selection fails', async () => {
       // Arrange
-      const mockZcfConfig = {
+      const mockAppConfig = {
         preferredLang: 'zh-CN' as const,
         version: '2.12.13',
         codeToolType: 'codex' as const,
         lastUpdated: '2025-01-15',
       }
 
-      vi.mocked(readZcfConfig).mockReturnValue(mockZcfConfig)
+      vi.mocked(readAppConfig).mockReturnValue(mockAppConfig)
       vi.mocked(resolveAiOutputLanguage).mockRejectedValue(new Error('Language selection failed'))
 
       // Act & Assert

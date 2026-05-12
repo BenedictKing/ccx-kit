@@ -32,8 +32,8 @@ vi.mock('../../src/i18n', async (importOriginal) => {
   }
 })
 
-// Mock zcf-config
-function createMockZcfConfig() {
+// Mock app-config
+function createMockAppConfig() {
   return {
     version: '1.0.0',
     preferredLang: 'en' as const,
@@ -42,10 +42,10 @@ function createMockZcfConfig() {
   }
 }
 
-vi.mock('../../src/utils/zcf-config', () => ({
-  readZcfConfigAsync: vi.fn().mockResolvedValue(createMockZcfConfig()),
-  readZcfConfig: vi.fn().mockReturnValue(createMockZcfConfig()),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../src/utils/app-config', () => ({
+  readAppConfigAsync: vi.fn().mockResolvedValue(createMockAppConfig()),
+  readAppConfig: vi.fn().mockReturnValue(createMockAppConfig()),
+  updateAppConfig: vi.fn(),
 }))
 
 // Mock prompts
@@ -56,7 +56,7 @@ vi.mock('../../src/utils/prompts', () => ({
 const { changeLanguage, i18n } = await import('../../src/i18n')
 const { checkUpdates } = await import('../../src/commands/check-updates')
 const mockedCheckUpdates = vi.mocked(checkUpdates)
-const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
+const { readAppConfigAsync } = await import('../../src/utils/app-config')
 const { selectScriptLanguage } = await import('../../src/utils/prompts')
 const mockSelectScriptLanguage = vi.mocked(selectScriptLanguage)
 
@@ -101,7 +101,7 @@ describe('cli-setup', () => {
     beforeEach(() => {
       vi.mocked(changeLanguage).mockReset()
       mockSelectScriptLanguage.mockResolvedValue('en')
-      vi.mocked(readZcfConfigAsync).mockResolvedValue(createMockZcfConfig())
+      vi.mocked(readAppConfigAsync).mockResolvedValue(createMockAppConfig())
     })
 
     it('should switch language when option specifies different language', async () => {
@@ -117,7 +117,7 @@ describe('cli-setup', () => {
     it('should prompt for language when not skipping and config missing', async () => {
       i18n.isInitialized = true
       i18n.language = 'en'
-      vi.mocked(readZcfConfigAsync).mockResolvedValue(null)
+      vi.mocked(readAppConfigAsync).mockResolvedValue(null)
       mockSelectScriptLanguage.mockResolvedValue('zh-CN')
 
       const wrapped = await withLanguageResolution(async (_options: any) => {}, false)
@@ -145,13 +145,13 @@ describe('cli-setup', () => {
       const result = customizeHelp(sections)
 
       // Should add header
-      expect(result[0].body).toContain('ZCF - Zero-Config Code Flow')
+      expect(result[0].body).toContain('CCX-Kit v')
 
       // Should add commands section
       const commandsSection = result.find(s => s.title.includes('Commands'))
       expect(commandsSection).toBeDefined()
-      expect(commandsSection.body).toContain('zcf init')
-      expect(commandsSection.body).toContain('zcf update')
+      expect(commandsSection.body).toContain('ccx-kit init')
+      expect(commandsSection.body).toContain('ccx-kit update')
 
       // Should add options section
       const optionsSection = result.find(s => s.title.includes('Options'))
@@ -163,9 +163,9 @@ describe('cli-setup', () => {
       // Should add examples section
       const examplesSection = result.find(s => s.title.includes('Examples'))
       expect(examplesSection).toBeDefined()
-      expect(examplesSection.body).toContain('npx zcf')
-      expect(examplesSection.body).toContain('npx zcf init')
-      expect(examplesSection.body).toContain('npx zcf u')
+      expect(examplesSection.body).toContain('npx ccx-kit')
+      expect(examplesSection.body).toContain('npx ccx-kit init')
+      expect(examplesSection.body).toContain('npx ccx-kit u')
     })
 
     it('should maintain existing sections', () => {

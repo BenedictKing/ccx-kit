@@ -4,11 +4,11 @@ import ansis from 'ansis'
 import inquirer from 'inquirer'
 import { DEFAULT_CODE_TOOL_TYPE, isCodeToolType, resolveCodeToolType } from '../constants'
 import { ensureI18nInitialized, i18n } from '../i18n'
+import { readAppConfig } from '../utils/app-config'
 import { ClaudeCodeConfigManager } from '../utils/claude-code-config-manager'
 import { listCodexProviders, readCodexConfig, switchToOfficialLogin as switchCodexOfficialLogin, switchCodexProvider, switchToProvider } from '../utils/code-tools/codex'
 import { handleGeneralError } from '../utils/error-handler'
 import { addNumbersToChoices } from '../utils/prompt-helpers'
-import { readZcfConfig } from '../utils/zcf-config'
 
 interface ConfigSwitchOptions {
   codeType?: CodeToolType // --code-type, -T
@@ -61,9 +61,9 @@ function resolveCodeType(codeType?: unknown): CodeToolType {
   }
 
   // Fall back to ZCF config
-  const zcfConfig = readZcfConfig()
-  if (zcfConfig?.codeToolType && isCodeToolType(zcfConfig.codeToolType)) {
-    return zcfConfig.codeToolType
+  const appConfig = readAppConfig()
+  if (appConfig?.codeToolType && isCodeToolType(appConfig.codeToolType)) {
+    return appConfig.codeToolType
   }
 
   return DEFAULT_CODE_TOOL_TYPE

@@ -1,14 +1,14 @@
 import type { CcxInstallStatus } from '../../types/ccx'
-import { createWriteStream, existsSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { chmod, mkdir } from 'node:fs/promises'
 import { arch, homedir, platform } from 'node:os'
 import process from 'node:process'
-import { Readable } from 'node:stream'
-import { pipeline } from 'node:stream/promises'
 import ansis from 'ansis'
 import { join } from 'pathe'
 import { exec } from 'tinyexec'
 import { ensureI18nInitialized, i18n } from '../../i18n'
+import { downloadCcxFromSources } from './download-sources'
+import { getLatestCcxVersionFromSources } from './version-sources'
 
 const CCX_GITHUB_REPO = 'BenedictKing/ccx'
 const CCX_INSTALL_DIR = join(homedir(), '.local', 'bin')
@@ -99,37 +99,14 @@ export async function getCcxVersion(): Promise<string | null> {
 }
 
 /**
- * Get latest CCX version from GitHub releases
+ * Get latest CCX version from multiple sources with fallback
  */
 export async function getLatestCcxVersion(): Promise<string | null> {
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000)
-
-    const response = await fetch(
-      `https://api.github.com/repos/${CCX_GITHUB_REPO}/releases/latest`,
-      {
-        signal: controller.signal,
-        headers: { Accept: 'application/vnd.github.v3+json' },
-      },
-    )
-    clearTimeout(timeoutId)
-
-    if (!response.ok)
-      return null
-
-    const data = await response.json() as { tag_name?: string }
-    const tag = data.tag_name || ''
-    // Strip leading 'v' if present
-    return tag.startsWith('v') ? tag.slice(1) : tag
-  }
-  catch {
-    return null
-  }
+  return await getLatestCcxVersionFromSources()
 }
 
 /**
- * Download and install CCX binary from GitHub releases
+ * Download and install CCX binary from multiple sources with fallback
  */
 export async function installCcx(): Promise<void> {
   ensureI18nInitialized()
@@ -144,46 +121,30 @@ export async function installCcx(): Promise<void> {
   console.log(ansis.cyan(`📦 ${i18n.t('ccx:installingCcx')}`))
 
   try {
-    // Get latest release info
+    // Get latest version from multiple sources
     const assetName = getCcxAssetName()
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000)
+    const latestVersion = await getLatestCcxVersion()
 
-    const response = await fetch(
-      `https://api.github.com/repos/${CCX_GITHUB_REPO}/releases/latest`,
-      {
-        signal: controller.signal,
-        headers: { Accept: 'application/vnd.github.v3+json' },
-      },
-    )
-    clearTimeout(timeoutId)
-
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`)
-    }
-
-    const release = await response.json() as {
-      tag_name: string
-      assets: Array<{ name: string, browser_download_url: string }>
-    }
-
-    const asset = release.assets.find(a => a.name === assetName)
-    if (!asset) {
-      throw new Error(`No binary found for ${assetName} in release ${release.tag_name}`)
+    if (!latestVersion) {
+      throw new Error('Failed to fetch latest version from all sources')
     }
 
     // Ensure install directory exists
     await mkdir(CCX_INSTALL_DIR, { recursive: true })
 
-    // Download binary
-    console.log(ansis.cyan(`  ${i18n.t('ccx:downloading')} ${asset.name}...`))
-    const downloadResponse = await fetch(asset.browser_download_url)
-    if (!downloadResponse.ok || !downloadResponse.body) {
-      throw new Error(`Download failed: ${downloadResponse.status}`)
-    }
+    // Download binary from multiple sources
+    console.log(ansis.cyan(`  ${i18n.t('ccx:downloading')} ${assetName}...`))
 
-    const fileStream = createWriteStream(CCX_BINARY_PATH)
-    await pipeline(Readable.fromWeb(downloadResponse.body as any), fileStream)
+    const success = await downloadCcxFromSources(
+      CCX_GITHUB_REPO,
+      latestVersion,
+      assetName,
+      CCX_BINARY_PATH,
+    )
+
+    if (!success) {
+      throw new Error('Failed to download from all sources')
+    }
 
     // Set executable permission on non-Windows
     if (platform() !== 'win32') {

@@ -1,6 +1,6 @@
 import type { UninstallItem } from '../../src/utils/uninstaller'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ZcfUninstaller } from '../../src/utils/uninstaller'
+import { CcxKitUninstaller } from '../../src/utils/uninstaller'
 
 // Mock dependencies
 vi.mock('node:fs')
@@ -69,11 +69,11 @@ vi.mocked(await import('pathe')).join = vi.fn().mockImplementation((...parts) =>
 vi.mocked(await import('../../src/i18n')).i18n = mockI18n.i18n
 vi.mocked(await import('../../src/utils/trash')).moveToTrash = mockTrash.moveToTrash
 
-describe('zcfUninstaller', () => {
-  let uninstaller: ZcfUninstaller
+describe('ccxKitUninstaller', () => {
+  let uninstaller: CcxKitUninstaller
 
   beforeEach(() => {
-    uninstaller = new ZcfUninstaller()
+    uninstaller = new CcxKitUninstaller()
     vi.clearAllMocks()
     mockUninstallCodeTool.mockReset()
   })
@@ -125,8 +125,8 @@ describe('zcfUninstaller', () => {
   })
 
   describe('removeCustomCommands', () => {
-    it('should remove commands/zcf/ directory', async () => {
-      const commandsPath = '/home/user/.claude/commands/zcf'
+    it('should remove commands/ccx-kit/ directory', async () => {
+      const commandsPath = '/home/user/.claude/commands/ccx-kit'
       mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: true, path: commandsPath }])
 
@@ -134,7 +134,7 @@ describe('zcfUninstaller', () => {
 
       expect(mockTrash.moveToTrash).toHaveBeenCalledWith(commandsPath)
       expect(result.success).toBe(true)
-      expect(result.removed).toContain('commands/zcf/')
+      expect(result.removed).toContain('commands/ccx-kit/')
     })
 
     it('should handle missing commands directory gracefully', async () => {
@@ -148,8 +148,8 @@ describe('zcfUninstaller', () => {
   })
 
   describe('removeCustomAgents', () => {
-    it('should remove agents/zcf/ directory', async () => {
-      const agentsPath = '/home/user/.claude/agents/zcf'
+    it('should remove agents/ccx-kit/ directory', async () => {
+      const agentsPath = '/home/user/.claude/agents/ccx-kit'
       mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: true }])
 
@@ -157,7 +157,7 @@ describe('zcfUninstaller', () => {
 
       expect(mockTrash.moveToTrash).toHaveBeenCalledWith(agentsPath)
       expect(result.success).toBe(true)
-      expect(result.removed).toContain('agents/zcf/')
+      expect(result.removed).toContain('agents/ccx-kit/')
     })
 
     it('should warn when agents directory is missing', async () => {

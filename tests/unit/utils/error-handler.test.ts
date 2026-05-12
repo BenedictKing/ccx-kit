@@ -9,8 +9,8 @@ vi.mock('ansis', () => ({
   },
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
 }))
 
 describe('error-handler utilities', () => {
@@ -35,8 +35,8 @@ describe('error-handler utilities', () => {
 
   describe('handleExitPromptError', () => {
     it('should handle ExitPromptError and exit gracefully', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       const error = new Error('User exited')
       error.name = 'ExitPromptError'
@@ -47,8 +47,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should use default language when config is not available', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue(null)
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue(null)
 
       const error = new Error('User exited')
       error.name = 'ExitPromptError'
@@ -83,8 +83,8 @@ describe('error-handler utilities', () => {
 
   describe('handleGeneralError', () => {
     it('should handle Error objects with stack trace', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       const error = new Error('Test error')
       error.stack = 'Error: Test error\n    at test.js:1:1'
@@ -97,8 +97,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should handle non-Error objects', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       expect(() => handleGeneralError('string error')).toThrow('process.exit called')
       expect(consoleErrorSpy).toHaveBeenCalledTimes(1)
@@ -106,8 +106,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should use provided language parameter', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       expect(() => handleGeneralError(new Error('Test'))).toThrow('process.exit called')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -115,8 +115,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should fall back to en when no config and no lang provided', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue(null)
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue(null)
 
       expect(() => handleGeneralError(new Error('Test'))).toThrow('process.exit called')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -124,8 +124,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should handle undefined error', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       expect(() => handleGeneralError(undefined)).toThrow('process.exit called')
       expect(consoleErrorSpy).toHaveBeenCalled()
@@ -133,8 +133,8 @@ describe('error-handler utilities', () => {
     })
 
     it('should handle null error', async () => {
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
-      vi.mocked(readZcfConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', version: '1.0.0', lastUpdated: '2024-01-01', codeToolType: 'claude-code' })
 
       expect(() => handleGeneralError(null)).toThrow('process.exit called')
       expect(consoleErrorSpy).toHaveBeenCalled()

@@ -272,7 +272,7 @@ export function batchUpdateCodexMcpServices(
       content = content.replace(/\n?\[mcp_servers\.[^\]]+\][\s\S]*?(?=\n\[|$)/g, '')
 
       // Also remove the MCP header comment if present
-      content = content.replace(/\n?#\s*---\s*MCP servers added by ZCF\s*---\s*/gi, '')
+      content = content.replace(/\n?#\s*---\s*MCP servers added by CCX-Kit\s*---\s*/gi, '')
 
       writeFile(CODEX_CONFIG_FILE, content)
     }

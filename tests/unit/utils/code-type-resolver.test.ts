@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
 import { resolveCodeType } from '../../../src/utils/code-type-resolver'
 
-// Mock readZcfConfigAsync
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfigAsync: vi.fn().mockResolvedValue({
+// Mock readAppConfigAsync
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfigAsync: vi.fn().mockResolvedValue({
     codeToolType: 'codex',
   }),
 }))
@@ -71,10 +71,10 @@ describe('resolveCodeType', () => {
   })
 
   it('should use DEFAULT_CODE_TOOL_TYPE when config read fails in error path', async () => {
-    const { readZcfConfigAsync } = await import('../../../src/utils/zcf-config')
+    const { readAppConfigAsync } = await import('../../../src/utils/app-config')
 
     // Mock config read to fail
-    vi.mocked(readZcfConfigAsync).mockRejectedValueOnce(new Error('Config read failed'))
+    vi.mocked(readAppConfigAsync).mockRejectedValueOnce(new Error('Config read failed'))
 
     await expect(resolveCodeType('invalid')).rejects.toThrow(
       'Invalid code type: "invalid". Valid options are: cc, cx, gc, claude-code, codex, gemini-cli. Using default: claude-code.',
@@ -82,10 +82,10 @@ describe('resolveCodeType', () => {
   })
 
   it('should use config value as default when available in error path', async () => {
-    const { readZcfConfigAsync } = await import('../../../src/utils/zcf-config')
+    const { readAppConfigAsync } = await import('../../../src/utils/app-config')
 
     // Mock config read to succeed with custom value
-    vi.mocked(readZcfConfigAsync).mockResolvedValueOnce({
+    vi.mocked(readAppConfigAsync).mockResolvedValueOnce({
       codeToolType: 'codex',
     } as any)
 
@@ -95,10 +95,10 @@ describe('resolveCodeType', () => {
   })
 
   it('should handle invalid config value in error path', async () => {
-    const { readZcfConfigAsync } = await import('../../../src/utils/zcf-config')
+    const { readAppConfigAsync } = await import('../../../src/utils/app-config')
 
     // Mock config read to return invalid code type
-    vi.mocked(readZcfConfigAsync).mockResolvedValueOnce({
+    vi.mocked(readAppConfigAsync).mockResolvedValueOnce({
       codeToolType: 'invalid-type',
     } as any)
 

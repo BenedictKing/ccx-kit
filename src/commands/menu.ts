@@ -3,6 +3,7 @@ import ansis from 'ansis'
 import inquirer from 'inquirer'
 import { CODE_TOOL_BANNERS, DEFAULT_CODE_TOOL_TYPE, isCodeToolType } from '../constants'
 import { i18n } from '../i18n'
+import { readAppConfig, updateAppConfig } from '../utils/app-config'
 import { displayBannerWithInfo } from '../utils/banner'
 import { configureCodexApi, configureCodexMcp, runCodexFullInit, runCodexUninstall, runCodexUpdate, runCodexWorkflowImportWithLanguageSelection } from '../utils/code-tools/codex'
 import { resolveCodeType } from '../utils/code-type-resolver'
@@ -20,7 +21,6 @@ import {
 import { addNumbersToChoices } from '../utils/prompt-helpers'
 import { promptBoolean } from '../utils/toggle-prompt'
 import { runCcusageFeature, runCcxMenuFeature, runCometixMenuFeature } from '../utils/tools'
-import { readZcfConfig, updateZcfConfig } from '../utils/zcf-config'
 import { checkUpdates } from './check-updates'
 import { init } from './init'
 import { uninstall } from './uninstall'
@@ -35,7 +35,7 @@ const CODE_TOOL_LABELS: Record<CodeToolType, string> = {
 }
 
 function getCurrentCodeTool(): CodeToolType {
-  const config = readZcfConfig()
+  const config = readAppConfig()
   if (config?.codeToolType && isCodeToolType(config.codeToolType)) {
     return config.codeToolType
   }
@@ -79,7 +79,7 @@ async function handleCodeToolSwitch(current: CodeToolType): Promise<boolean> {
     return false
   }
 
-  updateZcfConfig({ codeToolType: newTool })
+  updateAppConfig({ codeToolType: newTool })
   console.log(ansis.green(`✔ ${i18n.t('menu:codeToolSwitched', { tool: getCodeToolLabel(newTool) })}`))
   return true
 }
@@ -484,7 +484,7 @@ export async function showMainMenu(options: { codeType?: string } = {}): Promise
         const currentType = getCurrentCodeTool()
 
         if (resolvedType !== currentType) {
-          updateZcfConfig({ codeToolType: resolvedType })
+          updateAppConfig({ codeToolType: resolvedType })
           console.log(ansis.green(`✔ ${i18n.t('menu:codeToolSwitched', { tool: getCodeToolLabel(resolvedType) })}`))
         }
       }

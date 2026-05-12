@@ -1,25 +1,25 @@
 import type {
-  PartialZcfTomlConfig,
-  ZcfTomlConfig,
+  AppTomlConfig,
+  PartialAppTomlConfig,
 } from '../../../src/types/toml-config'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CODE_TOOL_TYPE } from '../../../src/constants'
-import * as jsonConfig from '../../../src/utils/json-config'
 import {
   createDefaultTomlConfig,
-  getZcfConfig,
-  getZcfConfigAsync,
+  getAppConfig,
+  getAppConfigAsync,
   migrateFromJsonConfig,
+  readAppConfig,
+  readAppConfigAsync,
   readDefaultTomlConfig,
   readTomlConfig,
-  readZcfConfig,
-  readZcfConfigAsync,
-  saveZcfConfig,
+  saveAppConfig,
+  updateAppConfig,
   updateTomlConfig,
-  updateZcfConfig,
+  writeAppConfig,
   writeTomlConfig,
-  writeZcfConfig,
-} from '../../../src/utils/zcf-config'
+} from '../../../src/utils/app-config'
+import * as jsonConfig from '../../../src/utils/json-config'
 
 // Mock dependencies
 vi.mock('../../../src/utils/json-config')
@@ -43,12 +43,12 @@ vi.mocked(await import('../../../src/utils/toml-edit')).parseToml = mockParseTom
 vi.mocked(await import('../../../src/utils/toml-edit')).stringifyToml = mockStringifyToml
 vi.mocked(await import('../../../src/utils/toml-edit')).batchEditToml = mockBatchEditToml
 
-describe('zcf-config utilities', () => {
+describe('app-config utilities', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  const sampleTomlConfig: ZcfTomlConfig = {
+  const sampleTomlConfig: AppTomlConfig = {
     version: '1.0.0',
     lastUpdated: '2025-09-21T08:00:00.000Z',
     general: {
@@ -138,7 +138,7 @@ system_prompt_style = "engineer-professional"`
     })
   })
 
-  describe('readZcfConfig', () => {
+  describe('readAppConfig', () => {
     it('should read config from TOML file', () => {
       const mockTomlConfig = {
         version: '1.0.0',
@@ -164,7 +164,7 @@ system_prompt_style = "engineer-professional"`
       mockReadFile.mockReturnValue(sampleTomlString)
       mockParseToml.mockReturnValue(mockTomlConfig)
 
-      const result = readZcfConfig()
+      const result = readAppConfig()
 
       expect(result).toEqual({
         version: '1.0.0',
@@ -184,14 +184,14 @@ system_prompt_style = "engineer-professional"`
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const result = readZcfConfig()
+      const result = readAppConfig()
 
       expect(result).toBeNull()
       expect(mockExists).toHaveBeenCalled()
     })
   })
 
-  describe('writeZcfConfig', () => {
+  describe('writeAppConfig', () => {
     it('should save config to TOML file', () => {
       const config = {
         version: '1.0.0',
@@ -206,7 +206,7 @@ system_prompt_style = "engineer-professional"`
       mockEnsureDir.mockReturnValue(undefined)
       mockWriteFile.mockReturnValue(undefined)
 
-      writeZcfConfig(config)
+      writeAppConfig(config)
 
       expect(mockWriteFile).toHaveBeenCalledWith(
         expect.any(String),
@@ -215,7 +215,7 @@ system_prompt_style = "engineer-professional"`
     })
   })
 
-  describe('updateZcfConfig', () => {
+  describe('updateAppConfig', () => {
     it('should update existing config', () => {
       const existingTomlConfig = {
         version: '1.0.0',
@@ -245,7 +245,7 @@ system_prompt_style = "engineer-professional"`
 
       // Migration is handled internally
 
-      updateZcfConfig({ preferredLang: 'zh-CN', codeToolType: 'codex' })
+      updateAppConfig({ preferredLang: 'zh-CN', codeToolType: 'codex' })
 
       // Verify writeFile was called and the content includes updated top-level fields
       expect(mockWriteFile).toHaveBeenCalled()
@@ -266,7 +266,7 @@ system_prompt_style = "engineer-professional"`
       mockEnsureDir.mockReturnValue(undefined)
       mockWriteFile.mockReturnValue(undefined)
 
-      updateZcfConfig({ preferredLang: 'zh-CN' })
+      updateAppConfig({ preferredLang: 'zh-CN' })
 
       expect(mockWriteFile).toHaveBeenCalledWith(
         expect.any(String),
@@ -275,7 +275,7 @@ system_prompt_style = "engineer-professional"`
     })
 
     it('should preserve codex system prompt style when updating unrelated fields', () => {
-      const existingTomlConfig: ZcfTomlConfig = {
+      const existingTomlConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2025-09-21T08:00:00.000Z',
         general: {
@@ -306,7 +306,7 @@ system_prompt_style = "engineer-professional"`
       mockEnsureDir.mockReturnValue(undefined)
       mockWriteFile.mockReturnValue(undefined)
 
-      updateZcfConfig({ codeToolType: 'codex' })
+      updateAppConfig({ codeToolType: 'codex' })
 
       // Verify batchEditToml was called (file exists case uses incremental editing)
       expect(mockBatchEditToml).toHaveBeenCalled()
@@ -319,28 +319,28 @@ system_prompt_style = "engineer-professional"`
     })
   })
 
-  // Extended Tests from zcf-config.extended.test.ts
-  describe('zcf-config extended tests', () => {
+  // Extended Tests from app-config.extended.test.ts
+  describe('app-config extended tests', () => {
     it('should handle cache cleanup', () => {
       // This is a placeholder test - the actual extended tests were minimal
       expect(true).toBe(true)
     })
   })
 
-  describe('readZcfConfig - legacy file support', () => {
+  describe('readAppConfig - legacy file support', () => {
     it('should try legacy location', () => {
       // This test covers the legacy path logic without complex mocking
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const result = readZcfConfig()
+      const result = readAppConfig()
 
       expect(result).toBeNull()
       expect(mockExists).toHaveBeenCalled()
     })
   })
 
-  describe('writeZcfConfig - error handling', () => {
+  describe('writeAppConfig - error handling', () => {
     it('should silently fail on write error', () => {
       mockWriteFile.mockImplementation(() => {
         throw new Error('Permission denied')
@@ -354,16 +354,16 @@ system_prompt_style = "engineer-professional"`
       }
 
       // Should not throw
-      expect(() => writeZcfConfig(config)).not.toThrow()
+      expect(() => writeAppConfig(config)).not.toThrow()
     })
   })
 
-  describe('getZcfConfig defaults', () => {
+  describe('getAppConfig defaults', () => {
     it('should return default config when nothing stored', () => {
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const config = getZcfConfig()
+      const config = getAppConfig()
 
       expect(config.preferredLang).toBe('en')
       expect(config.codeToolType).toBe(DEFAULT_CODE_TOOL_TYPE)
@@ -371,7 +371,7 @@ system_prompt_style = "engineer-professional"`
   })
 
   describe('async functions', () => {
-    it('should readZcfConfigAsync return config', async () => {
+    it('should readAppConfigAsync return config', async () => {
       const mockTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-01-01',
@@ -394,7 +394,7 @@ system_prompt_style = "engineer-professional"`
       mockReadFile.mockReturnValue(sampleTomlString)
       mockParseToml.mockReturnValue(mockTomlConfig)
 
-      const result = await readZcfConfigAsync()
+      const result = await readAppConfigAsync()
 
       expect(result).toEqual({
         version: '1.0.0',
@@ -407,20 +407,20 @@ system_prompt_style = "engineer-professional"`
       })
     })
 
-    it('should readZcfConfigAsync return null when no config', async () => {
+    it('should readAppConfigAsync return null when no config', async () => {
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const result = await readZcfConfigAsync()
+      const result = await readAppConfigAsync()
 
       expect(result).toBeNull()
     })
 
-    it('should getZcfConfigAsync return default when no config', async () => {
+    it('should getAppConfigAsync return default when no config', async () => {
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const result = await getZcfConfigAsync()
+      const result = await getAppConfigAsync()
 
       expect(result.version).toBe('1.0.0')
       expect(result.preferredLang).toBe('en')
@@ -428,7 +428,7 @@ system_prompt_style = "engineer-professional"`
       expect(result.lastUpdated).toBeTruthy()
     })
 
-    it('should getZcfConfigAsync return existing config', async () => {
+    it('should getAppConfigAsync return existing config', async () => {
       const mockTomlConfig = {
         version: '2.0.0',
         lastUpdated: '2024-06-01',
@@ -451,7 +451,7 @@ system_prompt_style = "engineer-professional"`
       mockReadFile.mockReturnValue(sampleTomlString)
       mockParseToml.mockReturnValue(mockTomlConfig)
 
-      const result = await getZcfConfigAsync()
+      const result = await getAppConfigAsync()
 
       expect(result.version).toBe('2.0.0')
       expect(result.preferredLang).toBe('zh-CN')
@@ -459,7 +459,7 @@ system_prompt_style = "engineer-professional"`
       expect(result.lastUpdated).toBe('2024-06-01')
     })
 
-    it('should saveZcfConfig call writeZcfConfig', async () => {
+    it('should saveAppConfig call writeAppConfig', async () => {
       const config = {
         version: '1.0.0',
         preferredLang: 'en' as const,
@@ -473,7 +473,7 @@ system_prompt_style = "engineer-professional"`
       mockEnsureDir.mockReturnValue(undefined)
       mockWriteFile.mockReturnValue(undefined)
 
-      await saveZcfConfig(config)
+      await saveAppConfig(config)
 
       expect(mockWriteFile).toHaveBeenCalledWith(
         expect.any(String),
@@ -482,12 +482,12 @@ system_prompt_style = "engineer-professional"`
     })
   })
 
-  describe('getZcfConfig - fallback behavior', () => {
-    it('should return default config when readZcfConfig returns null', () => {
+  describe('getAppConfig - fallback behavior', () => {
+    it('should return default config when readAppConfig returns null', () => {
       mockExists.mockReturnValue(false)
       vi.mocked(jsonConfig.readJsonConfig).mockReturnValue(null)
 
-      const result = getZcfConfig()
+      const result = getAppConfig()
 
       expect(result).toEqual({
         version: '1.0.0',
@@ -521,7 +521,7 @@ system_prompt_style = "engineer-professional"`
       mockReadFile.mockReturnValue(sampleTomlString)
       mockParseToml.mockReturnValue(mockTomlConfig)
 
-      const result = getZcfConfig()
+      const result = getAppConfig()
 
       expect(result.version).toBe('2.0.0')
       expect(result.preferredLang).toBe('zh-CN')
@@ -530,7 +530,7 @@ system_prompt_style = "engineer-professional"`
     })
   })
 
-  describe('updateZcfConfig - complex scenarios', () => {
+  describe('updateAppConfig - complex scenarios', () => {
     it('should handle partial updates with undefined values', () => {
       const existingTomlConfig = {
         version: '1.0.0',
@@ -560,7 +560,7 @@ system_prompt_style = "engineer-professional"`
       // Return content with old version/lastUpdated to verify they get updated
       mockBatchEditToml.mockReturnValue('version = "1.0.0"\nlastUpdated = "2024-01-01"\n[claudeCode]\nenabled = false')
 
-      updateZcfConfig({
+      updateAppConfig({
         outputStyles: undefined,
         defaultOutputStyle: undefined,
       })
@@ -592,7 +592,7 @@ system_prompt_style = "engineer-professional"`
       mockEnsureDir.mockReturnValue(undefined)
       mockWriteFile.mockReturnValue(undefined)
 
-      updateZcfConfig(updates)
+      updateAppConfig(updates)
 
       expect(mockWriteFile).toHaveBeenCalledWith(
         expect.any(String),
@@ -671,7 +671,7 @@ system_prompt_style = "engineer-professional"`
       it('should update top-level fields (version, lastUpdated) when file exists', () => {
         const configPath = '/test/config.toml'
         const existingContent = 'version = "0.9.0"\nlastUpdated = "2024-01-01T00:00:00.000Z"\n[general]\npreferredLang = "en"'
-        const newConfig: ZcfTomlConfig = {
+        const newConfig: AppTomlConfig = {
           version: '1.0.0',
           lastUpdated: '2024-12-25T10:45:00.000Z',
           general: {
@@ -716,7 +716,7 @@ system_prompt_style = "engineer-professional"`
       it('should add top-level fields if they do not exist', () => {
         const configPath = '/test/config.toml'
         const existingContent = '[general]\npreferredLang = "en"'
-        const newConfig: ZcfTomlConfig = {
+        const newConfig: AppTomlConfig = {
           version: '1.0.0',
           lastUpdated: '2024-12-25T10:45:00.000Z',
           general: {
@@ -878,7 +878,7 @@ enabled = true
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0', // This is config schema version, not tool version
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -933,7 +933,7 @@ currentTool = "claude-code"
 [claudeCode]
 enabled = true`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -981,7 +981,7 @@ enabled = true`
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1034,7 +1034,7 @@ preferredLang = "en"`
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1084,7 +1084,7 @@ preferredLang = "en"`
 enabled = true
 version = "1.5.0"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1134,7 +1134,7 @@ lastUpdated = "2024-01-01" # last update time
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1185,7 +1185,7 @@ lastUpdated = "2024-01-01"
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1241,7 +1241,7 @@ preferredLang = "en"`
       }
 
       // Should not throw when directory creation fails
-      expect(() => updateZcfConfig(config)).not.toThrow()
+      expect(() => updateAppConfig(config)).not.toThrow()
     })
 
     it('should handle configuration validation errors', () => {
@@ -1253,7 +1253,7 @@ preferredLang = "en"`
       }
 
       // Should handle validation errors gracefully
-      expect(() => updateZcfConfig(invalidConfig)).not.toThrow()
+      expect(() => updateAppConfig(invalidConfig)).not.toThrow()
     })
   })
 
@@ -1265,7 +1265,7 @@ preferredLang = "en"`
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1304,7 +1304,7 @@ preferredLang = "en"`
 
     it('should use stringifyToml for new files (no existing content)', () => {
       const configPath = '/test/new-config.toml'
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1349,7 +1349,7 @@ preferredLang = "en"`
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1398,7 +1398,7 @@ lastUpdated = "2023-01-01T00:00:00.000Z"
 [general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1448,7 +1448,7 @@ preferredLang = "zh-CN"`)
       const existingContent = `name = "test"
 author = "developer"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1490,7 +1490,7 @@ author = "developer"`
       const existingContent = `name = "test"[general]
 preferredLang = "en"`
 
-      const newConfig: ZcfTomlConfig = {
+      const newConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-12-25T10:45:00.000Z',
         general: {
@@ -1526,10 +1526,10 @@ preferredLang = "en"`
     })
   })
 
-  // Tests for writeZcfConfig preserving claudeCode profiles and other metadata
-  describe('writeZcfConfig metadata preservation', () => {
+  // Tests for writeAppConfig preserving claudeCode profiles and other metadata
+  describe('writeAppConfig metadata preservation', () => {
     it('should preserve claudeCode.profiles from existing config', () => {
-      const existingTomlConfig: ZcfTomlConfig = {
+      const existingTomlConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2025-01-01T00:00:00.000Z',
         general: {
@@ -1569,7 +1569,7 @@ preferredLang = "en"`
         codeToolType: 'claude-code' as const,
       }
 
-      writeZcfConfig(config)
+      writeAppConfig(config)
 
       // The test verifies the function runs without error
       // The actual profile preservation logic is covered by the function implementation
@@ -1577,7 +1577,7 @@ preferredLang = "en"`
     })
 
     it('should preserve systemPromptStyle from existing codex config', () => {
-      const existingTomlConfig: ZcfTomlConfig = {
+      const existingTomlConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2025-01-01T00:00:00.000Z',
         general: {
@@ -1610,7 +1610,7 @@ preferredLang = "en"`
         codeToolType: 'codex' as const,
       }
 
-      writeZcfConfig(config)
+      writeAppConfig(config)
 
       // The test verifies the function runs and preserves systemPromptStyle
       expect(mockWriteFile).toHaveBeenCalled()
@@ -1697,7 +1697,7 @@ preferredLang = "en"`
   describe('updateTomlConfig', () => {
     it('should update partial TOML configuration with existing config', () => {
       const configPath = '/test/update-config.toml'
-      const existingConfig: ZcfTomlConfig = {
+      const existingConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-01-01T00:00:00.000Z',
         general: {
@@ -1727,7 +1727,7 @@ preferredLang = "en"`
         general: {
           preferredLang: 'zh-CN' as const,
         },
-      } as PartialZcfTomlConfig
+      } as PartialAppTomlConfig
 
       const result = updateTomlConfig(configPath, updates)
 
@@ -1750,7 +1750,7 @@ preferredLang = "en"`
         general: {
           preferredLang: 'zh-CN' as const,
         },
-      } as PartialZcfTomlConfig
+      } as PartialAppTomlConfig
 
       const result = updateTomlConfig(configPath, updates)
 
@@ -1763,7 +1763,7 @@ preferredLang = "en"`
 
     it('should deep merge claudeCode updates', () => {
       const configPath = '/test/merge-config.toml'
-      const existingConfig: ZcfTomlConfig = {
+      const existingConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-01-01T00:00:00.000Z',
         general: {
@@ -1795,7 +1795,7 @@ preferredLang = "en"`
           outputStyles: ['nekomata-engineer'],
           defaultOutputStyle: 'nekomata-engineer',
         },
-      } as PartialZcfTomlConfig
+      } as PartialAppTomlConfig
 
       const result = updateTomlConfig(configPath, updates)
 
@@ -1807,7 +1807,7 @@ preferredLang = "en"`
 
     it('should deep merge codex updates', () => {
       const configPath = '/test/codex-merge-config.toml'
-      const existingConfig: ZcfTomlConfig = {
+      const existingConfig: AppTomlConfig = {
         version: '1.0.0',
         lastUpdated: '2024-01-01T00:00:00.000Z',
         general: {
@@ -1837,7 +1837,7 @@ preferredLang = "en"`
         codex: {
           systemPromptStyle: 'laowang-engineer',
         },
-      } as PartialZcfTomlConfig
+      } as PartialAppTomlConfig
 
       const result = updateTomlConfig(configPath, updates)
 

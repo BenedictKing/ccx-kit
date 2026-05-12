@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { readAppConfig, updateAppConfig } from '../../../src/utils/app-config'
 import { applyAiLanguageDirective } from '../../../src/utils/config'
 import { exists, readFile } from '../../../src/utils/fs-operations'
 import { resolveAiOutputLanguage, resolveTemplateLanguage } from '../../../src/utils/prompts'
-import { readZcfConfig, updateZcfConfig } from '../../../src/utils/zcf-config'
 
 // Mock i18n
 vi.mock('../../../src/i18n', () => ({
@@ -50,10 +50,10 @@ vi.mock('../../../src/utils/prompts', () => ({
   resolveSystemPromptStyle: vi.fn(),
 }))
 
-// Mock zcf-config
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+// Mock app-config
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 // Mock config operations
@@ -104,13 +104,13 @@ describe('codex Skip Prompt Integration', () => {
     vi.mocked(resolveTemplateLanguage).mockResolvedValue('zh-CN')
     vi.mocked(exists).mockReturnValue(true)
     vi.mocked(readFile).mockReturnValue('# Mock file content')
-    vi.mocked(readZcfConfig).mockReturnValue({
+    vi.mocked(readAppConfig).mockReturnValue({
       preferredLang: 'zh-CN',
       version: '3.1.3',
       codeToolType: 'codex',
       lastUpdated: '2025-01-15',
     })
-    vi.mocked(updateZcfConfig).mockImplementation(() => {})
+    vi.mocked(updateAppConfig).mockImplementation(() => {})
     vi.mocked(applyAiLanguageDirective).mockImplementation(() => {})
   })
 

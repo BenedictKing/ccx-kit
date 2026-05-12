@@ -205,7 +205,7 @@ export function removeApiKeyFromRejected(config: ClaudeConfiguration, apiKey: st
 
 /**
  * Manages API key approval status by reading config, updating it, and writing it back
- * @param apiKey - The API key to ensure is approved (e.g., 'sk-zcf-x-ccx')
+ * @param apiKey - The API key to ensure is approved (e.g., 'sk-ccx-kit')
  */
 export function manageApiKeyApproval(apiKey: string): void {
   try {
@@ -242,8 +242,8 @@ export function setPrimaryApiKey(): void {
       config = {}
     }
 
-    // Set primaryApiKey to "zcf" for third-party API identification
-    config.primaryApiKey = 'zcf'
+    // Set primaryApiKey to "ccx-kit" for third-party API identification
+    config.primaryApiKey = 'ccx-kit'
 
     // Write updated config to ~/.claude/config.json
     writeJsonConfig(CLAUDE_VSC_CONFIG_FILE, config)

@@ -31,8 +31,8 @@ vi.mock('../../../../src/utils/platform', () => ({
   getSystemRoot: vi.fn(),
 }))
 
-vi.mock('../../../../src/utils/zcf-config', () => ({
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../../src/utils/app-config', () => ({
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../../src/utils/code-tools/codex', () => ({
@@ -68,7 +68,7 @@ describe('codex-configure', () => {
   describe('configureCodexMcp - skipPrompt mode', () => {
     it('should skip MCP installation when mcpServices is false', async () => {
       const { configureCodexMcp } = await import('../../../../src/utils/code-tools/codex-configure')
-      const { updateZcfConfig } = vi.mocked(await import('../../../../src/utils/zcf-config'))
+      const { updateAppConfig } = vi.mocked(await import('../../../../src/utils/app-config'))
       const { backupCodexComplete, readCodexConfig } = vi.mocked(await import('../../../../src/utils/code-tools/codex'))
 
       backupCodexComplete.mockReturnValue('/backup/path')
@@ -81,7 +81,7 @@ describe('codex-configure', () => {
 
       await configureCodexMcp(options)
 
-      expect(updateZcfConfig).toHaveBeenCalledWith({ codeToolType: 'codex' })
+      expect(updateAppConfig).toHaveBeenCalledWith({ codeToolType: 'codex' })
     })
 
     it('should use provided mcpServices list in skipPrompt mode', async () => {
@@ -250,7 +250,7 @@ describe('codex-configure', () => {
       const { selectMcpServices } = vi.mocked(await import('../../../../src/utils/mcp-selector'))
       const { backupCodexComplete, readCodexConfig } = vi.mocked(await import('../../../../src/utils/code-tools/codex'))
       const { batchUpdateCodexMcpServices } = vi.mocked(await import('../../../../src/utils/code-tools/codex-toml-updater'))
-      const { updateZcfConfig } = vi.mocked(await import('../../../../src/utils/zcf-config'))
+      const { updateAppConfig } = vi.mocked(await import('../../../../src/utils/app-config'))
 
       backupCodexComplete.mockReturnValue('/backup/path')
       readCodexConfig.mockReturnValue(null)
@@ -259,7 +259,7 @@ describe('codex-configure', () => {
       await configureCodexMcp()
 
       expect(batchUpdateCodexMcpServices).toHaveBeenCalled()
-      expect(updateZcfConfig).toHaveBeenCalledWith({ codeToolType: 'codex' })
+      expect(updateAppConfig).toHaveBeenCalledWith({ codeToolType: 'codex' })
     })
 
     it('should handle empty selection with existing services on Windows', async () => {

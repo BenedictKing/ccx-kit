@@ -44,7 +44,8 @@
     "vitepress",
     "vitest",
     "webp",
-    "zcf",
+    "ccx-kit",
+    "cck",
     "Zhipu"
   ],
   "ignorePaths": [

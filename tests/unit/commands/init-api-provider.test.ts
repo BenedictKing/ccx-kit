@@ -42,9 +42,9 @@ vi.mock('../../../src/utils/output-style', () => ({
   configureOutputStyle: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/cometix/installer', () => ({
@@ -68,8 +68,8 @@ vi.mock('../../../src/constants', () => ({
   CLAUDE_DIR: '/test/.claude',
   DEFAULT_CODE_TOOL_TYPE: 'claude-code',
   SETTINGS_FILE: '/test/.claude/settings.json',
-  ZCF_CONFIG_DIR: '/test/.ufomiao/zcf',
-  ZCF_CONFIG_FILE: '/test/.ufomiao/zcf/config.toml',
+  APP_CONFIG_DIR: '/test/.ccx-kit',
+  APP_CONFIG_FILE: '/test/.ccx-kit/config.toml',
   CODE_TOOL_BANNERS: {
     'claude-code': 'ZCF',
   },
@@ -194,7 +194,7 @@ describe('init command - API provider preset', () => {
       const { init } = await import('../../../src/commands/init')
       const { getInstallationStatus } = await import('../../../src/utils/installer')
       const { existsSync } = await import('node:fs')
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
+      const { readAppConfig } = await import('../../../src/utils/app-config')
       const { configureApi } = await import('../../../src/utils/config')
 
       vi.mocked(getInstallationStatus).mockResolvedValue({
@@ -203,7 +203,7 @@ describe('init command - API provider preset', () => {
         localPath: '/test/.claude/local/claude',
       })
       vi.mocked(existsSync).mockReturnValue(false)
-      vi.mocked(readZcfConfig).mockReturnValue({
+      vi.mocked(readAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         codeToolType: 'claude-code',
@@ -235,7 +235,7 @@ describe('init command - API provider preset', () => {
       const { init } = await import('../../../src/commands/init')
       const { getInstallationStatus } = await import('../../../src/utils/installer')
       const { existsSync } = await import('node:fs')
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
+      const { readAppConfig } = await import('../../../src/utils/app-config')
       const { configureApi } = await import('../../../src/utils/config')
 
       vi.mocked(getInstallationStatus).mockResolvedValue({
@@ -244,7 +244,7 @@ describe('init command - API provider preset', () => {
         localPath: '/test/.claude/local/claude',
       })
       vi.mocked(existsSync).mockReturnValue(false)
-      vi.mocked(readZcfConfig).mockReturnValue({
+      vi.mocked(readAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         codeToolType: 'claude-code',
@@ -276,7 +276,7 @@ describe('init command - API provider preset', () => {
       const { init } = await import('../../../src/commands/init')
       const { getInstallationStatus } = await import('../../../src/utils/installer')
       const { existsSync } = await import('node:fs')
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
+      const { readAppConfig } = await import('../../../src/utils/app-config')
       const { configureApi } = await import('../../../src/utils/config')
 
       vi.mocked(getInstallationStatus).mockResolvedValue({
@@ -285,7 +285,7 @@ describe('init command - API provider preset', () => {
         localPath: '/test/.claude/local/claude',
       })
       vi.mocked(existsSync).mockReturnValue(false)
-      vi.mocked(readZcfConfig).mockReturnValue({
+      vi.mocked(readAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         codeToolType: 'claude-code',
@@ -317,7 +317,7 @@ describe('init command - API provider preset', () => {
       const { init } = await import('../../../src/commands/init')
       const { getInstallationStatus } = await import('../../../src/utils/installer')
       const { existsSync } = await import('node:fs')
-      const { readZcfConfig } = await import('../../../src/utils/zcf-config')
+      const { readAppConfig } = await import('../../../src/utils/app-config')
       const { configureApi } = await import('../../../src/utils/config')
 
       vi.mocked(getInstallationStatus).mockResolvedValue({
@@ -326,7 +326,7 @@ describe('init command - API provider preset', () => {
         localPath: '/test/.claude/local/claude',
       })
       vi.mocked(existsSync).mockReturnValue(false)
-      vi.mocked(readZcfConfig).mockReturnValue({
+      vi.mocked(readAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         codeToolType: 'claude-code',

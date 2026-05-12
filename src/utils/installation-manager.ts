@@ -1,10 +1,10 @@
 import type { InstallationStatus } from './installer'
 import ansis from 'ansis'
 import inquirer from 'inquirer'
-import { CLAUDE_DIR, ZCF_CONFIG_FILE } from '../constants'
+import { APP_CONFIG_FILE, CLAUDE_DIR } from '../constants'
 import { ensureI18nInitialized, i18n } from '../i18n'
+import { readTomlConfig, updateTomlConfig } from './app-config'
 import { removeLocalClaudeCode } from './installer'
-import { readTomlConfig, updateTomlConfig } from './zcf-config'
 
 /**
  * Installation method type
@@ -49,7 +49,7 @@ export async function handleMultipleInstallations(
   ensureI18nInitialized()
 
   // Check if user has already made a choice previously in TOML config
-  const tomlConfig = readTomlConfig(ZCF_CONFIG_FILE)
+  const tomlConfig = readTomlConfig(APP_CONFIG_FILE)
   if (tomlConfig && tomlConfig.general?.currentTool === 'claude-code') {
     const previousChoice = tomlConfig.claudeCode?.installType
 
@@ -113,7 +113,7 @@ export async function handleMultipleInstallations(
       }
 
       // Save user choice to TOML config (partial update)
-      updateTomlConfig(ZCF_CONFIG_FILE, {
+      updateTomlConfig(APP_CONFIG_FILE, {
         claudeCode: {
           installType: 'global',
         },
@@ -123,7 +123,7 @@ export async function handleMultipleInstallations(
       console.log(ansis.green(`✔ ${i18n.t('installation:usingLocalInstallation')}`))
 
       // Save user choice to TOML config (partial update)
-      updateTomlConfig(ZCF_CONFIG_FILE, {
+      updateTomlConfig(APP_CONFIG_FILE, {
         claudeCode: {
           installType: 'local',
         },

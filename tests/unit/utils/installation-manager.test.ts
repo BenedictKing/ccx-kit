@@ -1,20 +1,20 @@
 import inquirer from 'inquirer'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as appConfig from '../../../src/utils/app-config'
 import {
   chooseInstallationMethod,
   getClaudeCodeConfigDir,
   handleMultipleInstallations,
 } from '../../../src/utils/installation-manager'
 import * as installer from '../../../src/utils/installer'
-import * as zcfConfig from '../../../src/utils/zcf-config'
 
 vi.mock('../../../src/utils/fs-operations')
 vi.mock('../../../src/utils/installer')
-vi.mock('../../../src/utils/zcf-config', () => ({
+vi.mock('../../../src/utils/app-config', () => ({
   readTomlConfig: vi.fn(),
   updateTomlConfig: vi.fn(),
-  getZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+  getAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 // Mock homedir to return consistent test path
@@ -71,7 +71,7 @@ describe('installation manager utilities', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
 
     // Set default mock return values
-    vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+    vi.mocked(appConfig.getAppConfig).mockReturnValue({
       version: '1.0.0',
       preferredLang: 'en',
       codeToolType: 'claude-code',
@@ -164,7 +164,7 @@ describe('installation manager utilities', () => {
 
       await handleMultipleInstallations(installStatus)
 
-      expect(zcfConfig.updateTomlConfig).toHaveBeenCalledWith('/Users/test/.ufomiao/zcf/config.toml', {
+      expect(appConfig.updateTomlConfig).toHaveBeenCalledWith('/Users/test/.ccx-kit/config.toml', {
         claudeCode: {
           installType: 'local',
         },
@@ -183,7 +183,7 @@ describe('installation manager utilities', () => {
 
       await handleMultipleInstallations(installStatus)
 
-      expect(zcfConfig.updateTomlConfig).toHaveBeenCalledWith('/Users/test/.ufomiao/zcf/config.toml', {
+      expect(appConfig.updateTomlConfig).toHaveBeenCalledWith('/Users/test/.ccx-kit/config.toml', {
         claudeCode: {
           installType: 'global',
         },
@@ -254,7 +254,7 @@ describe('installation manager utilities', () => {
       }
 
       // Mock that user previously chose local installation
-      vi.mocked(zcfConfig.readTomlConfig).mockReturnValue({
+      vi.mocked(appConfig.readTomlConfig).mockReturnValue({
         version: '1.0.0',
         lastUpdated: '2025-01-01T00:00:00.000Z',
         general: {
@@ -287,7 +287,7 @@ describe('installation manager utilities', () => {
       }
 
       // Mock that user previously chose local installation, but it no longer exists
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -352,7 +352,7 @@ describe('installation manager utilities', () => {
       }
 
       vi.mocked(inquirer.prompt).mockResolvedValue({ installMethod: 'local' })
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => {
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => {
         throw new Error('Config update failed')
       })
 
@@ -361,14 +361,14 @@ describe('installation manager utilities', () => {
 
       expect(result).toBe('local')
       // Verify that updateTomlConfig was called - this is the main test requirement
-      expect(zcfConfig.updateTomlConfig).toHaveBeenCalled()
+      expect(appConfig.updateTomlConfig).toHaveBeenCalled()
       // The function should complete without throwing (graceful error handling)
     })
   })
 
   describe('getClaudeCodeConfigDir', () => {
     it('should return local config dir when local installation is configured', () => {
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -381,7 +381,7 @@ describe('installation manager utilities', () => {
     })
 
     it('should return default config dir when global installation is configured', () => {
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -394,7 +394,7 @@ describe('installation manager utilities', () => {
     })
 
     it('should return default config dir when no installation is configured', () => {
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -406,8 +406,8 @@ describe('installation manager utilities', () => {
       expect(result).toMatch(/\.claude$/)
     })
 
-    it('should return default config dir when getZcfConfig throws error', () => {
-      vi.mocked(zcfConfig.getZcfConfig).mockImplementation(() => {
+    it('should return default config dir when getAppConfig throws error', () => {
+      vi.mocked(appConfig.getAppConfig).mockImplementation(() => {
         throw new Error('Config error')
       })
 
@@ -417,7 +417,7 @@ describe('installation manager utilities', () => {
     })
 
     it('should return default when config is missing installation info', () => {
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -439,7 +439,7 @@ describe('installation manager utilities', () => {
       }
 
       vi.mocked(inquirer.prompt).mockResolvedValue({ installMethod: 'local' })
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => {
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => {
         throw new Error('Config save failed')
       })
 
@@ -477,7 +477,7 @@ describe('installation manager utilities', () => {
       }
 
       // Mock that user previously chose global installation
-      vi.mocked(zcfConfig.getZcfConfig).mockReturnValue({
+      vi.mocked(appConfig.getAppConfig).mockReturnValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-01-01T00:00:00.000Z',
@@ -499,7 +499,7 @@ describe('installation manager utilities', () => {
 
       vi.mocked(inquirer.prompt).mockResolvedValue({ installMethod: 'global' })
       vi.mocked(installer.removeLocalClaudeCode).mockResolvedValue(undefined)
-      vi.mocked(zcfConfig.updateTomlConfig).mockImplementation(() => {
+      vi.mocked(appConfig.updateTomlConfig).mockImplementation(() => {
         throw new Error('Config save error')
       })
 
@@ -522,7 +522,7 @@ describe('installation manager utilities', () => {
       await expect(handleMultipleInstallations(installStatus)).rejects.toThrow('Remove failed')
 
       // updateTomlConfig should not have been called due to error
-      expect(zcfConfig.updateTomlConfig).not.toHaveBeenCalled()
+      expect(appConfig.updateTomlConfig).not.toHaveBeenCalled()
     })
   })
 

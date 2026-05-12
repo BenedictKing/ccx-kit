@@ -21,8 +21,8 @@ vi.mock('../../../src/utils/json-config', () => ({
   readJsonConfig: vi.fn(),
   writeJsonConfig: vi.fn(),
 }))
-vi.mock('../../../src/utils/zcf-config', () => ({
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  updateAppConfig: vi.fn(),
 }))
 vi.mock('../../../src/constants', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../../../src/constants')>()
@@ -58,7 +58,7 @@ vi.mock('../../../src/utils/toggle-prompt', () => ({
 // Declare mock types
 let mockFsOperations: any
 let mockJsonConfig: any
-let mockZcfConfig: any
+let mockAppConfig: any
 let mockInquirer: any
 
 describe('output-style', () => {
@@ -68,7 +68,7 @@ describe('output-style', () => {
     // Initialize mocked modules
     mockFsOperations = vi.mocked(await import('../../../src/utils/fs-operations'))
     mockJsonConfig = vi.mocked(await import('../../../src/utils/json-config'))
-    mockZcfConfig = vi.mocked(await import('../../../src/utils/zcf-config'))
+    mockAppConfig = vi.mocked(await import('../../../src/utils/app-config'))
     mockInquirer = vi.mocked(await import('inquirer'))
 
     // Initialize real i18n for test environment
@@ -349,14 +349,14 @@ describe('output-style', () => {
       mockFsOperations.copyFile.mockImplementation(() => {})
       mockJsonConfig.readJsonConfig.mockReturnValue({})
       mockJsonConfig.writeJsonConfig.mockImplementation(() => {})
-      mockZcfConfig.updateZcfConfig.mockImplementation(() => {})
+      mockAppConfig.updateAppConfig.mockImplementation(() => {})
 
       await configureOutputStyle()
 
       expect(mockInquirer.default.prompt).toHaveBeenCalledTimes(2)
       expect(mockFsOperations.copyFile).toHaveBeenCalledTimes(2)
       expect(mockJsonConfig.writeJsonConfig).toHaveBeenCalled()
-      expect(mockZcfConfig.updateZcfConfig).toHaveBeenCalled()
+      expect(mockAppConfig.updateAppConfig).toHaveBeenCalled()
     })
 
     it('should handle non-interactive mode with preselected styles', async () => {
@@ -365,7 +365,7 @@ describe('output-style', () => {
       mockFsOperations.exists.mockImplementation(() => true)
       mockJsonConfig.readJsonConfig.mockImplementation(() => ({}))
       mockJsonConfig.writeJsonConfig.mockImplementation(() => {})
-      mockZcfConfig.updateZcfConfig.mockImplementation(() => {})
+      mockAppConfig.updateAppConfig.mockImplementation(() => {})
 
       await configureOutputStyle(
         ['engineer-professional', 'default'], // preselectedStyles
@@ -375,7 +375,7 @@ describe('output-style', () => {
       expect(mockInquirer.default.prompt).not.toHaveBeenCalled()
       expect(mockFsOperations.copyFile).toHaveBeenCalledTimes(1) // Only custom styles
       expect(mockJsonConfig.writeJsonConfig).toHaveBeenCalled()
-      expect(mockZcfConfig.updateZcfConfig).toHaveBeenCalled()
+      expect(mockAppConfig.updateAppConfig).toHaveBeenCalled()
     })
 
     it('should detect and handle legacy files', async () => {
@@ -400,7 +400,7 @@ describe('output-style', () => {
       mockFsOperations.copyFile.mockImplementation(() => {})
       mockJsonConfig.readJsonConfig.mockImplementation(() => ({}))
       mockJsonConfig.writeJsonConfig.mockImplementation(() => {})
-      mockZcfConfig.updateZcfConfig.mockImplementation(() => {})
+      mockAppConfig.updateAppConfig.mockImplementation(() => {})
 
       await configureOutputStyle()
 
@@ -435,7 +435,7 @@ describe('output-style', () => {
       mockFsOperations.copyFile.mockImplementation(() => {})
       mockJsonConfig.readJsonConfig.mockImplementation(() => ({}))
       mockJsonConfig.writeJsonConfig.mockImplementation(() => {})
-      mockZcfConfig.updateZcfConfig.mockImplementation(() => {})
+      mockAppConfig.updateAppConfig.mockImplementation(() => {})
 
       await configureOutputStyle()
 

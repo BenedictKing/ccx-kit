@@ -85,9 +85,9 @@ vi.mock('../../../src/utils/output-style', () => ({
   configureOutputStyle: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/code-tools/codex', () => ({
@@ -163,11 +163,11 @@ interface TestMocks {
   selectMcpServices: any
   selectAndInstallWorkflows: any
   configureOutputStyle: any
-  updateZcfConfig: any
+  updateAppConfig: any
   existsSync: any
   inquirerPrompt: any
   promptBoolean: any
-  readZcfConfig: any
+  readAppConfig: any
   getExistingApiConfig: any
   switchToOfficialLogin: any
   promptApiConfigurationAction: any
@@ -196,7 +196,7 @@ describe('init command', () => {
     const { selectMcpServices } = await import('../../../src/utils/mcp-selector')
     const { selectAndInstallWorkflows } = await import('../../../src/utils/workflow-installer')
     const { configureOutputStyle } = await import('../../../src/utils/output-style')
-    const { updateZcfConfig, readZcfConfig } = await import('../../../src/utils/zcf-config')
+    const { updateAppConfig, readAppConfig } = await import('../../../src/utils/app-config')
     const { isCcxInstalled, installCcx: _installCcx } = await import('../../../src/utils/ccx/installer')
     const { setupCcxConfiguration } = await import('../../../src/utils/ccx/config')
     const { configureApiCompletely, modifyApiConfigPartially } = await import('../../../src/utils/config-operations')
@@ -217,8 +217,8 @@ describe('init command', () => {
       selectMcpServices: vi.mocked(selectMcpServices),
       selectAndInstallWorkflows: vi.mocked(selectAndInstallWorkflows),
       configureOutputStyle: vi.mocked(configureOutputStyle),
-      updateZcfConfig: vi.mocked(updateZcfConfig),
-      readZcfConfig: vi.mocked(readZcfConfig),
+      updateAppConfig: vi.mocked(updateAppConfig),
+      readAppConfig: vi.mocked(readAppConfig),
       existsSync: vi.mocked(existsSync),
       inquirerPrompt: vi.mocked(inquirer.prompt),
       getExistingApiConfig: vi.mocked(getExistingApiConfig),
@@ -254,13 +254,13 @@ describe('init command', () => {
           localPath: '/Users/test/.claude/local/claude',
         })
         testMocks.existsSync.mockReturnValue(false)
-        testMocks.readZcfConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
+        testMocks.readAppConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
         testMocks.resolveTemplateLanguage.mockResolvedValue('zh-CN')
         testMocks.inquirerPrompt.mockResolvedValueOnce({ shouldConfigureMcp: false })
         testMocks.resolveAiOutputLanguage.mockResolvedValue('chinese-simplified')
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({ skipBanner: true })
 
@@ -278,12 +278,12 @@ describe('init command', () => {
           localPath: '/Users/test/.claude/local/claude',
         })
         testMocks.existsSync.mockReturnValue(false)
-        testMocks.readZcfConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
+        testMocks.readAppConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
         testMocks.resolveAiOutputLanguage.mockResolvedValue('english')
         testMocks.inquirerPrompt.mockResolvedValue({ shouldConfigureMcp: false })
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({ configLang: 'en', force: true, skipBanner: true })
 
@@ -301,12 +301,12 @@ describe('init command', () => {
         localPath: '/Users/test/.claude/local/claude',
       })
       testMocks.existsSync.mockReturnValue(false)
-      testMocks.readZcfConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
+      testMocks.readAppConfig.mockReturnValue({ codeToolType: 'claude-code' } as any)
       testMocks.resolveAiOutputLanguage.mockResolvedValue('english')
       testMocks.inquirerPrompt.mockResolvedValue({})
       testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
       testMocks.configureOutputStyle.mockResolvedValue(undefined)
-      testMocks.updateZcfConfig.mockResolvedValue(undefined)
+      testMocks.updateAppConfig.mockResolvedValue(undefined)
 
       const codexModule = await import('../../../src/utils/code-tools/codex')
       const codexInitSpy = vi.spyOn(codexModule, 'runCodexFullInit').mockResolvedValue('en')
@@ -319,7 +319,7 @@ describe('init command', () => {
         aiOutputLang: 'en',
       } as any)
 
-      expect(testMocks.updateZcfConfig).toHaveBeenCalledWith(
+      expect(testMocks.updateAppConfig).toHaveBeenCalledWith(
         expect.objectContaining({
           codeToolType: 'codex',
         }),
@@ -337,7 +337,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(false)
         testMocks.resolveTemplateLanguage.mockResolvedValue('zh-CN')
         testMocks.inquirerPrompt
@@ -346,7 +346,7 @@ describe('init command', () => {
         testMocks.resolveAiOutputLanguage.mockResolvedValue('chinese-simplified')
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
         testMocks.installClaudeCode.mockResolvedValue(undefined)
         testMocks.handleMultipleInstallations.mockResolvedValue('none')
         testMocks.checkClaudeCodeVersionAndPrompt.mockResolvedValue(undefined)
@@ -365,14 +365,14 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(false)
         testMocks.resolveTemplateLanguage.mockResolvedValue('en')
         testMocks.resolveAiOutputLanguage.mockResolvedValue('english')
         testMocks.selectMcpServices.mockResolvedValue([])
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({ skipBanner: true, skipPrompt: true })
 
@@ -387,7 +387,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(false)
         testMocks.resolveTemplateLanguage.mockResolvedValue('en')
         testMocks.resolveAiOutputLanguage.mockResolvedValue('english')
@@ -395,7 +395,7 @@ describe('init command', () => {
         testMocks.selectMcpServices.mockResolvedValue([])
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
         testMocks.installClaudeCode.mockResolvedValue(undefined)
         testMocks.handleMultipleInstallations.mockResolvedValue('none')
 
@@ -414,7 +414,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(true)
         testMocks.resolveTemplateLanguage.mockResolvedValue('zh-CN')
         testMocks.inquirerPrompt
@@ -437,7 +437,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(false) // No existing config, so action will be 'new'
         // Mock SETTINGS_FILE path specifically
         testMocks.existsSync.mockImplementation((path: string) => {
@@ -455,7 +455,7 @@ describe('init command', () => {
         testMocks.applyAiLanguageDirective.mockReturnValue(undefined)
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockReturnValue(undefined)
+        testMocks.updateAppConfig.mockReturnValue(undefined)
         testMocks.handleMultipleInstallations.mockResolvedValue('global')
         testMocks.checkClaudeCodeVersionAndPrompt.mockResolvedValue(undefined)
 
@@ -465,7 +465,7 @@ describe('init command', () => {
         expect(testMocks.getInstallationStatus).toHaveBeenCalled()
         expect(testMocks.copyConfigFiles).toHaveBeenCalled()
         expect(testMocks.applyAiLanguageDirective).toHaveBeenCalled()
-        expect(testMocks.updateZcfConfig).toHaveBeenCalled()
+        expect(testMocks.updateAppConfig).toHaveBeenCalled()
       }, 45000) // 45秒超时，给CI更多时间
     })
 
@@ -474,7 +474,7 @@ describe('init command', () => {
         const { init } = await import('../../../src/commands/init')
 
         const error = new Error('Test error')
-        testMocks.readZcfConfig.mockImplementation(() => {
+        testMocks.readAppConfig.mockImplementation(() => {
           throw error
         })
 
@@ -495,7 +495,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({ codeToolType: 'codex' } as any)
+        testMocks.readAppConfig.mockReturnValue({ codeToolType: 'codex' } as any)
         testMocks.existsSync.mockReturnValue(false)
 
         const codexModule = await import('../../../src/utils/code-tools/codex')
@@ -528,7 +528,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'codex',
           templateLang: 'zh-CN',
         } as any)
@@ -562,7 +562,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'codex',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -583,7 +583,7 @@ describe('init command', () => {
 
         expect(runCodexFullInitSpy).toHaveBeenCalled()
 
-        expect(testMocks.updateZcfConfig).toHaveBeenCalledWith(
+        expect(testMocks.updateAppConfig).toHaveBeenCalledWith(
           expect.objectContaining({
             codeToolType: 'codex',
             templateLang: 'en', // Should use i18n.language fallback
@@ -600,7 +600,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'codex',
           aiOutputLang: 'en',
         } as any)
@@ -630,7 +630,7 @@ describe('init command', () => {
 
         expect(runCodexFullInitSpy).toHaveBeenCalled()
 
-        expect(testMocks.updateZcfConfig).toHaveBeenCalledWith(
+        expect(testMocks.updateAppConfig).toHaveBeenCalledWith(
           expect.objectContaining({
             aiOutputLang: 'chinese-simplified', // Should use resolved value from runCodexFullInit
           }),
@@ -645,7 +645,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'codex',
           aiOutputLang: 'chinese-simplified',
         } as any)
@@ -663,7 +663,7 @@ describe('init command', () => {
 
         expect(runCodexFullInitSpy).toHaveBeenCalled()
 
-        expect(testMocks.updateZcfConfig).toHaveBeenCalledWith(
+        expect(testMocks.updateAppConfig).toHaveBeenCalledWith(
           expect.objectContaining({
             aiOutputLang: '', // Should use resolved value from runCodexFullInit (empty string)
           }),
@@ -678,7 +678,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'codex',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -695,7 +695,7 @@ describe('init command', () => {
 
         expect(runCodexFullInitSpy).toHaveBeenCalled()
 
-        expect(testMocks.updateZcfConfig).toHaveBeenCalledWith(
+        expect(testMocks.updateAppConfig).toHaveBeenCalledWith(
           expect.objectContaining({
             aiOutputLang: '', // Should use resolved value from runCodexFullInit (empty string)
           }),
@@ -714,14 +714,14 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({})
+        testMocks.readAppConfig.mockReturnValue({})
         testMocks.existsSync.mockReturnValue(false)
         testMocks.resolveTemplateLanguage.mockResolvedValue('zh-CN')
         testMocks.inquirerPrompt.mockResolvedValue({ shouldConfigureMcp: false })
         testMocks.resolveAiOutputLanguage.mockResolvedValue('chinese-simplified')
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: false,
@@ -741,7 +741,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -750,7 +750,7 @@ describe('init command', () => {
         testMocks.resolveAiOutputLanguage.mockResolvedValue('chinese-simplified')
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -773,7 +773,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -781,7 +781,7 @@ describe('init command', () => {
         testMocks.resolveAiOutputLanguage.mockResolvedValue('english')
         testMocks.selectAndInstallWorkflows.mockResolvedValue(undefined)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -812,7 +812,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -820,7 +820,7 @@ describe('init command', () => {
         testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'official' })
         testMocks.switchToOfficialLogin.mockReturnValue(true)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -852,7 +852,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -860,7 +860,7 @@ describe('init command', () => {
         testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'official' }) // Unified menu selection
         testMocks.switchToOfficialLogin.mockReturnValue(true)
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -880,7 +880,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
@@ -891,7 +891,7 @@ describe('init command', () => {
         testMocks.setupCcxConfiguration.mockResolvedValue(true)
         testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'ccx' }) // Unified menu selection
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -912,14 +912,14 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)
         testMocks.getExistingApiConfig.mockReturnValue(null)
         testMocks.inquirerPrompt.mockResolvedValueOnce({ apiMode: 'skip' })
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -947,7 +947,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false) // Bypass global existing config prompt
@@ -958,7 +958,7 @@ describe('init command', () => {
         const mockConfigureIncrementalManagement = vi.spyOn(await import('../../../src/utils/claude-code-incremental-manager'), 'configureIncrementalManagement').mockResolvedValue()
 
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -980,7 +980,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false) // No existing config
@@ -991,7 +991,7 @@ describe('init command', () => {
         const mockConfigureIncrementalManagement = vi.spyOn(await import('../../../src/utils/claude-code-incremental-manager'), 'configureIncrementalManagement').mockResolvedValue()
 
         testMocks.configureOutputStyle.mockResolvedValue(undefined)
-        testMocks.updateZcfConfig.mockResolvedValue(undefined)
+        testMocks.updateAppConfig.mockResolvedValue(undefined)
 
         await init({
           skipBanner: true,
@@ -1012,7 +1012,7 @@ describe('init command', () => {
           hasLocal: false,
           localPath: '/Users/test/.claude/local/claude',
         })
-        testMocks.readZcfConfig.mockReturnValue({
+        testMocks.readAppConfig.mockReturnValue({
           codeToolType: 'claude-code',
         } as any)
         testMocks.existsSync.mockReturnValue(false)

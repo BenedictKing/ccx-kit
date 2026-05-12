@@ -1,15 +1,15 @@
 import type { AiOutputLanguage, SupportedLang } from '../constants'
-import type { ZcfTomlConfig } from '../types/toml-config'
-import type { ZcfConfig } from './zcf-config'
+import type { AppTomlConfig } from '../types/toml-config'
+import type { AppConfig } from './app-config'
 import process from 'node:process'
 import ansis from 'ansis'
 import inquirer from 'inquirer'
 import { version } from '../../package.json'
 import { AI_OUTPUT_LANGUAGES, getAiOutputLanguageLabel, LANG_LABELS, SUPPORTED_LANGS } from '../constants'
 import { ensureI18nInitialized, i18n } from '../i18n'
+import { readAppConfig, updateAppConfig } from './app-config'
 import { addNumbersToChoices } from './prompt-helpers'
 import { promptBoolean } from './toggle-prompt'
-import { readZcfConfig, updateZcfConfig } from './zcf-config'
 
 /**
  * Prompt user to select AI output language
@@ -69,7 +69,7 @@ export async function selectAiOutputLanguage(
 
 // Constants for language selection (must be hardcoded bilingual since i18n is not initialized yet)
 const LANGUAGE_SELECTION_MESSAGES = {
-  selectLanguage: 'Select ZCF display language / 选择ZCF显示语言',
+  selectLanguage: 'Select CCX-Kit display language / 选择CCX-Kit显示语言',
   operationCancelled: 'Operation cancelled / 操作已取消',
 } as const
 
@@ -79,9 +79,9 @@ const LANGUAGE_SELECTION_MESSAGES = {
  */
 export async function selectScriptLanguage(currentLang?: SupportedLang): Promise<SupportedLang> {
   // Try to read from saved config first
-  const zcfConfig = readZcfConfig()
-  if (zcfConfig?.preferredLang) {
-    return zcfConfig.preferredLang
+  const appConfig = readAppConfig()
+  if (appConfig?.preferredLang) {
+    return appConfig.preferredLang
   }
 
   // If provided as parameter, use it
@@ -108,7 +108,7 @@ export async function selectScriptLanguage(currentLang?: SupportedLang): Promise
   const scriptLang = lang
 
   // Save the selected language preference
-  updateZcfConfig({
+  updateAppConfig({
     version,
     preferredLang: scriptLang,
   })
@@ -123,7 +123,7 @@ export async function selectScriptLanguage(currentLang?: SupportedLang): Promise
 export async function resolveAiOutputLanguage(
   scriptLang: SupportedLang,
   commandLineOption?: AiOutputLanguage | string,
-  savedConfig?: ZcfConfig | null,
+  savedConfig?: AppConfig | null,
   skipPrompt?: boolean,
 ): Promise<AiOutputLanguage | string> {
   ensureI18nInitialized()
@@ -206,7 +206,7 @@ export async function selectTemplateLanguage(): Promise<SupportedLang> {
  */
 export async function resolveTemplateLanguage(
   commandLineOption?: SupportedLang,
-  savedConfig?: ZcfConfig | null,
+  savedConfig?: AppConfig | null,
   skipPrompt?: boolean,
 ): Promise<SupportedLang> {
   ensureI18nInitialized()
@@ -282,7 +282,7 @@ export async function resolveTemplateLanguage(
 export async function resolveSystemPromptStyle(
   availablePrompts: Array<{ id: string, name: string, description: string }>,
   commandLineOption?: string,
-  savedConfig?: ZcfTomlConfig | null,
+  savedConfig?: AppTomlConfig | null,
   skipPrompt?: boolean,
 ): Promise<string> {
   ensureI18nInitialized()

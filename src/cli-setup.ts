@@ -11,8 +11,8 @@ import { showMainMenu } from './commands/menu'
 import { uninstall } from './commands/uninstall'
 import { update } from './commands/update'
 import { changeLanguage, i18n, initI18n } from './i18n'
+import { readAppConfigAsync } from './utils/app-config'
 import { selectScriptLanguage } from './utils/prompts'
-import { readZcfConfigAsync } from './utils/zcf-config'
 
 export interface CliOptions {
   lang?: 'zh-CN' | 'en'
@@ -51,14 +51,14 @@ async function resolveAndSwitchLanguage(
   options?: { lang?: string, allLang?: string },
   skipPrompt: boolean = false,
 ): Promise<SupportedLang> {
-  const zcfConfig = await readZcfConfigAsync()
+  const appConfig = await readAppConfigAsync()
 
   // Determine target language with priority: allLang > lang > config > prompt
   const targetLang
     = (options?.allLang as SupportedLang)
       || (lang as SupportedLang)
       || (options?.lang as SupportedLang)
-      || zcfConfig?.preferredLang
+      || appConfig?.preferredLang
       || (skipPrompt ? 'en' : await selectScriptLanguage()) as SupportedLang
 
   // Only switch if different from current language
@@ -107,27 +107,27 @@ export function customizeHelp(sections: any[]): any[] {
   // Add custom header
   sections.unshift({
     title: '',
-    body: ansis.cyan.bold(`ZCF - Zero-Config Code Flow v${version}`),
+    body: ansis.cyan.bold(`CCX-Kit v${version}`),
   })
 
   // Add commands section with aliases
   sections.push({
     title: ansis.yellow(i18n.t('cli:help.commands')),
     body: [
-      `  ${ansis.cyan('zcf')}              ${i18n.t('cli:help.commandDescriptions.showInteractiveMenuDefault')}`,
-      `  ${ansis.cyan('zcf init')} | ${ansis.cyan(
+      `  ${ansis.cyan('ccx-kit')}              ${i18n.t('cli:help.commandDescriptions.showInteractiveMenuDefault')}`,
+      `  ${ansis.cyan('ccx-kit init')} | ${ansis.cyan(
         'i',
       )}     ${i18n.t('cli:help.commandDescriptions.initClaudeCodeConfig')}`,
-      `  ${ansis.cyan('zcf update')} | ${ansis.cyan('u')}   ${i18n.t('cli:help.commandDescriptions.updateWorkflowFiles')}`,
-      `  ${ansis.cyan('zcf ccx')}          ${i18n.t('cli:help.commandDescriptions.configureCcxProxy')}`,
-      `  ${ansis.cyan('zcf ccu')} [args]   ${i18n.t('cli:help.commandDescriptions.claudeCodeUsageAnalysis')}`,
-      `  ${ansis.cyan('zcf uninstall')}     ${i18n.t('cli:help.commandDescriptions.uninstallConfigurations')}`,
-      `  ${ansis.cyan('zcf check-updates')} ${i18n.t('cli:help.commandDescriptions.checkUpdateVersions')}`,
+      `  ${ansis.cyan('ccx-kit update')} | ${ansis.cyan('u')}   ${i18n.t('cli:help.commandDescriptions.updateWorkflowFiles')}`,
+      `  ${ansis.cyan('ccx-kit ccx')}          ${i18n.t('cli:help.commandDescriptions.configureCcxProxy')}`,
+      `  ${ansis.cyan('ccx-kit ccu')} [args]   ${i18n.t('cli:help.commandDescriptions.claudeCodeUsageAnalysis')}`,
+      `  ${ansis.cyan('ccx-kit uninstall')}     ${i18n.t('cli:help.commandDescriptions.uninstallConfigurations')}`,
+      `  ${ansis.cyan('ccx-kit check-updates')} ${i18n.t('cli:help.commandDescriptions.checkUpdateVersions')}`,
       '',
       ansis.gray(`  ${i18n.t('cli:help.shortcuts')}`),
-      `  ${ansis.cyan('zcf i')}            ${i18n.t('cli:help.shortcutDescriptions.quickInit')}`,
-      `  ${ansis.cyan('zcf u')}            ${i18n.t('cli:help.shortcutDescriptions.quickUpdate')}`,
-      `  ${ansis.cyan('zcf check')}        ${i18n.t('cli:help.shortcutDescriptions.quickCheckUpdates')}`,
+      `  ${ansis.cyan('cck i')}            ${i18n.t('cli:help.shortcutDescriptions.quickInit')}`,
+      `  ${ansis.cyan('cck u')}            ${i18n.t('cli:help.shortcutDescriptions.quickUpdate')}`,
+      `  ${ansis.cyan('cck check')}        ${i18n.t('cli:help.shortcutDescriptions.quickCheckUpdates')}`,
     ].join('\n'),
   })
 
@@ -167,41 +167,41 @@ export function customizeHelp(sections: any[]): any[] {
     title: ansis.yellow(i18n.t('cli:help.examples')),
     body: [
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.showInteractiveMenu')}`),
-      `  ${ansis.cyan('npx zcf')}`,
+      `  ${ansis.cyan('npx ccx-kit')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.runFullInitialization')}`),
-      `  ${ansis.cyan('npx zcf init')}`,
-      `  ${ansis.cyan('npx zcf i')}`,
+      `  ${ansis.cyan('npx ccx-kit init')}`,
+      `  ${ansis.cyan('npx ccx-kit i')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.updateWorkflowFilesOnly')}`),
-      `  ${ansis.cyan('npx zcf u')}`,
+      `  ${ansis.cyan('npx ccx-kit u')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.configureClaudeCodeRouter')}`),
-      `  ${ansis.cyan('npx zcf ccx')}`,
+      `  ${ansis.cyan('npx ccx-kit ccx')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.runClaudeCodeUsageAnalysis')}`),
-      `  ${ansis.cyan('npx zcf ccu')}               ${ansis.gray(`# ${i18n.t('cli:help.defaults.dailyUsage')}`)}`,
-      `  ${ansis.cyan('npx zcf ccu monthly --json')}`,
+      `  ${ansis.cyan('npx ccx-kit ccu')}               ${ansis.gray(`# ${i18n.t('cli:help.defaults.dailyUsage')}`)}`,
+      `  ${ansis.cyan('npx ccx-kit ccu monthly --json')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.uninstallConfigurations')}`),
-      `  ${ansis.cyan('npx zcf uninstall')}         ${ansis.gray(`# ${i18n.t('cli:help.defaults.interactiveUninstall')}`)}`,
+      `  ${ansis.cyan('npx ccx-kit uninstall')}         ${ansis.gray(`# ${i18n.t('cli:help.defaults.interactiveUninstall')}`)}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.checkAndUpdateTools')}`),
-      `  ${ansis.cyan('npx zcf check-updates')}     ${ansis.gray(`# ${i18n.t('cli:help.defaults.updateTools')}`)}`,
-      `  ${ansis.cyan('npx zcf check')}`,
+      `  ${ansis.cyan('npx ccx-kit check-updates')}     ${ansis.gray(`# ${i18n.t('cli:help.defaults.updateTools')}`)}`,
+      `  ${ansis.cyan('npx ccx-kit check')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.checkClaudeCode')}`),
-      `  ${ansis.cyan('npx zcf check --code-type claude-code')}`,
-      `  ${ansis.cyan('npx zcf check -T cc')}`,
+      `  ${ansis.cyan('npx ccx-kit check --code-type claude-code')}`,
+      `  ${ansis.cyan('npx ccx-kit check -T cc')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.checkCodex')}`),
-      `  ${ansis.cyan('npx zcf check --code-type codex')}`,
-      `  ${ansis.cyan('npx zcf check -T cx')}`,
+      `  ${ansis.cyan('npx ccx-kit check --code-type codex')}`,
+      `  ${ansis.cyan('npx ccx-kit check -T cx')}`,
       '',
       ansis.gray(`  # ${i18n.t('cli:help.exampleDescriptions.nonInteractiveModeCicd')}`),
-      `  ${ansis.cyan('npx zcf i --skip-prompt --api-type api_key --api-key "sk-ant-..."')}`,
-      `  ${ansis.cyan('npx zcf i --skip-prompt --all-lang zh-CN --api-type api_key --api-key "key"')}`,
-      `  ${ansis.cyan('npx zcf i --skip-prompt --api-type ccx_proxy')}`,
+      `  ${ansis.cyan('npx ccx-kit i --skip-prompt --api-type api_key --api-key "sk-ant-..."')}`,
+      `  ${ansis.cyan('npx ccx-kit i --skip-prompt --all-lang zh-CN --api-type api_key --api-key "key"')}`,
+      `  ${ansis.cyan('npx ccx-kit i --skip-prompt --api-type ccx_proxy')}`,
       '',
     ].join('\n'),
   })
@@ -213,8 +213,8 @@ export async function setupCommands(cli: CAC): Promise<void> {
   // Use async initialization to ensure help text displays correctly
   try {
     // Try to get language from existing config for help system
-    const zcfConfig = await readZcfConfigAsync()
-    const defaultLang = zcfConfig?.preferredLang || 'en'
+    const appConfig = await readAppConfigAsync()
+    const defaultLang = appConfig?.preferredLang || 'en'
 
     // Initialize i18n for help system using imported function
     await initI18n(defaultLang)
@@ -225,7 +225,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   // Default command - show menu
   cli
     .command('', 'Show interactive menu (default)')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .option('--config-lang, -c <lang>', 'Configuration language (zh-CN, en)')
     .option('--force, -f', 'Force overwrite existing configuration')
@@ -238,7 +238,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   cli
     .command('init', 'Initialize Claude Code configuration')
     .alias('i')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--config-lang, -c <lang>', 'Configuration language (zh-CN, en)')
     .option('--ai-output-lang, -a <lang>', 'AI output language')
     .option('--force, -f', 'Force overwrite existing configuration')
@@ -269,7 +269,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   cli
     .command('update', 'Update Claude Code prompts only')
     .alias('u')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .option('--config-lang, -c <lang>', 'Configuration language (zh-CN, en)')
     .action(await withLanguageResolution(async (options) => {
@@ -279,7 +279,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   // CCX command - Configure CCX API Proxy
   cli
     .command('ccx', 'Configure CCX API proxy')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .action(await withLanguageResolution(async () => {
       await ccx()
@@ -288,7 +288,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   // CCU command - Claude Code usage analysis
   cli
     .command('ccu [...args]', 'Run Claude Code usage analysis tool')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .allowUnknownOptions()
     .action(await withLanguageResolution(async (args) => {
@@ -300,7 +300,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
     .command('config-switch [target]', 'Switch Codex provider or Claude Code configuration, or list available configurations')
     .alias('cs')
     .option('--code-type, -T <type>', 'Code tool type (claude-code, codex, cc, cx)')
-    .option('--lang <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .option('--list, -l', 'List available configurations')
     .action(await withLanguageResolution(async (target, options) => {
@@ -311,10 +311,10 @@ export async function setupCommands(cli: CAC): Promise<void> {
       })
     }))
 
-  // Uninstall command - Remove ZCF configurations and tools
+  // Uninstall command - Remove CCX-Kit configurations and tools
   cli
-    .command('uninstall', 'Remove ZCF configurations and tools')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .command('uninstall', 'Remove CCX-Kit configurations and tools')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .option('--code-type, -T <codeType>', 'Select code tool type (claude-code, codex, cc, cx)')
     .option('--mode, -m <mode>', 'Uninstall mode (complete/custom/interactive), default: interactive')
@@ -327,7 +327,7 @@ export async function setupCommands(cli: CAC): Promise<void> {
   cli
     .command('check-updates', 'Check and update Claude Code and CCX to latest versions')
     .alias('check')
-    .option('--lang, -l <lang>', 'ZCF display language (zh-CN, en)')
+    .option('--lang, -l <lang>', 'CCX-Kit display language (zh-CN, en)')
     .option('--all-lang, -g <lang>', 'Set all language parameters to this value')
     .option('--code-type, -T <codeType>', 'Select code tool type (claude-code, codex, cc, cx)')
     .option('--skip-prompt, -s', 'Skip all interactive prompts (non-interactive mode)')

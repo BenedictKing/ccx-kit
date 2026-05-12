@@ -39,8 +39,8 @@ vi.mock('../../src/i18n', () => ({
   },
 }))
 
-vi.mock('../../src/utils/zcf-config', () => ({
-  readZcfConfigAsync: vi.fn().mockResolvedValue({
+vi.mock('../../src/utils/app-config', () => ({
+  readAppConfigAsync: vi.fn().mockResolvedValue({
     preferredLang: 'en',
     codeToolType: 'claude-code',
   }),
@@ -57,9 +57,9 @@ describe('cli-setup - Edge Cases', () => {
 
   describe('setupCommands error handling', () => {
     it('should handle config read errors gracefully in setupCommands', async () => {
-      // Mock readZcfConfigAsync to throw an error
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
-      vi.mocked(readZcfConfigAsync).mockRejectedValue(new Error('Config read failed'))
+      // Mock readAppConfigAsync to throw an error
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
+      vi.mocked(readAppConfigAsync).mockRejectedValue(new Error('Config read failed'))
 
       const cli = cac('test')
 
@@ -71,11 +71,11 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should handle initI18n errors gracefully in setupCommands', async () => {
-      // Mock readZcfConfigAsync to succeed but initI18n to fail
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
+      // Mock readAppConfigAsync to succeed but initI18n to fail
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
       const { initI18n } = await import('../../src/i18n')
 
-      vi.mocked(readZcfConfigAsync).mockResolvedValue({
+      vi.mocked(readAppConfigAsync).mockResolvedValue({
         version: '1.0.0',
         preferredLang: 'en',
         codeToolType: 'claude-code',
@@ -94,8 +94,8 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should handle config read returning null', async () => {
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
-      vi.mocked(readZcfConfigAsync).mockResolvedValue(null)
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
+      vi.mocked(readAppConfigAsync).mockResolvedValue(null)
 
       const cli = cac('test')
 
@@ -107,8 +107,8 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should handle config read returning undefined preferredLang', async () => {
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
-      vi.mocked(readZcfConfigAsync).mockResolvedValue(null)
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
+      vi.mocked(readAppConfigAsync).mockResolvedValue(null)
 
       const cli = cac('test')
 
@@ -120,10 +120,10 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should handle both config read and initI18n errors together', async () => {
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
       const { initI18n } = await import('../../src/i18n')
 
-      vi.mocked(readZcfConfigAsync).mockRejectedValue(new Error('Config error'))
+      vi.mocked(readAppConfigAsync).mockRejectedValue(new Error('Config error'))
       vi.mocked(initI18n).mockRejectedValue(new Error('i18n error'))
 
       const cli = cac('test')
@@ -136,8 +136,8 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should use zh-CN language from config correctly', async () => {
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
-      vi.mocked(readZcfConfigAsync).mockResolvedValue({
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
+      vi.mocked(readAppConfigAsync).mockResolvedValue({
         version: '1.0.0',
         preferredLang: 'zh-CN',
         lastUpdated: '2025-09-14T00:00:00.000Z',
@@ -153,8 +153,8 @@ describe('cli-setup - Edge Cases', () => {
     })
 
     it('should handle empty config object', async () => {
-      const { readZcfConfigAsync } = await import('../../src/utils/zcf-config')
-      vi.mocked(readZcfConfigAsync).mockResolvedValue({
+      const { readAppConfigAsync } = await import('../../src/utils/app-config')
+      vi.mocked(readAppConfigAsync).mockResolvedValue({
         version: '1.0.0',
         preferredLang: 'en',
         lastUpdated: '2025-09-14T00:00:00.000Z',
@@ -193,7 +193,7 @@ describe('cli-setup - Edge Cases', () => {
 
       await setupCommands(cli)
 
-      expect(commandSpy).toHaveBeenCalledWith('uninstall', 'Remove ZCF configurations and tools')
+      expect(commandSpy).toHaveBeenCalledWith('uninstall', 'Remove CCX-Kit configurations and tools')
     })
 
     it('should register all command aliases properly', async () => {

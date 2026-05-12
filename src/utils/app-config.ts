@@ -1,17 +1,17 @@
 import type { AiOutputLanguage, CodeToolType, SupportedLang } from '../constants'
 import type {
-  PartialZcfTomlConfig,
-  ZcfTomlConfig,
+  AppTomlConfig,
+  PartialAppTomlConfig,
 } from '../types/toml-config'
 import { copyFileSync, existsSync, mkdirSync, renameSync, rmSync } from 'node:fs'
 import { dirname } from 'pathe'
-import { DEFAULT_CODE_TOOL_TYPE, isCodeToolType, LEGACY_ZCF_CONFIG_FILES, SUPPORTED_LANGS, ZCF_CONFIG_DIR, ZCF_CONFIG_FILE } from '../constants'
+import { APP_CONFIG_DIR, APP_CONFIG_FILE, DEFAULT_CODE_TOOL_TYPE, isCodeToolType, LEGACY_APP_CONFIG_FILES, SUPPORTED_LANGS } from '../constants'
 import { ensureDir, exists, readFile, writeFile } from './fs-operations'
 import { readJsonConfig } from './json-config'
 import { batchEditToml, parseToml, stringifyToml } from './toml-edit'
 
 // Legacy interfaces for backward compatibility
-export interface ZcfConfig {
+export interface AppConfig {
   version: string
   preferredLang: SupportedLang
   templateLang?: SupportedLang
@@ -22,7 +22,7 @@ export interface ZcfConfig {
   lastUpdated: string
 }
 
-export interface ZcfConfigMigrationResult {
+export interface AppConfigMigrationResult {
   migrated: boolean
   source?: string
   target: string
@@ -46,14 +46,14 @@ function sanitizeCodeToolType(codeTool: any): CodeToolType {
  * @param configPath - Path to the TOML configuration file
  * @returns Parsed TOML configuration or null if not found/invalid
  */
-function readTomlConfig(configPath: string): ZcfTomlConfig | null {
+function readTomlConfig(configPath: string): AppTomlConfig | null {
   try {
     if (!exists(configPath)) {
       return null
     }
 
     const content = readFile(configPath)
-    const parsed = parseToml<ZcfTomlConfig>(content)
+    const parsed = parseToml<AppTomlConfig>(content)
     return parsed
   }
   catch {
@@ -185,7 +185,7 @@ function updateTopLevelTomlFields(content: string, version: string, lastUpdated:
  * Top-level fields (version, lastUpdated) are updated after incremental editing
  * using string operations since editToml only supports nested paths with dots.
  */
-function writeTomlConfig(configPath: string, config: ZcfTomlConfig): void {
+function writeTomlConfig(configPath: string, config: AppTomlConfig): void {
   try {
     // Ensure parent directory exists
     const configDir = dirname(configPath)
@@ -276,7 +276,7 @@ function writeTomlConfig(configPath: string, config: ZcfTomlConfig): void {
  * @param claudeCodeInstallType - Claude Code installation type (global or local)
  * @returns Default configuration structure
  */
-function createDefaultTomlConfig(preferredLang: SupportedLang = 'en', claudeCodeInstallType: 'global' | 'local' = 'global'): ZcfTomlConfig {
+function createDefaultTomlConfig(preferredLang: SupportedLang = 'en', claudeCodeInstallType: 'global' | 'local' = 'global'): AppTomlConfig {
   return {
     version: '1.0.0',
     lastUpdated: new Date().toISOString(),
@@ -306,13 +306,13 @@ function createDefaultTomlConfig(preferredLang: SupportedLang = 'en', claudeCode
  * @param jsonConfig - Legacy JSON configuration
  * @returns Migrated TOML configuration
  */
-function migrateFromJsonConfig(jsonConfig: any): ZcfTomlConfig {
+function migrateFromJsonConfig(jsonConfig: any): AppTomlConfig {
   // Extract install type from old installation config
   const claudeCodeInstallType = jsonConfig.claudeCodeInstallation?.type || 'global'
   const defaultConfig = createDefaultTomlConfig('en', claudeCodeInstallType)
 
   // Map JSON fields to TOML structure
-  const tomlConfig: ZcfTomlConfig = {
+  const tomlConfig: AppTomlConfig = {
     version: jsonConfig.version || defaultConfig.version,
     lastUpdated: jsonConfig.lastUpdated || new Date().toISOString(),
     general: {
@@ -344,11 +344,11 @@ function migrateFromJsonConfig(jsonConfig: any): ZcfTomlConfig {
  * @param updates - Partial updates to apply
  * @returns Updated configuration
  */
-function updateTomlConfig(configPath: string, updates: PartialZcfTomlConfig): ZcfTomlConfig {
+function updateTomlConfig(configPath: string, updates: PartialAppTomlConfig): AppTomlConfig {
   const existingConfig = readTomlConfig(configPath) || createDefaultTomlConfig()
 
   // Deep merge updates with existing configuration
-  const updatedConfig: ZcfTomlConfig = {
+  const updatedConfig: AppTomlConfig = {
     version: updates.version || existingConfig.version,
     lastUpdated: new Date().toISOString(),
     general: {
@@ -370,9 +370,9 @@ function updateTomlConfig(configPath: string, updates: PartialZcfTomlConfig): Zc
 }
 
 /**
- * Convert TOML config to legacy ZcfConfig format for backward compatibility
+ * Convert TOML config to legacy AppConfig format for backward compatibility
  */
-function convertTomlToLegacyConfig(tomlConfig: ZcfTomlConfig): ZcfConfig {
+function convertTomlToLegacyConfig(tomlConfig: AppTomlConfig): AppConfig {
   return {
     version: tomlConfig.version,
     preferredLang: tomlConfig.general.preferredLang,
@@ -386,13 +386,13 @@ function convertTomlToLegacyConfig(tomlConfig: ZcfTomlConfig): ZcfConfig {
 }
 
 /**
- * Convert legacy ZcfConfig to TOML format
+ * Convert legacy AppConfig to TOML format
  */
-function convertLegacyToTomlConfig(legacyConfig: ZcfConfig): ZcfTomlConfig {
+function convertLegacyToTomlConfig(legacyConfig: AppConfig): AppTomlConfig {
   return migrateFromJsonConfig(legacyConfig)
 }
 
-function normalizeZcfConfig(config: Partial<ZcfConfig> | null): ZcfConfig | null {
+function normalizeAppConfig(config: Partial<AppConfig> | null): AppConfig | null {
   if (!config) {
     return null
   }
@@ -409,16 +409,16 @@ function normalizeZcfConfig(config: Partial<ZcfConfig> | null): ZcfConfig | null
   }
 }
 
-export function migrateZcfConfigIfNeeded(): ZcfConfigMigrationResult {
-  const target = ZCF_CONFIG_FILE
+export function migrateAppConfigIfNeeded(): AppConfigMigrationResult {
+  const target = APP_CONFIG_FILE
   const removed: string[] = []
   const targetExists = existsSync(target)
-  const legacySources = LEGACY_ZCF_CONFIG_FILES.filter(path => existsSync(path))
+  const legacySources = LEGACY_APP_CONFIG_FILES.filter(path => existsSync(path))
 
   if (!targetExists && legacySources.length > 0) {
     const source = legacySources[0]
-    if (!existsSync(ZCF_CONFIG_DIR)) {
-      mkdirSync(ZCF_CONFIG_DIR, { recursive: true })
+    if (!existsSync(APP_CONFIG_DIR)) {
+      mkdirSync(APP_CONFIG_DIR, { recursive: true })
     }
 
     try {
@@ -463,26 +463,26 @@ export function migrateZcfConfigIfNeeded(): ZcfConfigMigrationResult {
   return { migrated: false, target, removed }
 }
 
-export function readZcfConfig(): ZcfConfig | null {
-  migrateZcfConfigIfNeeded()
+export function readAppConfig(): AppConfig | null {
+  migrateAppConfigIfNeeded()
 
   // First, try to read TOML config
-  const tomlConfig = readTomlConfig(ZCF_CONFIG_FILE)
+  const tomlConfig = readTomlConfig(APP_CONFIG_FILE)
   if (tomlConfig) {
     return convertTomlToLegacyConfig(tomlConfig)
   }
 
   // Fallback to legacy JSON config reading for backward compatibility
-  const raw = readJsonConfig<Partial<ZcfConfig>>(ZCF_CONFIG_FILE.replace('.toml', '.json'))
-  const normalized = normalizeZcfConfig(raw || null)
+  const raw = readJsonConfig<Partial<AppConfig>>(APP_CONFIG_FILE.replace('.toml', '.json'))
+  const normalized = normalizeAppConfig(raw || null)
   if (normalized) {
     return normalized
   }
 
-  for (const legacyPath of LEGACY_ZCF_CONFIG_FILES) {
+  for (const legacyPath of LEGACY_APP_CONFIG_FILES) {
     if (existsSync(legacyPath)) {
-      const legacyRaw = readJsonConfig<Partial<ZcfConfig>>(legacyPath)
-      const legacyNormalized = normalizeZcfConfig(legacyRaw || null)
+      const legacyRaw = readJsonConfig<Partial<AppConfig>>(legacyPath)
+      const legacyNormalized = normalizeAppConfig(legacyRaw || null)
       if (legacyNormalized) {
         return legacyNormalized
       }
@@ -492,18 +492,18 @@ export function readZcfConfig(): ZcfConfig | null {
   return null
 }
 
-export async function readZcfConfigAsync(): Promise<ZcfConfig | null> {
-  return readZcfConfig()
+export async function readAppConfigAsync(): Promise<AppConfig | null> {
+  return readAppConfig()
 }
 
-export function writeZcfConfig(config: ZcfConfig): void {
+export function writeAppConfig(config: AppConfig): void {
   try {
     // Convert legacy config to TOML format and write
     const sanitizedConfig = {
       ...config,
       codeToolType: sanitizeCodeToolType(config.codeToolType),
     }
-    const existingTomlConfig = readTomlConfig(ZCF_CONFIG_FILE)
+    const existingTomlConfig = readTomlConfig(APP_CONFIG_FILE)
     const tomlConfig = convertLegacyToTomlConfig(sanitizedConfig)
 
     const nextSystemPromptStyle
@@ -526,7 +526,7 @@ export function writeZcfConfig(config: ZcfConfig): void {
       }
     }
 
-    writeTomlConfig(ZCF_CONFIG_FILE, tomlConfig)
+    writeTomlConfig(APP_CONFIG_FILE, tomlConfig)
   }
   catch {
     // Silently fail if cannot write config - user's system may have permission issues
@@ -534,9 +534,9 @@ export function writeZcfConfig(config: ZcfConfig): void {
   }
 }
 
-export function updateZcfConfig(updates: Partial<ZcfConfig>): void {
-  const existingConfig = readZcfConfig()
-  const newConfig: ZcfConfig = {
+export function updateAppConfig(updates: Partial<AppConfig>): void {
+  const existingConfig = readAppConfig()
+  const newConfig: AppConfig = {
     version: updates.version || existingConfig?.version || '1.0.0',
     preferredLang: updates.preferredLang || existingConfig?.preferredLang || 'en',
     templateLang: updates.templateLang !== undefined ? updates.templateLang : existingConfig?.templateLang,
@@ -546,11 +546,11 @@ export function updateZcfConfig(updates: Partial<ZcfConfig>): void {
     codeToolType: updates.codeToolType || existingConfig?.codeToolType || DEFAULT_CODE_TOOL_TYPE,
     lastUpdated: new Date().toISOString(),
   }
-  writeZcfConfig(newConfig)
+  writeAppConfig(newConfig)
 }
 
-export function getZcfConfig(): ZcfConfig {
-  const config = readZcfConfig()
+export function getAppConfig(): AppConfig {
+  const config = readAppConfig()
   return config || {
     version: '1.0.0',
     preferredLang: 'en',
@@ -559,8 +559,8 @@ export function getZcfConfig(): ZcfConfig {
   }
 }
 
-export async function getZcfConfigAsync(): Promise<ZcfConfig> {
-  const config = await readZcfConfigAsync()
+export async function getAppConfigAsync(): Promise<AppConfig> {
+  const config = await readAppConfigAsync()
   return config || {
     version: '1.0.0',
     preferredLang: 'en',
@@ -569,16 +569,16 @@ export async function getZcfConfigAsync(): Promise<ZcfConfig> {
   }
 }
 
-export async function saveZcfConfig(config: ZcfConfig): Promise<void> {
-  writeZcfConfig(config)
+export async function saveAppConfig(config: AppConfig): Promise<void> {
+  writeAppConfig(config)
 }
 
 /**
  * Read TOML configuration from default location
  * @returns Parsed TOML configuration or null if not found/invalid
  */
-export function readDefaultTomlConfig(): ZcfTomlConfig | null {
-  return readTomlConfig(ZCF_CONFIG_FILE)
+export function readDefaultTomlConfig(): AppTomlConfig | null {
+  return readTomlConfig(APP_CONFIG_FILE)
 }
 
 // Export TOML functions for direct usage (migration path)

@@ -36,7 +36,7 @@ jobs:
 
       - name: Build VitePress site
         # Build docs package using workspace filter
-        run: pnpm -F @zcf/docs build
+        run: pnpm -F @ccx-kit/docs build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

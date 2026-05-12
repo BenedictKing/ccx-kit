@@ -5,6 +5,7 @@ import inquirer from 'inquirer'
 import { getMcpServices } from '../config/mcp-services'
 import { LANG_LABELS, SUPPORTED_LANGS } from '../constants'
 import { changeLanguage, ensureI18nInitialized, i18n } from '../i18n'
+import { readAppConfig, updateAppConfig } from './app-config'
 import { setupCcxConfiguration } from './ccx/config'
 import { installCcx, isCcxInstalled } from './ccx/installer'
 import {
@@ -33,7 +34,6 @@ import { addNumbersToChoices } from './prompt-helpers'
 import { importRecommendedEnv, importRecommendedPermissions, openSettingsJson } from './simple-config'
 import { promptBoolean } from './toggle-prompt'
 import { formatApiKeyDisplay, validateApiKey } from './validator'
-import { readZcfConfig, updateZcfConfig } from './zcf-config'
 
 // Helper function to handle cancelled operations
 async function handleCancellation(): Promise<void> {
@@ -58,8 +58,8 @@ async function handleCustomApiMode(): Promise<void> {
   ensureI18nInitialized()
 
   // Get current code tool type from ZCF config
-  const zcfConfig = readZcfConfig()
-  const codeToolType = zcfConfig?.codeToolType || 'claude-code'
+  const appConfig = readAppConfig()
+  const codeToolType = appConfig?.codeToolType || 'claude-code'
 
   // For Claude Code, use the new incremental configuration management
   if (codeToolType === 'claude-code') {
@@ -453,8 +453,8 @@ export async function configureAiMemoryFeature(): Promise<void> {
   }
 
   if (option === 'language') {
-    const zcfConfig = readZcfConfig()
-    const existingLang = zcfConfig?.aiOutputLang
+    const appConfig = readAppConfig()
+    const existingLang = appConfig?.aiOutputLang
 
     // Show existing language configuration if any
     if (existingLang) {
@@ -480,7 +480,7 @@ export async function configureAiMemoryFeature(): Promise<void> {
     const aiOutputLang = await selectAiOutputLanguage()
 
     applyAiLanguageDirective(aiOutputLang)
-    updateZcfConfig({ aiOutputLang })
+    updateAppConfig({ aiOutputLang })
     console.log(ansis.green(`✔ ${i18n.t('configuration:aiLanguageConfigured') || 'AI output language configured'}`))
   }
   else if (option === 'outputStyle') {
@@ -509,7 +509,7 @@ export async function changeScriptLanguageFeature(currentLang: SupportedLang): P
     return currentLang
   }
 
-  updateZcfConfig({ preferredLang: lang })
+  updateAppConfig({ preferredLang: lang })
 
   await changeLanguage(lang)
 
@@ -632,8 +632,8 @@ export async function configureCodexAiMemoryFeature(): Promise<void> {
   }
 
   if (option === 'language') {
-    const zcfConfig = readZcfConfig()
-    const existingLang = zcfConfig?.aiOutputLang
+    const appConfig = readAppConfig()
+    const existingLang = appConfig?.aiOutputLang
 
     // Show existing language configuration if any
     if (existingLang) {
@@ -664,13 +664,13 @@ export async function configureCodexAiMemoryFeature(): Promise<void> {
 
     // Update AGENTS.md with language directive
     await updateCodexLanguageDirective(aiOutputLang)
-    updateZcfConfig({ aiOutputLang })
+    updateAppConfig({ aiOutputLang })
     console.log(ansis.green(`✔ ${i18n.t('configuration:aiLanguageConfigured') || 'AI output language configured'}`))
   }
   else if (option === 'systemPrompt') {
     // Get current AI output language from config
-    const zcfConfig = readZcfConfig()
-    const currentLang = zcfConfig?.aiOutputLang || 'English'
+    const appConfig = readAppConfig()
+    const currentLang = appConfig?.aiOutputLang || 'English'
 
     // Regenerate system prompt with current language and style selection
     const { runCodexSystemPromptSelection } = await import('./code-tools/codex')

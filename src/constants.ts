@@ -21,13 +21,10 @@ export const GEMINI_DIR = join(homedir(), '.gemini')
 export const GEMINI_SETTINGS_FILE = join(GEMINI_DIR, 'settings.json')
 export const GEMINI_MD_FILE = join(GEMINI_DIR, 'GEMINI.md')
 
-// ZCF configuration paths
-export const ZCF_CONFIG_DIR = join(homedir(), '.ufomiao', 'zcf')
-export const ZCF_CONFIG_FILE = join(ZCF_CONFIG_DIR, 'config.toml')
-export const LEGACY_ZCF_CONFIG_FILES = [
-  join(CLAUDE_DIR, '.zcf-config.json'),
-  join(homedir(), '.zcf.json'),
-]
+// Application configuration paths
+export const APP_CONFIG_DIR = join(homedir(), '.ccx-kit')
+export const APP_CONFIG_FILE = join(APP_CONFIG_DIR, 'config.toml')
+export const LEGACY_APP_CONFIG_FILES: string[] = []
 
 export const CODE_TOOL_TYPES = ['claude-code', 'codex', 'gemini-cli'] as const
 export type CodeToolType = (typeof CODE_TOOL_TYPES)[number]

@@ -17,8 +17,8 @@ import * as platform from '../../../src/utils/platform'
 vi.mock('../../../src/utils/json-config')
 vi.mock('../../../src/utils/platform')
 vi.mock('../../../src/utils/object-utils')
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn().mockReturnValue({ preferredLang: 'en' }),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn().mockReturnValue({ preferredLang: 'en' }),
 }))
 
 // Mock i18n system

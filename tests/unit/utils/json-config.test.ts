@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as appConfig from '../../../src/utils/app-config'
 import * as fsOps from '../../../src/utils/fs-operations'
 import {
   backupJsonConfig,
@@ -8,10 +9,9 @@ import {
   updateJsonConfig,
   writeJsonConfig,
 } from '../../../src/utils/json-config'
-import * as zcfConfig from '../../../src/utils/zcf-config'
 
 vi.mock('../../../src/utils/fs-operations')
-vi.mock('../../../src/utils/zcf-config')
+vi.mock('../../../src/utils/app-config')
 // Use real i18n system for better integration testing
 vi.mock('../../../src/i18n', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../../../src/i18n')>()
@@ -33,7 +33,7 @@ vi.mock('dayjs', () => ({
 describe('json-config utilities', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(zcfConfig.readZcfConfig).mockReturnValue({ preferredLang: 'en' } as any)
+    vi.mocked(appConfig.readAppConfig).mockReturnValue({ preferredLang: 'en' } as any)
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -302,7 +302,7 @@ describe('json-config utilities', () => {
         vi.mocked(fsOps.copyFile).mockImplementation(() => {
           throw new Error('Write error')
         })
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue({ preferredLang: 'zh-CN' } as any)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue({ preferredLang: 'zh-CN' } as any)
 
         const result = backupJsonConfig('/test/config.json')
 
@@ -317,7 +317,7 @@ describe('json-config utilities', () => {
         vi.mocked(fsOps.copyFile).mockImplementation(() => {
           throw new Error('Write error')
         })
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue(null)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue(null)
 
         const result = backupJsonConfig('/test/config.json')
 
@@ -331,7 +331,7 @@ describe('json-config utilities', () => {
         vi.mocked(fsOps.ensureDir).mockImplementation(() => {
           throw new Error('Create directory error')
         })
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue({ preferredLang: 'en' } as any)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue({ preferredLang: 'en' } as any)
 
         const result = backupJsonConfig('/test/config.json')
 
@@ -358,7 +358,7 @@ describe('json-config utilities', () => {
       it('should handle validation failure with ZCF config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('{"valid": "json"}')
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue({ preferredLang: 'zh-CN' } as any)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue({ preferredLang: 'zh-CN' } as any)
 
         const validator = vi.fn().mockReturnValue(false) as any
         const result = readJsonConfig('/test.json', {
@@ -373,7 +373,7 @@ describe('json-config utilities', () => {
       it('should handle validation failure without ZCF config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('{"valid": "json"}')
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue(null)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue(null)
 
         const validator = vi.fn().mockReturnValue(false) as any
         const result = readJsonConfig('/test.json', {
@@ -388,7 +388,7 @@ describe('json-config utilities', () => {
       it('should handle JSON parse error without ZCF config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('invalid json')
-        vi.mocked(zcfConfig.readZcfConfig).mockReturnValue(null)
+        vi.mocked(appConfig.readAppConfig).mockReturnValue(null)
 
         const result = readJsonConfig('/test.json')
 

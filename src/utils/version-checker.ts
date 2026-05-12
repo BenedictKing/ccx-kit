@@ -3,6 +3,7 @@ import * as nodeFs from 'node:fs'
 import process from 'node:process'
 import { promisify } from 'node:util'
 import semver from 'semver'
+import { getLatestCcxVersionFromSources } from './ccx/version-sources'
 import { findCommandPath, getHomebrewCommandPaths, getPlatform } from './platform'
 
 const execAsync = promisify(exec)
@@ -646,28 +647,8 @@ export async function checkCcxVersion(): Promise<{
 }> {
   const currentVersion = await getInstalledVersion('ccx')
 
-  // Get the latest version from GitHub releases
-  let latestVersion: string | null = null
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000)
-    const response = await fetch(
-      'https://api.github.com/repos/BenedictKing/ccx/releases/latest',
-      {
-        signal: controller.signal,
-        headers: { Accept: 'application/vnd.github.v3+json' },
-      },
-    )
-    clearTimeout(timeoutId)
-    if (response.ok) {
-      const data = await response.json() as { tag_name?: string }
-      const tag = data.tag_name || ''
-      latestVersion = tag.startsWith('v') ? tag.slice(1) : tag
-    }
-  }
-  catch {
-    latestVersion = null
-  }
+  // Get the latest version from multiple sources with fallback
+  const latestVersion = await getLatestCcxVersionFromSources()
 
   return {
     installed: currentVersion !== null,

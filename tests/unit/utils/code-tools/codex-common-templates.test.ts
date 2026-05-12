@@ -25,9 +25,9 @@ vi.mock('../../../../src/utils/fs-operations', () => ({
   copyDir: vi.fn(),
 }))
 
-vi.mock('../../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
   readDefaultTomlConfig: vi.fn(),
   updateTomlConfig: vi.fn(),
 }))
@@ -54,7 +54,7 @@ vi.mock('../../../../src/utils/prompts', () => ({
 
 // Declare mock types
 let mockFsOperations: any
-let mockZcfConfig: any
+let mockAppConfig: any
 let mockInquirer: any
 let mockPrompts: any
 let mockNodeFs: any
@@ -73,7 +73,7 @@ describe('codex - common templates usage', () => {
 
     // Initialize mocked modules
     mockFsOperations = vi.mocked(await import('../../../../src/utils/fs-operations'))
-    mockZcfConfig = vi.mocked(await import('../../../../src/utils/zcf-config'))
+    mockAppConfig = vi.mocked(await import('../../../../src/utils/app-config'))
     mockInquirer = vi.mocked(await import('inquirer'))
     mockPrompts = vi.mocked(await import('../../../../src/utils/prompts'))
     mockNodeFs = vi.mocked(await import('node:fs'))
@@ -87,12 +87,12 @@ describe('codex - common templates usage', () => {
     mockFsOperations.copyFile.mockImplementation(() => {})
     mockFsOperations.copyDir.mockImplementation(() => {})
 
-    mockZcfConfig.readZcfConfig.mockReturnValue({
+    mockAppConfig.readAppConfig.mockReturnValue({
       templateLang: 'zh-CN',
       preferredLang: 'zh-CN',
     })
-    mockZcfConfig.updateZcfConfig.mockImplementation(() => {})
-    mockZcfConfig.readDefaultTomlConfig.mockReturnValue({})
+    mockAppConfig.updateAppConfig.mockImplementation(() => {})
+    mockAppConfig.readDefaultTomlConfig.mockReturnValue({})
 
     mockPrompts.resolveTemplateLanguage.mockResolvedValue('zh-CN')
     mockPrompts.resolveSystemPromptStyle.mockResolvedValue('engineer-professional')
@@ -128,7 +128,7 @@ describe('codex - common templates usage', () => {
     it('should use templates/common/output-styles/ path with English locale', async () => {
       const codex = await import('../../../../src/utils/code-tools/codex')
 
-      mockZcfConfig.readZcfConfig.mockReturnValue({
+      mockAppConfig.readAppConfig.mockReturnValue({
         templateLang: 'en',
         preferredLang: 'en',
       })

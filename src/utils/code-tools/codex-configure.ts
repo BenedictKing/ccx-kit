@@ -3,9 +3,9 @@ import ansis from 'ansis'
 import inquirer from 'inquirer'
 import { getMcpServices, MCP_SERVICE_CONFIGS } from '../../config/mcp-services'
 import { ensureI18nInitialized, i18n } from '../../i18n'
+import { updateAppConfig } from '../app-config'
 import { selectMcpServices } from '../mcp-selector'
 import { getSystemRoot, isWindows } from '../platform'
-import { updateZcfConfig } from '../zcf-config'
 import { backupCodexComplete, getBackupMessage, readCodexConfig } from './codex'
 import { applyCodexPlatformCommand } from './codex-platform'
 import { batchUpdateCodexMcpServices } from './codex-toml-updater'
@@ -29,7 +29,7 @@ export async function configureCodexMcp(options?: CodexFullInitOptions): Promise
     // Respect options.mcpServices if provided
     // If mcpServices is false, skip MCP installation entirely
     if (options?.mcpServices === false) {
-      updateZcfConfig({ codeToolType: 'codex' })
+      updateAppConfig({ codeToolType: 'codex' })
       console.log(ansis.green(i18n.t('codex:mcpConfigured')))
       return
     }
@@ -106,7 +106,7 @@ export async function configureCodexMcp(options?: CodexFullInitOptions): Promise
 
     // Use targeted MCP updates - preserves existing SSE-type services
     batchUpdateCodexMcpServices(finalServices)
-    updateZcfConfig({ codeToolType: 'codex' })
+    updateAppConfig({ codeToolType: 'codex' })
     console.log(ansis.green(i18n.t('codex:mcpConfigured')))
     return
   }
@@ -141,7 +141,7 @@ export async function configureCodexMcp(options?: CodexFullInitOptions): Promise
 
     // Use targeted MCP updates - preserves existing SSE-type services
     batchUpdateCodexMcpServices(preserved)
-    updateZcfConfig({ codeToolType: 'codex' })
+    updateAppConfig({ codeToolType: 'codex' })
     return
   }
 
@@ -227,6 +227,6 @@ export async function configureCodexMcp(options?: CodexFullInitOptions): Promise
   // Use targeted MCP updates - preserves existing SSE-type services
   batchUpdateCodexMcpServices(finalServices)
 
-  updateZcfConfig({ codeToolType: 'codex' })
+  updateAppConfig({ codeToolType: 'codex' })
   console.log(ansis.green(i18n.t('codex:mcpConfigured')))
 }

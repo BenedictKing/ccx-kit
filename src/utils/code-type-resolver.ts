@@ -1,7 +1,7 @@
 import type { CodeToolType } from '../constants'
 import { DEFAULT_CODE_TOOL_TYPE } from '../constants'
 import { i18n } from '../i18n'
-import { readZcfConfigAsync } from './zcf-config'
+import { readAppConfigAsync } from './app-config'
 
 /**
  * Code type abbreviation mapping
@@ -40,7 +40,7 @@ export async function resolveCodeType(codeTypeParam?: string): Promise<CodeToolT
     // Get the actual default value that will be used
     let defaultValue = DEFAULT_CODE_TOOL_TYPE
     try {
-      const config = await readZcfConfigAsync()
+      const config = await readAppConfigAsync()
       if (config?.codeToolType && isValidCodeType(config.codeToolType)) {
         defaultValue = config.codeToolType
       }
@@ -57,7 +57,7 @@ export async function resolveCodeType(codeTypeParam?: string): Promise<CodeToolT
 
   // No parameter provided, use config default
   try {
-    const config = await readZcfConfigAsync()
+    const config = await readAppConfigAsync()
     if (config?.codeToolType && isValidCodeType(config.codeToolType)) {
       return config.codeToolType
     }

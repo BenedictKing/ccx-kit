@@ -48,7 +48,7 @@ describe('tOML Parser Refactor', () => {
 trust_level = "trusted"
 local_model = "wenwen"
 
-# --- model provider added by ZCF ---
+# --- model provider added by CCX-Kit ---
 model_provider = "gpt-4"
 
 [model_providers.gpt-4]
@@ -216,7 +216,7 @@ base_url = "https://api.anthropic.com"
       expect(modelProviderIndex).toBeLessThan(firstSectionIndex)
 
       // Verify the actual structure
-      expect(result).toContain('# --- model provider added by ZCF ---')
+      expect(result).toContain('# --- model provider added by CCX-Kit ---')
       expect(result).toContain('model_provider = "wenwen"')
       expect(result).toContain('[projects."/Users/test/project1"]')
       expect(result).toContain('[projects."/Users/test/project2"]')

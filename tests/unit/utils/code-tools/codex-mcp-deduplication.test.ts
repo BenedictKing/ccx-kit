@@ -112,8 +112,8 @@ vi.mock('../../../../src/utils/platform', () => ({
   normalizeTomlPath: vi.fn((str: string) => str.replace(/\\+/g, '/').replace(/\/+/g, '/')), // Normalize Windows paths
 }))
 
-vi.mock('../../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(() => ({
+vi.mock('../../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(() => ({
     preferredLang: 'en',
     templateLang: 'en',
     aiOutputLang: 'en',
@@ -126,7 +126,7 @@ vi.mock('../../../../src/utils/zcf-config', () => ({
       aiOutputLang: 'en',
     },
   })),
-  updateZcfConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
   readDefaultTomlConfig: vi.fn(() => ({
     version: '1.0.0',
     lastUpdated: new Date().toISOString(),
@@ -146,7 +146,7 @@ vi.mock('../../../../src/utils/zcf-config', () => ({
     },
   })),
   updateTomlConfig: vi.fn(),
-  readZcfConfigAsync: vi.fn().mockResolvedValue({
+  readAppConfigAsync: vi.fn().mockResolvedValue({
     preferredLang: 'en',
     templateLang: 'en',
     aiOutputLang: 'en',

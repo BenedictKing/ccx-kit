@@ -64,14 +64,14 @@ vi.mock('../../src/utils/installer', () => ({
   displayVerificationResult: vi.fn(),
 }))
 
-vi.mock('../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(() => ({
+vi.mock('../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(() => ({
     version: '1.0.0',
     preferredLang: 'zh-CN',
     codeToolType: 'claude-code',
     lastUpdated: new Date().toISOString(),
   })),
-  updateZcfConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../src/utils/auto-updater', () => ({

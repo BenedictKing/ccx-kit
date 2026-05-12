@@ -1,21 +1,20 @@
 {
-  "name": "zcf",
+  "name": "ccx-kit",
   "type": "module",
-  "version": "3.7.1",
+  "version": "1.0.0",
   "packageManager": "pnpm@10.17.1",
-  "description": "Zero-Config Code Flow - One-click configuration tool for Code Cli",
+  "description": "CCX-Kit - One-click setup and management tool for CCX AI API proxy",
   "author": {
-    "name": "Miao Da",
-    "email": "ufo025174@gmail.com",
-    "url": "https://github.com/WitMiao"
+    "name": "BenedictKing",
+    "url": "https://github.com/BenedictKing"
   },
   "license": "MIT",
-  "homepage": "https://github.com/BenedictKing/zcf",
+  "homepage": "https://github.com/BenedictKing/ccx-kit",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BenedictKing/zcf.git"
+    "url": "git+https://github.com/BenedictKing/ccx-kit.git"
   },
-  "bugs": "https://github.com/BenedictKing/zcf/issues",
+  "bugs": "https://github.com/BenedictKing/ccx-kit/issues",
   "keywords": [
     "claude",
     "claude-code",
@@ -23,8 +22,9 @@
     "config",
     "cli",
     "setup",
-    "zero-config",
-    "zcf",
+    "ccx",
+    "ccx-kit",
+    "cck",
     "anthropic",
     "openai",
     "ChatGPT",
@@ -36,7 +36,8 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.mts",
   "bin": {
-    "zcf": "bin/zcf.mjs"
+    "ccx-kit": "bin/ccx-kit.mjs",
+    "cck": "bin/cck.mjs"
   },
   "files": [
     "bin",
@@ -46,7 +47,7 @@
   "scripts": {
     "dev": "tsx ./src/cli.ts",
     "build": "unbuild",
-    "start": "node bin/zcf.mjs",
+    "start": "node bin/ccx-kit.mjs",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm build",
     "lint": "eslint",
@@ -63,9 +64,9 @@
     "prepare": "husky",
     "commitlint": "commitlint",
     "commitlint:check": "commitlint --from HEAD~1 --to HEAD --verbose",
-    "docs:dev": "pnpm -F @zcf/docs dev",
-    "docs:build": "pnpm -F @zcf/docs build",
-    "docs:preview": "pnpm -F @zcf/docs preview"
+    "docs:dev": "pnpm -F @ccx-kit/docs dev",
+    "docs:build": "pnpm -F @ccx-kit/docs build",
+    "docs:preview": "pnpm -F @ccx-kit/docs preview"
   },
   "dependencies": {
     "@rainbowatcher/toml-edit-js": "catalog:runtime",

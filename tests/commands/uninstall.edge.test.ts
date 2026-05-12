@@ -12,9 +12,9 @@ vi.mock('../../src/utils/prompt-helpers')
 vi.mock('../../src/utils/toggle-prompt', () => ({
   promptBoolean: vi.fn(),
 }))
-vi.mock('../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(() => ({ codeToolType: 'claude-code' })),
-  readZcfConfigAsync: vi.fn(async () => ({ codeToolType: 'claude-code' })),
+vi.mock('../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(() => ({ codeToolType: 'claude-code' })),
+  readAppConfigAsync: vi.fn(async () => ({ codeToolType: 'claude-code' })),
 }))
 vi.mock('../../src/utils/code-type-resolver', () => ({
   resolveCodeType: vi.fn(async () => 'claude-code'),
@@ -46,7 +46,7 @@ const mockI18n = vi.hoisted(() => ({
 }))
 
 const mockUninstaller = vi.hoisted(() => ({
-  ZcfUninstaller: vi.fn(),
+  CcxKitUninstaller: vi.fn(),
 }))
 
 const mockErrorHandler = vi.hoisted(() => ({
@@ -77,7 +77,7 @@ const mockAnsis = vi.hoisted(() => {
 vi.mocked(await import('inquirer')).default = mockInquirer as any
 vi.mocked(await import('../../src/i18n')).ensureI18nInitialized = mockI18n.ensureI18nInitialized
 vi.mocked(await import('../../src/i18n')).i18n = mockI18n.i18n
-vi.mocked(await import('../../src/utils/uninstaller')).ZcfUninstaller = mockUninstaller.ZcfUninstaller
+vi.mocked(await import('../../src/utils/uninstaller')).CcxKitUninstaller = mockUninstaller.CcxKitUninstaller
 vi.mocked(await import('../../src/utils/error-handler')).handleExitPromptError = mockErrorHandler.handleExitPromptError
 vi.mocked(await import('../../src/utils/error-handler')).handleGeneralError = mockErrorHandler.handleGeneralError
 vi.mocked(await import('../../src/utils/prompt-helpers')).addNumbersToChoices = mockPromptHelpers.addNumbersToChoices
@@ -94,7 +94,7 @@ describe('uninstall command - Edge Cases', () => {
       completeUninstall: vi.fn(),
       customUninstall: vi.fn(),
     }
-    mockUninstaller.ZcfUninstaller.mockReturnValue(mockUninstallerInstance)
+    mockUninstaller.CcxKitUninstaller.mockReturnValue(mockUninstallerInstance)
 
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
     vi.clearAllMocks()
@@ -188,7 +188,7 @@ describe('uninstall command - Edge Cases', () => {
 
       await uninstall(options)
 
-      expect(mockUninstaller.ZcfUninstaller).toHaveBeenCalledWith('zh-CN')
+      expect(mockUninstaller.CcxKitUninstaller).toHaveBeenCalledWith('zh-CN')
     })
 
     it('should handle default language when not specified', async () => {
@@ -198,7 +198,7 @@ describe('uninstall command - Edge Cases', () => {
 
       await uninstall()
 
-      expect(mockUninstaller.ZcfUninstaller).toHaveBeenCalledWith('en')
+      expect(mockUninstaller.CcxKitUninstaller).toHaveBeenCalledWith('en')
     })
   })
 
@@ -321,7 +321,7 @@ describe('uninstall command - Edge Cases', () => {
     })
 
     it('should handle uninstaller initialization errors', async () => {
-      mockUninstaller.ZcfUninstaller.mockImplementation(() => {
+      mockUninstaller.CcxKitUninstaller.mockImplementation(() => {
         throw new Error('Uninstaller init failed')
       })
 

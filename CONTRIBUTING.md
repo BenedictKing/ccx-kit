@@ -20,7 +20,7 @@ Thank you for your interest in contributing to ZCF (Zero-Config Code Flow)! We w
 ZCF is a CLI tool built with TypeScript that provides zero-configuration setup for Claude Code environments. Before contributing, please:
 
 1. Read our [Code of Conduct](CODE_OF_CONDUCT.md)
-2. Check existing [issues](https://github.com/UfoMiao/zcf/issues) and [pull requests](https://github.com/UfoMiao/zcf/pulls)
+2. Check existing [issues](https://github.com/BenedictKing/ccx-kit/issues) and [pull requests](https://github.com/BenedictKing/ccx-kit/pulls)
 3. Fork the repository and create your feature branch
 
 ## 💻 Development Setup
@@ -228,14 +228,14 @@ Brief description of changes
 
 When reporting bugs, please include:
 
-1. **ZCF Version**: Run `npx zcf --version`
+1. **ZCF Version**: Run `npx ccx-kit --version`
 2. **Environment**: OS, Node.js version, pnpm version
 3. **Steps to Reproduce**: Minimal reproduction steps
 4. **Expected Behavior**: What should happen
 5. **Actual Behavior**: What actually happens
 6. **Error Messages**: Any error output or logs
 
-Use our [bug report template](https://github.com/UfoMiao/zcf/issues/new?template=bug_report.md).
+Use our [bug report template](https://github.com/BenedictKing/ccx-kit/issues/new?template=bug_report.md).
 
 ## 💡 Feature Requests
 
@@ -247,7 +247,7 @@ For new features:
 4. **Alternatives**: Other solutions considered
 5. **Implementation**: Willing to contribute code?
 
-Use our [feature request template](https://github.com/UfoMiao/zcf/issues/new?template=feature_request.md).
+Use our [feature request template](https://github.com/BenedictKing/ccx-kit/issues/new?template=feature_request.md).
 
 ## 📚 Documentation
 
@@ -351,4 +351,4 @@ Contributors will be:
 
 Thank you for contributing to ZCF! Your efforts help make Claude Code more accessible and powerful for developers worldwide.
 
-For questions about contributing, please [open an issue](https://github.com/UfoMiao/zcf/issues/new) or start a [discussion](https://github.com/UfoMiao/zcf/discussions).
+For questions about contributing, please [open an issue](https://github.com/BenedictKing/ccx-kit/issues/new) or start a [discussion](https://github.com/BenedictKing/ccx-kit/discussions).

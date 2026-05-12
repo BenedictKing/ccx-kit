@@ -11,6 +11,7 @@ import { getMcpServices, MCP_SERVICE_CONFIGS } from '../config/mcp-services'
 import { WORKFLOW_CONFIG_BASE } from '../config/workflows'
 import { API_DEFAULT_URL, CLAUDE_DIR, CODE_TOOL_BANNERS, DEFAULT_CODE_TOOL_TYPE, SETTINGS_FILE } from '../constants'
 import { i18n } from '../i18n'
+import { readAppConfig, updateAppConfig } from '../utils/app-config'
 import { displayBannerWithInfo } from '../utils/banner'
 import { backupCcxConfig, configureCcxProxy, createDefaultCcxConfig, readCcxEnv, setupCcxConfiguration, writeCcxEnv } from '../utils/ccx/config'
 import { installCcx, isCcxInstalled } from '../utils/ccx/installer'
@@ -50,7 +51,6 @@ import { promptBoolean } from '../utils/toggle-prompt'
 import { formatApiKeyDisplay } from '../utils/validator'
 import { checkClaudeCodeVersionAndPrompt } from '../utils/version-checker'
 import { selectAndInstallWorkflows } from '../utils/workflow-installer'
-import { readZcfConfig, updateZcfConfig } from '../utils/zcf-config'
 
 export interface InitOptions {
   configLang?: SupportedLang
@@ -274,7 +274,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
 
   try {
     // Step 2: Read ZCF config once for multiple uses
-    const zcfConfig = readZcfConfig()
+    const appConfig = readAppConfig()
 
     // Step 3: Select code tool
     let codeToolType: CodeToolType
@@ -401,10 +401,10 @@ export async function init(options: InitOptions = {}): Promise<void> {
     if (codeToolType === 'codex') {
       if (!configLang) {
         if (options.skipPrompt) {
-          configLang = zcfConfig?.templateLang || 'en'
+          configLang = appConfig?.templateLang || 'en'
         }
         else {
-          configLang = zcfConfig?.templateLang || (i18n.language as SupportedLang) || 'en'
+          configLang = appConfig?.templateLang || (i18n.language as SupportedLang) || 'en'
         }
       }
     }
@@ -413,7 +413,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
         const { resolveTemplateLanguage } = await import('../utils/prompts')
         configLang = await resolveTemplateLanguage(
           options.configLang,
-          zcfConfig,
+          appConfig,
           options.skipPrompt,
         )
       }
@@ -425,7 +425,8 @@ export async function init(options: InitOptions = {}): Promise<void> {
 
     if (codeToolType === 'codex') {
       if (options.skipPrompt)
-        process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP = 'true'
+        process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP = 'true'
+      process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP = 'true' // backward compat
 
       const hasApiConfigs = Boolean(options.apiConfigs || options.apiConfigsFile)
 
@@ -475,13 +476,13 @@ export async function init(options: InitOptions = {}): Promise<void> {
         customApiConfig,
         workflows: selectedWorkflows,
       })
-      updateZcfConfig({
+      updateAppConfig({
         version,
         preferredLang: i18n.language as SupportedLang, // ZCF界面语言
         templateLang: configLang, // 模板语言
         aiOutputLang: resolvedAiOutputLang
           ?? options.aiOutputLang
-          ?? zcfConfig?.aiOutputLang
+          ?? appConfig?.aiOutputLang
           ?? 'en',
         codeToolType,
       })
@@ -498,13 +499,13 @@ export async function init(options: InitOptions = {}): Promise<void> {
         skipPrompt: options.skipPrompt,
       })
 
-      updateZcfConfig({
+      updateAppConfig({
         version,
         preferredLang: i18n.language as SupportedLang,
         templateLang: configLang,
         aiOutputLang: resolvedAiOutputLang
           ?? options.aiOutputLang
-          ?? zcfConfig?.aiOutputLang
+          ?? appConfig?.aiOutputLang
           ?? 'en',
         codeToolType,
       })
@@ -512,7 +513,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
     }
 
     // Step 4: Select AI output language
-    const aiOutputLang = await resolveAiOutputLanguage(i18n.language as SupportedLang, options.aiOutputLang, zcfConfig, options.skipPrompt)
+    const aiOutputLang = await resolveAiOutputLanguage(i18n.language as SupportedLang, options.aiOutputLang, appConfig, options.skipPrompt)
 
     // Step 4: Check and handle Claude Code installation
     const installationStatus = await getInstallationStatus()
@@ -1019,7 +1020,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
     }
 
     // Step 12: Save zcf config
-    updateZcfConfig({
+    updateAppConfig({
       version,
       preferredLang: i18n.language as SupportedLang, // ZCF界面语言
       templateLang: configLang, // 模板语言

@@ -109,26 +109,26 @@ ZCF provides both direct commands and an interactive menu system with advanced i
 
 ```bash
 # Interactive menu (recommended)
-npx zcf                    # Opens main menu with all options
+npx ccx-kit                    # Opens main menu with all options
 
 # Direct commands
-npx zcf i                  # Full initialization
-npx zcf u                  # Update workflows only
-npx zcf ccr [--lang <en|zh-CN>]  # Claude Code Router management
-npx zcf ccu [args...]      # Run ccusage with arguments
-npx zcf check-updates [--lang <en|zh-CN>] [--code-type <claude-code|codex>]  # Check tool updates
-npx zcf config-switch [target] [--code-type <claude-code|codex>]  # Switch configurations
-npx zcf uninstall [--mode <complete|custom|interactive>] [--items <items>] [--lang <en|zh-CN>]  # ZCF uninstallation
+npx ccx-kit i                  # Full initialization
+npx ccx-kit u                  # Update workflows only
+npx ccx-kit ccr [--lang <en|zh-CN>]  # Claude Code Router management
+npx ccx-kit ccu [args...]      # Run ccusage with arguments
+npx ccx-kit check-updates [--lang <en|zh-CN>] [--code-type <claude-code|codex>]  # Check tool updates
+npx ccx-kit config-switch [target] [--code-type <claude-code|codex>]  # Switch configurations
+npx ccx-kit uninstall [--mode <complete|custom|interactive>] [--items <items>] [--lang <en|zh-CN>]  # ZCF uninstallation
 
 # Config switch examples
-npx zcf config-switch --list                    # List available configurations
-npx zcf config-switch provider1 --code-type codex  # Switch Codex provider
-npx zcf config-switch config1 --code-type claude-code  # Switch Claude Code config
+npx ccx-kit config-switch --list                    # List available configurations
+npx ccx-kit config-switch provider1 --code-type codex  # Switch Codex provider
+npx ccx-kit config-switch config1 --code-type claude-code  # Switch Claude Code config
 
 # Uninstall examples
-npx zcf uninstall                                    # Interactive uninstall menu
-npx zcf uninstall --mode complete                    # Complete uninstallation
-npx zcf uninstall --mode custom --items ccr,backups # Custom uninstallation
+npx ccx-kit uninstall                                    # Interactive uninstall menu
+npx ccx-kit uninstall --mode complete                    # Complete uninstallation
+npx ccx-kit uninstall --mode custom --items ccr,backups # Custom uninstallation
 ```
 
 ## Testing and Debugging
@@ -312,32 +312,32 @@ The ZCF project employs a specialized AI agent team optimized for CLI developmen
 | Agent | Model | Domain | Primary Responsibilities |
 |-------|-------|--------|-------------------------|
 | **typescript-cli-architect** | sonnet | CLI Architecture | TypeScript CLI design, CAC integration, ESM modules, developer experience |
-| **zcf-i18n-specialist** | opus | Internationalization | i18next configuration, translation management, namespace organization |
-| **zcf-tools-integration-specialist** | sonnet | Tool Integration | CCR/Cometix/CCusage integration, version management, cross-platform compatibility |
-| **zcf-template-engine** | haiku | Template System | Template design, workflow configurations, output styles, multilingual templates |
-| **zcf-config-architect** | opus | Configuration Management | Config merging, MCP services, TOML/JSON validation, backup systems |
-| **zcf-testing-specialist** | sonnet | Testing Infrastructure | Vitest configuration, test coverage, mock systems, quality assurance |
-| **zcf-devops-engineer** | inherit | DevOps & Deployment | Build optimization, release management, CI/CD, cross-platform deployment |
+| **ccx-kit-i18n-specialist** | opus | Internationalization | i18next configuration, translation management, namespace organization |
+| **ccx-kit-tools-integration-specialist** | sonnet | Tool Integration | CCR/Cometix/CCusage integration, version management, cross-platform compatibility |
+| **ccx-kit-template-engine** | haiku | Template System | Template design, workflow configurations, output styles, multilingual templates |
+| **ccx-kit-config-architect** | opus | Configuration Management | Config merging, MCP services, TOML/JSON validation, backup systems |
+| **ccx-kit-testing-specialist** | sonnet | Testing Infrastructure | Vitest configuration, test coverage, mock systems, quality assurance |
+| **ccx-kit-devops-engineer** | inherit | DevOps & Deployment | Build optimization, release management, CI/CD, cross-platform deployment |
 
 ### Agent Collaboration Matrix
 
 ```mermaid
 graph TD
-    A[typescript-cli-architect] --> B[zcf-i18n-specialist]
-    A --> C[zcf-tools-integration-specialist]
-    A --> D[zcf-template-engine]
+    A[typescript-cli-architect] --> B[ccx-kit-i18n-specialist]
+    A --> C[ccx-kit-tools-integration-specialist]
+    A --> D[ccx-kit-template-engine]
 
-    E[zcf-config-architect] --> A
+    E[ccx-kit-config-architect] --> A
     E --> C
     E --> D
 
-    F[zcf-testing-specialist] --> A
+    F[ccx-kit-testing-specialist] --> A
     F --> B
     F --> C
     F --> D
     F --> E
 
-    G[zcf-devops-engineer] --> A
+    G[ccx-kit-devops-engineer] --> A
     G --> F
     G --> E
 
@@ -353,12 +353,12 @@ graph TD
 ### Agent Boundaries & Delegation Rules
 
 - **CLI Architecture**: typescript-cli-architect handles all CLI structure, command parsing, and TypeScript configuration
-- **Internationalization**: zcf-i18n-specialist manages all i18next systems, translations, and language detection
-- **Tool Integration**: zcf-tools-integration-specialist handles CCR, Cometix, CCusage integration and version management
-- **Templates**: zcf-template-engine manages all template systems, workflow configurations, and output styles
-- **Configuration**: zcf-config-architect handles complex config merging, MCP services, and backup systems
-- **Testing**: zcf-testing-specialist maintains Vitest infrastructure, coverage, and quality assurance
-- **DevOps**: zcf-devops-engineer manages builds, releases, and deployment processes
+- **Internationalization**: ccx-kit-i18n-specialist manages all i18next systems, translations, and language detection
+- **Tool Integration**: ccx-kit-tools-integration-specialist handles CCR, Cometix, CCusage integration and version management
+- **Templates**: ccx-kit-template-engine manages all template systems, workflow configurations, and output styles
+- **Configuration**: ccx-kit-config-architect handles complex config merging, MCP services, and backup systems
+- **Testing**: ccx-kit-testing-specialist maintains Vitest infrastructure, coverage, and quality assurance
+- **DevOps**: ccx-kit-devops-engineer manages builds, releases, and deployment processes
 
 ### Model Selection Rationale
 

@@ -2,14 +2,14 @@ import ansis from 'ansis'
 import { x } from 'tinyexec'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { executeCcusage } from '../../../src/commands/ccu'
-import * as zcfConfig from '../../../src/utils/zcf-config'
+import * as appConfig from '../../../src/utils/app-config'
 
 vi.mock('tinyexec')
-vi.mock('../../../src/utils/zcf-config')
+vi.mock('../../../src/utils/app-config')
 
 describe('executeCcusage', () => {
   const mockX = vi.mocked(x)
-  const mockReadZcfConfigAsync = vi.mocked(zcfConfig.readZcfConfigAsync)
+  const mockReadAppConfigAsync = vi.mocked(appConfig.readAppConfigAsync)
   const consoleLogSpy = vi.spyOn(console, 'log')
   const consoleErrorSpy = vi.spyOn(console, 'error')
   vi.spyOn(process, 'exit').mockImplementation((() => {
@@ -30,7 +30,7 @@ describe('executeCcusage', () => {
 
   describe('successful execution', () => {
     it('should execute ccusage with default language (en)', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue(null)
+      mockReadAppConfigAsync.mockResolvedValue(null)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -49,7 +49,7 @@ describe('executeCcusage', () => {
     })
 
     it('should execute ccusage with English language', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -66,7 +66,7 @@ describe('executeCcusage', () => {
     })
 
     it('should execute ccusage without arguments (defaults to daily)', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -83,7 +83,7 @@ describe('executeCcusage', () => {
     })
 
     it('should execute ccusage with multiple arguments', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',

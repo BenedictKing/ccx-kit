@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { configSwitchCommand } from '../../../src/commands/config-switch'
 
 import { resolveCodeToolType } from '../../../src/constants'
+import { readAppConfig } from '../../../src/utils/app-config'
 // Import the mocked module correctly
 import { ClaudeCodeConfigManager } from '../../../src/utils/claude-code-config-manager'
-import { readZcfConfig } from '../../../src/utils/zcf-config'
 
 // Mock external dependencies
 vi.mock('inquirer')
@@ -102,8 +102,8 @@ vi.mock('../../../src/utils/error-handler', () => ({
   handleGeneralError: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(() => ({
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(() => ({
     version: '1.0.0',
     preferredLang: 'zh-CN',
     codeToolType: 'claude-code',
@@ -362,8 +362,8 @@ describe('config-switch command - Claude Code Support', () => {
     })
 
     it('should fallback to ZCF config code type', async () => {
-      const mockReadZcfConfig = vi.mocked(readZcfConfig)
-      mockReadZcfConfig.mockReturnValue({
+      const mockReadAppConfig = vi.mocked(readAppConfig)
+      mockReadAppConfig.mockReturnValue({
         version: '1.0.0',
         preferredLang: 'zh-CN',
         codeToolType: 'claude-code',
@@ -372,12 +372,12 @@ describe('config-switch command - Claude Code Support', () => {
 
       await configSwitchCommand({ list: true })
 
-      expect(mockReadZcfConfig).toHaveBeenCalled()
+      expect(mockReadAppConfig).toHaveBeenCalled()
     })
 
     it('should fallback to default code type', async () => {
-      const mockReadZcfConfig = vi.mocked(readZcfConfig)
-      mockReadZcfConfig.mockReturnValue({
+      const mockReadAppConfig = vi.mocked(readAppConfig)
+      mockReadAppConfig.mockReturnValue({
         version: '1.0.0',
         preferredLang: 'zh-CN',
         codeToolType: 'claude-code',
@@ -493,8 +493,8 @@ describe('config-switch command - Codex Support', () => {
   })
 
   it('should fall back to Codex type from configuration when option omitted', async () => {
-    const mockReadZcfConfig = vi.mocked(readZcfConfig)
-    mockReadZcfConfig.mockReturnValue({
+    const mockReadAppConfig = vi.mocked(readAppConfig)
+    mockReadAppConfig.mockReturnValue({
       codeToolType: 'codex',
     } as any)
     mockListCodexProviders.mockResolvedValue([])

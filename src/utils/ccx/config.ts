@@ -28,7 +28,7 @@ export function ensureCcxConfigDir(): void {
  */
 export function createDefaultCcxConfig(): CcxConfig {
   return {
-    PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
+    PROXY_ACCESS_KEY: 'sk-ccx-kit',
     PORT: 3688,
     ENABLE_WEB_UI: true,
   }
@@ -127,7 +127,7 @@ export async function configureCcxProxy(ccxConfig: CcxConfig): Promise<void> {
   const settings = readJsonConfig<any>(SETTINGS_FILE) || {}
 
   const port = ccxConfig.PORT || 3688
-  const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
+  const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
 
   if (!settings.env) {
     settings.env = {}

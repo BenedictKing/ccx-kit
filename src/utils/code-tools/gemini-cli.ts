@@ -267,7 +267,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
       ccxConfig = createDefaultCcxConfig()
     }
 
-    const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
+    const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
     const ccxPort = ccxConfig.PORT || 3688
 
     // Step 4: Write Gemini .env
@@ -407,11 +407,11 @@ export async function runGeminiCliFullInit(
 
   // Preserve existing AI output language setting if not explicitly provided
   if (!aiOutputLang) {
-    const { readZcfConfig } = await import('../zcf-config')
-    const zcfConfig = readZcfConfig()
-    if (zcfConfig?.aiOutputLang) {
+    const { readAppConfig } = await import('../app-config')
+    const appConfig = readAppConfig()
+    if (appConfig?.aiOutputLang) {
       console.log(ansis.green(i18n.t('gemini-cli:setupComplete')))
-      return zcfConfig.aiOutputLang
+      return appConfig.aiOutputLang
     }
   }
 

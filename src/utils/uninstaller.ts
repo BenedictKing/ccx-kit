@@ -3,7 +3,7 @@ import { homedir } from 'node:os'
 import { pathExists } from 'fs-extra'
 import { join } from 'pathe'
 import { exec } from 'tinyexec'
-import { ZCF_CONFIG_FILE } from '../constants'
+import { APP_CONFIG_FILE } from '../constants'
 import { i18n } from '../i18n'
 import { readJsonConfig, writeJsonConfig } from './json-config'
 import { moveToTrash } from './trash'
@@ -19,7 +19,7 @@ export type UninstallItem
     | 'ccline'
     | 'claude-code'
     | 'backups'
-    | 'zcf-config'
+    | 'app-config'
 
 export interface UninstallResult {
   success: boolean
@@ -32,7 +32,7 @@ export interface UninstallResult {
 /**
  * ZCF Uninstaller - Handles removal of ZCF configurations and tools
  */
-export class ZcfUninstaller {
+export class CcxKitUninstaller {
   private _lang: SupportedLang // Reserved for future i18n support
   private conflictResolution = new Map<UninstallItem, UninstallItem[]>()
 
@@ -98,7 +98,7 @@ export class ZcfUninstaller {
   }
 
   /**
-   * 2. Remove custom commands directory (commands/zcf/)
+   * 2. Remove custom commands directory (commands/ccx-kit/)
    */
   async removeCustomCommands(): Promise<UninstallResult> {
     const result: UninstallResult = {
@@ -110,14 +110,14 @@ export class ZcfUninstaller {
     }
 
     try {
-      const commandsPath = join(homedir(), '.claude', 'commands', 'zcf')
+      const commandsPath = join(homedir(), '.claude', 'commands', 'ccx-kit')
 
       if (await pathExists(commandsPath)) {
         const trashResult = await moveToTrash(commandsPath)
         if (!trashResult[0]?.success) {
           result.warnings.push(trashResult[0]?.error || 'Failed to move to trash')
         }
-        result.removed.push('commands/zcf/')
+        result.removed.push('commands/ccx-kit/')
         result.success = true
       }
       else {
@@ -133,7 +133,7 @@ export class ZcfUninstaller {
   }
 
   /**
-   * 3. Remove custom agents directory (agents/zcf/)
+   * 3. Remove custom agents directory (agents/ccx-kit/)
    */
   async removeCustomAgents(): Promise<UninstallResult> {
     const result: UninstallResult = {
@@ -145,14 +145,14 @@ export class ZcfUninstaller {
     }
 
     try {
-      const agentsPath = join(homedir(), '.claude', 'agents', 'zcf')
+      const agentsPath = join(homedir(), '.claude', 'agents', 'ccx-kit')
 
       if (await pathExists(agentsPath)) {
         const trashResult = await moveToTrash(agentsPath)
         if (!trashResult[0]?.success) {
           result.warnings.push(trashResult[0]?.error || 'Failed to move to trash')
         }
-        result.removed.push('agents/zcf/')
+        result.removed.push('agents/ccx-kit/')
         result.success = true
       }
       else {
@@ -458,7 +458,7 @@ export class ZcfUninstaller {
   /**
    * 11. Remove ZCF preference configuration
    */
-  async removeZcfConfig(): Promise<UninstallResult> {
+  async removeAppConfig(): Promise<UninstallResult> {
     const result: UninstallResult = {
       success: false,
       removed: [],
@@ -468,11 +468,11 @@ export class ZcfUninstaller {
     }
 
     try {
-      const zcfConfigPath = ZCF_CONFIG_FILE
-      const relativeName = zcfConfigPath.replace(homedir(), '~')
+      const appConfigPath = APP_CONFIG_FILE
+      const relativeName = appConfigPath.replace(homedir(), '~')
 
-      if (await pathExists(zcfConfigPath)) {
-        const trashResult = await moveToTrash(zcfConfigPath)
+      if (await pathExists(appConfigPath)) {
+        const trashResult = await moveToTrash(appConfigPath)
         if (!trashResult[0]?.success) {
           result.warnings.push(trashResult[0]?.error || 'Failed to move to trash')
         }
@@ -480,12 +480,12 @@ export class ZcfUninstaller {
         result.success = true
       }
       else {
-        result.warnings.push(i18n.t('uninstall:zcfConfigNotFound'))
+        result.warnings.push(i18n.t('uninstall:appConfigNotFound'))
         result.success = true
       }
     }
     catch (error: any) {
-      result.errors.push(`Failed to remove ZCF config: ${error.message}`)
+      result.errors.push(`Failed to remove CCX-Kit config: ${error.message}`)
     }
 
     return result
@@ -635,8 +635,8 @@ export class ZcfUninstaller {
         return await this.uninstallClaudeCode()
       case 'backups':
         return await this.removeBackups()
-      case 'zcf-config':
-        return await this.removeZcfConfig()
+      case 'app-config':
+        return await this.removeAppConfig()
       default:
         return {
           success: false,

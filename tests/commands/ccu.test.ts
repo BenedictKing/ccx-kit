@@ -2,15 +2,15 @@ import ansis from 'ansis'
 import { x } from 'tinyexec'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { executeCcusage } from '../../src/commands/ccu'
-import * as zcfConfig from '../../src/utils/zcf-config'
+import * as appConfig from '../../src/utils/app-config'
 
 // Mock tinyexec
 vi.mock('tinyexec', () => ({
   x: vi.fn(),
 }))
 
-// Mock zcf-config
-vi.mock('../../src/utils/zcf-config')
+// Mock app-config
+vi.mock('../../src/utils/app-config')
 
 describe('cCU Command', () => {
   let consoleLogSpy: any
@@ -29,8 +29,8 @@ describe('cCU Command', () => {
     // Set test environment
     process.env = { ...originalEnv, NODE_ENV: 'test' }
 
-    // Default mock for zcfConfig
-    vi.mocked(zcfConfig.readZcfConfigAsync).mockResolvedValue({
+    // Default mock for appConfig
+    vi.mocked(appConfig.readAppConfigAsync).mockResolvedValue({
       preferredLang: 'en',
     } as any)
   })
@@ -93,7 +93,7 @@ describe('cCU Command', () => {
     })
 
     it('should use Chinese language when configured', async () => {
-      vi.mocked(zcfConfig.readZcfConfigAsync).mockResolvedValue({
+      vi.mocked(appConfig.readAppConfigAsync).mockResolvedValue({
         preferredLang: 'zh-CN',
       } as any)
       vi.mocked(x).mockResolvedValueOnce({
@@ -138,7 +138,7 @@ describe('cCU Command', () => {
     })
 
     it('should handle missing language configuration', async () => {
-      vi.mocked(zcfConfig.readZcfConfigAsync).mockResolvedValue(null)
+      vi.mocked(appConfig.readAppConfigAsync).mockResolvedValue(null)
       vi.mocked(x).mockResolvedValueOnce({
         stdout: '',
         stderr: '',
@@ -154,7 +154,7 @@ describe('cCU Command', () => {
     })
 
     it('should handle invalid language configuration', async () => {
-      vi.mocked(zcfConfig.readZcfConfigAsync).mockResolvedValue({
+      vi.mocked(appConfig.readAppConfigAsync).mockResolvedValue({
         preferredLang: 'invalid-lang',
       } as any)
       vi.mocked(x).mockResolvedValueOnce({

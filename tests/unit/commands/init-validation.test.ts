@@ -49,9 +49,9 @@ vi.mock('../../../src/utils/cometix/installer', () => ({
   installCometixLine: vi.fn().mockResolvedValue(undefined),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn().mockReturnValue(null),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn().mockReturnValue(null),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/banner', () => ({

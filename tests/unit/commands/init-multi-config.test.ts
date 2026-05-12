@@ -16,9 +16,9 @@ vi.mock('../../../src/utils/installer', () => ({
   getInstallationStatus: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/fs-operations', () => ({

@@ -16,7 +16,7 @@
   <p align="center">
   <b>English</b> | <a href="README_zh-CN.md">中文</a> | <a href="README_ja-JP.md">日本語</a> | <a href="CHANGELOG.md">Changelog</a>
 
-**✨ Full Documentation**: [ZCF Docs](https://zcf.ufomiao.com/)
+**✨ Full Documentation**: [CCX-Kit Docs](https://zcf.ufomiao.com/)
 
 > Zero-config, one-click setup for Claude Code & Codex with bilingual support, intelligent agent system and personalized AI assistant
 </p>
@@ -51,19 +51,19 @@ Get 10% OFF GLM CODING PLAN：https://z.ai/subscribe?ic=8JVLJQFSKB
 
 ## 🚀 Quick Start
 
-- Recommended: `npx zcf` opens the interactive menu and guides you through install/update.
+- Recommended: `npx ccx-kit` opens the interactive menu and guides you through install/update.
 - Common commands:
 
 ```bash
-npx zcf i        # Full initialization: install + workflows + API/CCR + MCP
-npx zcf u        # Update workflows only
-npx zcf --lang zh-CN  # Switch interface language (example)
+npx ccx-kit i        # Full initialization: install + workflows + API/CCR + MCP
+npx ccx-kit u        # Update workflows only
+npx ccx-kit --lang zh-CN  # Switch interface language (example)
 ```
 
 - Non-interactive example (provider preset):
 
 ```bash
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 ```
 
 More usage, options, and workflows: see documentation.
@@ -146,8 +146,8 @@ Thanks to the following authors for promoting this project:
 
 ## 🚀 Contributors
 
-<a href="https://github.com/UfoMiao/zcf/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=UfoMiao/zcf" />
+<a href="https://github.com/BenedictKing/ccx-kit/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=BenedictKing/ccx-kit" />
 </a>
 <br /><br />
 
@@ -155,21 +155,21 @@ Thanks to the following authors for promoting this project:
 
 If this project helps you, please give me a ⭐️ Star!
 
-[![Star History Chart](https://api.star-history.com/svg?repos=UfoMiao/zcf&type=Date)](https://star-history.com/#UfoMiao/zcf&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=BenedictKing/ccx-kit&type=Date)](https://star-history.com/#BenedictKing/ccx-kit&Date)
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/zcf?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-src]: https://img.shields.io/npm/v/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
 [npm-version-href]: https://npmjs.com/package/zcf
-[npm-downloads-src]: https://img.shields.io/npm/dm/zcf?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-src]: https://img.shields.io/npm/dm/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
 [npm-downloads-href]: https://npmjs.com/package/zcf
 [license-src]: https://img.shields.io/github/license/ufomiao/zcf.svg?style=flat&colorA=080f12&colorB=1fa669
 [license-href]: https://github.com/ufomiao/zcf/blob/main/LICENSE
 [claude-code-src]: https://img.shields.io/badge/Claude-Code-1fa669?style=flat&colorA=080f12&colorB=1fa669
 [claude-code-href]: https://claude.ai/code
-[codecov-src]: https://codecov.io/gh/UfoMiao/zcf/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669
-[codecov-href]: https://codecov.io/gh/UfoMiao/zcf
+[codecov-src]: https://codecov.io/gh/BenedictKing/ccx-kit/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669
+[codecov-href]: https://codecov.io/gh/BenedictKing/ccx-kit
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-1fa669?style=flat&colorA=080f12&colorB=1fa669
 [jsdocs-href]: https://www.jsdocs.io/package/zcf
 [deepwiki-src]: https://img.shields.io/badge/Ask-DeepWiki-1fa669?style=flat&colorA=080f12&colorB=1fa669
-[deepwiki-href]: https://deepwiki.com/UfoMiao/zcf
+[deepwiki-href]: https://deepwiki.com/BenedictKing/ccx-kit

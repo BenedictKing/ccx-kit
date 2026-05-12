@@ -2,8 +2,8 @@ import type { DefaultTheme } from 'vitepress'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vitepress'
 
-const githubRepo = 'UfoMiao/zcf'
-const siteTitle = 'ZCF'
+const githubRepo = 'BenedictKing/ccx-kit'
+const siteTitle = 'CCX-Kit'
 const siteDescription = 'Zero-Config Code Flow Documentation'
 
 interface SidebarDefinitionItem {
@@ -84,8 +84,8 @@ const zhSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: 'CLI 命令',
     items: [
       { text: '命令概览', link: 'cli/' },
-      { text: 'zcf init', link: 'cli/init' },
-      { text: 'zcf update', link: 'cli/update' },
+      { text: 'ccx-kit init', link: 'cli/init' },
+      { text: 'ccx-kit update', link: 'cli/update' },
       { text: '主菜单', link: 'cli/menu' },
       { text: 'CCR 代理管理', link: 'cli/ccr' },
       { text: '使用分析 ccu', link: 'cli/ccu' },
@@ -98,7 +98,7 @@ const zhSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: '工作流详解',
     items: [
       { text: '工作流概览', link: 'workflows/' },
-      { text: 'ZCF 六阶段工作流', link: 'workflows/zcf-workflow' },
+      { text: 'CCX-Kit 六阶段工作流', link: 'workflows/ccx-workflow' },
       { text: '功能开发工作流', link: 'workflows/feat' },
       { text: 'BMad 敏捷流程', link: 'workflows/bmad' },
       { text: 'Spec 工作流集成', link: 'workflows/spec' },
@@ -168,8 +168,8 @@ const enSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: 'CLI Commands',
     items: [
       { text: 'Commands Overview', link: 'cli/' },
-      { text: 'zcf init', link: 'cli/init' },
-      { text: 'zcf update', link: 'cli/update' },
+      { text: 'ccx-kit init', link: 'cli/init' },
+      { text: 'ccx-kit update', link: 'cli/update' },
       { text: 'Main Menu', link: 'cli/menu' },
       { text: 'CCR Proxy Management', link: 'cli/ccr' },
       { text: 'Usage Analysis ccu', link: 'cli/ccu' },
@@ -182,7 +182,7 @@ const enSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: 'Workflow Details',
     items: [
       { text: 'Workflow Overview', link: 'workflows/' },
-      { text: 'ZCF Six-Stage Workflow', link: 'workflows/zcf-workflow' },
+      { text: 'CCX-Kit Six-Stage Workflow', link: 'workflows/ccx-workflow' },
       { text: 'Feature Development Workflow', link: 'workflows/feat' },
       { text: 'BMad Agile Process', link: 'workflows/bmad' },
       { text: 'Spec Workflow Integration', link: 'workflows/spec' },
@@ -252,8 +252,8 @@ const jaSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: 'CLI コマンド',
     items: [
       { text: 'コマンド概要', link: 'cli/' },
-      { text: 'zcf init', link: 'cli/init' },
-      { text: 'zcf update', link: 'cli/update' },
+      { text: 'ccx-kit init', link: 'cli/init' },
+      { text: 'ccx-kit update', link: 'cli/update' },
       { text: 'メインメニュー', link: 'cli/menu' },
       { text: 'CCR プロキシ管理', link: 'cli/ccr' },
       { text: '使用分析 ccu', link: 'cli/ccu' },
@@ -266,7 +266,7 @@ const jaSidebar: DefaultTheme.SidebarItem[] = createSidebar([
     text: 'ワークフロー詳細',
     items: [
       { text: 'ワークフロー概要', link: 'workflows/' },
-      { text: 'ZCF 6段階ワークフロー', link: 'workflows/zcf-workflow' },
+      { text: 'CCX-Kit 6段階ワークフロー', link: 'workflows/ccx-workflow' },
       { text: '機能開発ワークフロー', link: 'workflows/feat' },
       { text: 'BMad アジャイルプロセス', link: 'workflows/bmad' },
       { text: 'Spec ワークフロー統合', link: 'workflows/spec' },

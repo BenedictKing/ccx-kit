@@ -10,8 +10,9 @@ import { dirname, join } from 'pathe'
 import semver from 'semver'
 import { x } from 'tinyexec'
 // Removed MCP config imports; MCP configuration moved to codex-configure.ts
-import { AI_OUTPUT_LANGUAGES, CODEX_AGENTS_FILE, CODEX_AUTH_FILE, CODEX_CONFIG_FILE, CODEX_DIR, CODEX_PROMPTS_DIR, SUPPORTED_LANGS, ZCF_CONFIG_FILE } from '../../constants'
+import { AI_OUTPUT_LANGUAGES, APP_CONFIG_FILE, CODEX_AGENTS_FILE, CODEX_AUTH_FILE, CODEX_CONFIG_FILE, CODEX_DIR, CODEX_PROMPTS_DIR, SUPPORTED_LANGS } from '../../constants'
 import { ensureI18nInitialized, format, i18n } from '../../i18n'
+import { readAppConfig, readDefaultTomlConfig, updateAppConfig, updateTomlConfig } from '../app-config'
 import { applyAiLanguageDirective } from '../config'
 import { copyDir, copyFile, ensureDir, exists, readFile, writeFile } from '../fs-operations'
 import { readJsonConfig, writeJsonConfig } from '../json-config'
@@ -21,7 +22,6 @@ import { addNumbersToChoices } from '../prompt-helpers'
 import { resolveAiOutputLanguage } from '../prompts'
 import { promptBoolean } from '../toggle-prompt'
 import { parseToml } from '../toml-edit'
-import { readDefaultTomlConfig, readZcfConfig, updateTomlConfig, updateZcfConfig } from '../zcf-config'
 import { detectConfigManagementMode } from './codex-config-detector'
 import { configureCodexMcp } from './codex-configure'
 
@@ -204,7 +204,7 @@ export function backupCodexFiles(): string | null {
     return null
 
   // Skip-prompt模式：只在首次调用时创建备份，其余复用
-  if (process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
+  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
 
   const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss')
@@ -215,7 +215,7 @@ export function backupCodexFiles(): string | null {
   }
 
   copyDir(CODEX_DIR, backupDir, { filter })
-  if (process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true')
+  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true')
     cachedSkipPromptBackup = backupDir
 
   return backupDir
@@ -249,7 +249,7 @@ export function backupCodexConfig(): string | null {
 }
 
 export function backupCodexAgents(): string | null {
-  if (process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
+  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
   if (!exists(CODEX_AGENTS_FILE))
     return null
@@ -267,7 +267,7 @@ export function backupCodexAgents(): string | null {
 }
 
 export function backupCodexPrompts(): string | null {
-  if (process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
+  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
   if (!exists(CODEX_PROMPTS_DIR))
     return null
@@ -355,7 +355,7 @@ export function migrateEnvKeyToTempEnvKey(): boolean {
     writeFile(CODEX_CONFIG_FILE, migratedContent)
 
     // Update ZCF config to mark migration as complete
-    updateTomlConfig(ZCF_CONFIG_FILE, {
+    updateTomlConfig(APP_CONFIG_FILE, {
       codex: {
         envKeyMigrated: true,
       },
@@ -566,7 +566,7 @@ export function parseCodexConfig(content: string): CodexConfigData {
 
         // Skip comments (but reset inSection flag for ZCF comments)
         if (trimmedLine.startsWith('#')) {
-          if (trimmedLine.includes('--- model provider added by ZCF ---')) {
+          if (trimmedLine.includes('--- model provider added by CCX-Kit ---')) {
             inSection = false // ZCF comments mark global config area
           }
           continue
@@ -601,11 +601,11 @@ export function parseCodexConfig(content: string): CodexConfigData {
         continue
 
       // Skip ZCF managed comments/headers
-      if (/^#\s*---\s*model provider added by ZCF\s*---\s*$/i.test(trimmed))
+      if (/^#\s*---\s*model provider added by CCX-Kit\s*---\s*$/i.test(trimmed))
         continue
-      if (/^#\s*---\s*MCP servers added by ZCF\s*---\s*$/i.test(trimmed))
+      if (/^#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/i.test(trimmed))
         continue
-      if (/Managed by ZCF/i.test(trimmed))
+      if (/Managed by CCX-Kit/i.test(trimmed))
         continue
 
       // Section header detection
@@ -653,8 +653,8 @@ export function parseCodexConfig(content: string): CodexConfigData {
     // Clean previously managed sections to avoid duplication on subsequent renders
     const cleaned = content
       // Remove ZCF headers
-      .replace(/^\s*#\s*---\s*model provider added by ZCF\s*---\s*$/gim, '')
-      .replace(/^\s*#\s*---\s*MCP servers added by ZCF\s*---\s*$/gim, '')
+      .replace(/^\s*#\s*---\s*model provider added by CCX-Kit\s*---\s*$/gim, '')
+      .replace(/^\s*#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/gim, '')
       // Remove entire [model_providers.*] and [mcp_servers.*] blocks
       .replace(/^\[model_providers\.[^\]]+\][\s\S]*?(?=^\[|$)/gim, '')
       .replace(/^\[mcp_servers\.[^\]]+\][\s\S]*?(?=^\[|$)/gim, '')
@@ -814,7 +814,7 @@ export function renderCodexConfig(data: CodexConfigData): string {
   // CRITICAL: Add ZCF global configuration FIRST to ensure it's truly global
   // This prevents TOML parser from incorrectly assigning global keys to sections
   if (data.model || data.modelProvider || data.providers.length > 0 || data.modelProviderCommented) {
-    lines.push('# --- model provider added by ZCF ---')
+    lines.push('# --- model provider added by CCX-Kit ---')
 
     // Add model field if present
     if (data.model) {
@@ -837,9 +837,9 @@ export function renderCodexConfig(data: CodexConfigData): string {
       if (!l)
         return false
       // Guard: never re-insert any ZCF-managed headers/sections/fields
-      if (/^#\s*---\s*model provider added by ZCF\s*---\s*$/i.test(l))
+      if (/^#\s*---\s*model provider added by CCX-Kit\s*---\s*$/i.test(l))
         return false
-      if (/^#\s*---\s*MCP servers added by ZCF\s*---\s*$/i.test(l))
+      if (/^#\s*---\s*MCP servers added by CCX-Kit\s*---\s*$/i.test(l))
         return false
       if (/^\[\s*mcp_servers\./i.test(l))
         return false
@@ -882,7 +882,7 @@ export function renderCodexConfig(data: CodexConfigData): string {
   // Add MCP servers sections
   if (data.mcpServices.length > 0) {
     lines.push('')
-    lines.push('# --- MCP servers added by ZCF ---')
+    lines.push('# --- MCP servers added by CCX-Kit ---')
     for (const service of data.mcpServices) {
       lines.push(`[mcp_servers.${service.id}]`)
       // Normalize Windows paths: convert backslashes to forward slashes
@@ -1106,18 +1106,18 @@ export async function runCodexWorkflowImportWithLanguageSelection(
   ensureI18nInitialized()
 
   // Step 1: Select AI output language (uses global config memory)
-  const zcfConfig = readZcfConfig()
+  const appConfig = readAppConfig()
   const { aiOutputLang: commandLineOption, skipPrompt = false } = options ?? {}
 
   const aiOutputLang = await resolveAiOutputLanguage(
     i18n.language as SupportedLang,
     commandLineOption,
-    zcfConfig,
+    appConfig,
     skipPrompt,
   )
 
   // Step 2: Save AI output language to global config
-  updateZcfConfig({ aiOutputLang })
+  updateAppConfig({ aiOutputLang })
   applyAiLanguageDirective(aiOutputLang)
 
   // Step 3: Continue with original workflow (system prompt + workflow selection)
@@ -1134,19 +1134,19 @@ export async function runCodexSystemPromptSelection(skipPrompt = false): Promise
   const rootDir = getRootDir()
 
   // Read both legacy and new config formats
-  const zcfConfig = readZcfConfig()
-  const { readDefaultTomlConfig } = await import('../zcf-config')
+  const appConfig = readAppConfig()
+  const { readDefaultTomlConfig } = await import('../app-config')
   const tomlConfig = readDefaultTomlConfig()
 
   // Use intelligent template language selection
   const { resolveTemplateLanguage } = await import('../prompts')
   const preferredLang = await resolveTemplateLanguage(
     undefined, // No command line option for this function
-    zcfConfig,
+    appConfig,
     skipPrompt, // Pass skipPrompt flag
   )
 
-  updateZcfConfig({ templateLang: preferredLang })
+  updateAppConfig({ templateLang: preferredLang })
 
   // Use shared output-styles from common directory
   let systemPromptSrc = join(rootDir, 'templates', 'common', 'output-styles', preferredLang)
@@ -1214,10 +1214,10 @@ export async function runCodexSystemPromptSelection(skipPrompt = false): Promise
 
   // Update ZCF configuration to save the selected system prompt style
   try {
-    const { updateTomlConfig } = await import('../zcf-config')
-    const { ZCF_CONFIG_FILE } = await import('../../constants')
+    const { updateTomlConfig } = await import('../app-config')
+    const { APP_CONFIG_FILE } = await import('../../constants')
 
-    updateTomlConfig(ZCF_CONFIG_FILE, {
+    updateTomlConfig(APP_CONFIG_FILE, {
       codex: {
         systemPromptStyle: systemPrompt,
       },
@@ -1235,9 +1235,9 @@ export async function runCodexWorkflowSelection(options?: CodexFullInitOptions):
   const { skipPrompt = false, workflows: presetWorkflows = [] } = options ?? {}
   const rootDir = getRootDir()
 
-  const zcfConfig = readZcfConfig()
+  const appConfig = readAppConfig()
   // Use templateLang with fallback to preferredLang for backward compatibility
-  const templateLang = zcfConfig?.templateLang || zcfConfig?.preferredLang || 'en'
+  const templateLang = appConfig?.templateLang || appConfig?.preferredLang || 'en'
   let preferredLang = templateLang === 'en' ? 'en' : 'zh-CN'
 
   // Workflows are now in templates/common/workflow/{category}/{lang}
@@ -1484,7 +1484,7 @@ async function applyCustomApiConfig(customApiConfig: NonNullable<CodexFullInitOp
   // Auth file remains JSON format
   writeJsonConfig(CODEX_AUTH_FILE, authEntries)
 
-  updateZcfConfig({ codeToolType: 'codex' })
+  updateAppConfig({ codeToolType: 'codex' })
 
   console.log(ansis.green(`✔ ${i18n.t('codex:apiConfigured')}`))
 }
@@ -1542,7 +1542,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
       ccxConfig = createDefaultCcxConfig()
     }
 
-    const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-zcf-x-ccx'
+    const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
     const ccxPort = ccxConfig.PORT || 3000
 
     // Step 4: Build Codex provider config
@@ -1612,7 +1612,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
       // Use official API mode
       const success = await switchToOfficialLogin()
       if (success) {
-        updateZcfConfig({ codeToolType: 'codex' })
+        updateAppConfig({ codeToolType: 'codex' })
       }
       return
     }
@@ -1620,7 +1620,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
     if (apiMode === 'ccx') {
       const success = await configureCodexCcxProxy()
       if (success)
-        updateZcfConfig({ codeToolType: 'codex' })
+        updateAppConfig({ codeToolType: 'codex' })
       return
     }
   }
@@ -1656,7 +1656,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
     // Use new official login logic - preserve providers but comment model_provider
     const success = await switchToOfficialLogin()
     if (success) {
-      updateZcfConfig({ codeToolType: 'codex' })
+      updateAppConfig({ codeToolType: 'codex' })
     }
     return
   }
@@ -1664,7 +1664,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
   if (mode === 'ccx') {
     const success = await configureCodexCcxProxy()
     if (success) {
-      updateZcfConfig({ codeToolType: 'codex' })
+      updateAppConfig({ codeToolType: 'codex' })
     }
     return
   }
@@ -1701,7 +1701,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
     }
 
     if (success) {
-      updateZcfConfig({ codeToolType: 'codex' })
+      updateAppConfig({ codeToolType: 'codex' })
     }
     return
   }
@@ -1906,7 +1906,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
   }
 
   writeAuthFile(authEntries)
-  updateZcfConfig({ codeToolType: 'codex' })
+  updateAppConfig({ codeToolType: 'codex' })
   console.log(ansis.green(i18n.t('codex:apiConfigured')))
 }
 
@@ -2057,8 +2057,8 @@ export async function runCodexUninstall(): Promise<void> {
 
   // Import CodexUninstaller dynamically to avoid circular dependency
   const { CodexUninstaller } = await import('./codex-uninstaller')
-  const zcfConfig = readZcfConfig()
-  const preferredLang = zcfConfig?.preferredLang
+  const appConfig = readAppConfig()
+  const preferredLang = appConfig?.preferredLang
   const uninstallLang: SupportedLang
     = preferredLang && SUPPORTED_LANGS.includes(preferredLang as SupportedLang)
       ? preferredLang as SupportedLang

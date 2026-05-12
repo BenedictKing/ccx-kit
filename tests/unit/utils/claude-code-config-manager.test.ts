@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'pathe'
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const testConfigDir = mkdtempSync(join(tmpdir(), 'zcf-config-manager-test-'))
+const testConfigDir = mkdtempSync(join(tmpdir(), 'app-config-manager-test-'))
 const testConfigFile = join(testConfigDir, 'config.toml')
 const testSettingsFile = join(testConfigDir, 'settings.json')
 
@@ -12,8 +12,8 @@ vi.mock('../../../src/constants', async () => {
   const actual = await vi.importActual<typeof import('../../../src/constants')>('../../../src/constants')
   return {
     ...actual,
-    ZCF_CONFIG_DIR: testConfigDir,
-    ZCF_CONFIG_FILE: testConfigFile,
+    APP_CONFIG_DIR: testConfigDir,
+    APP_CONFIG_FILE: testConfigFile,
     SETTINGS_FILE: testSettingsFile,
   }
 })
@@ -317,7 +317,7 @@ describe('claudeCodeConfigManager', () => {
 
     it('ccx_proxy 模式应该读取CCX配置并触发重启', async () => {
       mockReadCcxEnv.mockReturnValue({
-        PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
+        PROXY_ACCESS_KEY: 'sk-ccx-kit',
         PORT: 7000,
         ENABLE_WEB_UI: true,
       })
@@ -334,7 +334,7 @@ describe('claudeCodeConfigManager', () => {
       })
 
       expect(writtenSettings.env.ANTHROPIC_BASE_URL).toBe('http://127.0.0.1:7000')
-      expect(writtenSettings.env.ANTHROPIC_API_KEY).toBe('sk-zcf-x-ccx')
+      expect(writtenSettings.env.ANTHROPIC_API_KEY).toBe('sk-ccx-kit')
       expect(mockSetPrimaryApiKey).toHaveBeenCalled()
       expect(mockAddCompletedOnboarding).toHaveBeenCalled()
       expect(mockRestartCcxService).toHaveBeenCalled()
@@ -1085,7 +1085,7 @@ describe('claudeCodeConfigManager', () => {
       })
       // 添加CCX profile
       await (ClaudeCodeConfigManager as any).ensureCcxProfileExists({
-        PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
+        PROXY_ACCESS_KEY: 'sk-ccx-kit',
         PORT: 3000,
         ENABLE_WEB_UI: true,
       })
@@ -1130,7 +1130,7 @@ describe('claudeCodeConfigManager', () => {
         apiKey: 'sk-main',
       })
       await (ClaudeCodeConfigManager as any).ensureCcxProfileExists({
-        PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
+        PROXY_ACCESS_KEY: 'sk-ccx-kit',
         PORT: 3000,
         ENABLE_WEB_UI: true,
       })
@@ -1168,7 +1168,7 @@ describe('claudeCodeConfigManager', () => {
         apiKey: 'sk-entry',
       })
       mockReadCcxEnv.mockReturnValue({
-        PROXY_ACCESS_KEY: 'sk-zcf-x-ccx',
+        PROXY_ACCESS_KEY: 'sk-ccx-kit',
         PORT: 3000,
         ENABLE_WEB_UI: true,
       })

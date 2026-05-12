@@ -1,14 +1,14 @@
 import { x } from 'tinyexec'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { executeCcusage } from '../../../src/commands/ccu'
-import * as zcfConfig from '../../../src/utils/zcf-config'
+import * as appConfig from '../../../src/utils/app-config'
 
 vi.mock('tinyexec')
-vi.mock('../../../src/utils/zcf-config')
+vi.mock('../../../src/utils/app-config')
 
 describe('executeCcusage - edge cases', () => {
   const mockX = vi.mocked(x)
-  const mockReadZcfConfigAsync = vi.mocked(zcfConfig.readZcfConfigAsync)
+  const mockReadAppConfigAsync = vi.mocked(appConfig.readAppConfigAsync)
   const consoleLogSpy = vi.spyOn(console, 'log')
   const consoleErrorSpy = vi.spyOn(console, 'error')
   vi.spyOn(process, 'exit').mockImplementation((() => {
@@ -29,7 +29,7 @@ describe('executeCcusage - edge cases', () => {
 
   describe('edge cases', () => {
     it('should handle empty array arguments', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -46,7 +46,7 @@ describe('executeCcusage - edge cases', () => {
     })
 
     it('should handle special characters in arguments', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -64,7 +64,7 @@ describe('executeCcusage - edge cases', () => {
     })
 
     it('should handle very long argument lists', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: '',
         stderr: '',
@@ -90,7 +90,7 @@ describe('executeCcusage - edge cases', () => {
     // Test removed - error handling pattern incompatible with test environment
 
     it('should handle non-zero exit code', async () => {
-      mockReadZcfConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      mockReadAppConfigAsync.mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       mockX.mockResolvedValue({
         stdout: 'Some output',
         stderr: 'Some error',

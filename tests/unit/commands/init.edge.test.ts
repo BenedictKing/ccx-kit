@@ -5,6 +5,7 @@ import inquirer from 'inquirer'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { init } from '../../../src/commands/init'
 import { i18n } from '../../../src/i18n'
+import { readAppConfig } from '../../../src/utils/app-config'
 import { buildMcpServerConfig } from '../../../src/utils/claude-config'
 import { configureApiCompletely } from '../../../src/utils/config-operations'
 import { getInstallationStatus, installClaudeCode, isClaudeCodeInstalled } from '../../../src/utils/installer'
@@ -12,7 +13,6 @@ import { isTermux, isWindows } from '../../../src/utils/platform'
 import { resolveAiOutputLanguage, resolveTemplateLanguage } from '../../../src/utils/prompts'
 import { promptBoolean } from '../../../src/utils/toggle-prompt'
 import { selectAndInstallWorkflows } from '../../../src/utils/workflow-installer'
-import { readZcfConfig } from '../../../src/utils/zcf-config'
 
 // Mock modules with comprehensive error scenarios
 vi.mock('inquirer', () => ({
@@ -73,9 +73,9 @@ vi.mock('../../../src/utils/platform', () => ({
   isTermux: vi.fn(),
 }))
 
-vi.mock('../../../src/utils/zcf-config', () => ({
-  readZcfConfig: vi.fn(),
-  updateZcfConfig: vi.fn(),
+vi.mock('../../../src/utils/app-config', () => ({
+  readAppConfig: vi.fn(),
+  updateAppConfig: vi.fn(),
 }))
 
 vi.mock('../../../src/utils/banner', () => ({
@@ -127,7 +127,7 @@ interface TestMocks {
   isClaudeCodeInstalled: any
   getInstallationStatus: any
   installClaudeCode: any
-  readZcfConfig: any
+  readAppConfig: any
   resolveAiOutputLanguage: any
   resolveTemplateLanguage: any
   isTermux: any
@@ -152,7 +152,7 @@ describe('init - Edge Cases', () => {
       isClaudeCodeInstalled: isClaudeCodeInstalled as any,
       getInstallationStatus: getInstallationStatus as any,
       installClaudeCode: installClaudeCode as any,
-      readZcfConfig: readZcfConfig as any,
+      readAppConfig: readAppConfig as any,
       resolveAiOutputLanguage: resolveAiOutputLanguage as any,
       resolveTemplateLanguage: resolveTemplateLanguage as any,
       isTermux: isTermux as any,
@@ -170,7 +170,7 @@ describe('init - Edge Cases', () => {
       hasLocal: false,
       localPath: '/Users/test/.claude/local/claude',
     })
-    testMocks.readZcfConfig.mockReturnValue({})
+    testMocks.readAppConfig.mockReturnValue({})
     testMocks.resolveAiOutputLanguage.mockResolvedValue('en')
     testMocks.resolveTemplateLanguage.mockResolvedValue('en')
     testMocks.isTermux.mockReturnValue(false)

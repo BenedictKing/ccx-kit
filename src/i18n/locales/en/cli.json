@@ -7,7 +7,7 @@
   "help.commandDescriptions.showInteractiveMenuDefault": "Show interactive menu (default)",
   "help.commandDescriptions.initClaudeCodeConfig": "Initialize Claude Code configuration",
   "help.commandDescriptions.updateWorkflowFiles": "Update workflow-related md files",
-  "help.commandDescriptions.configureCcxProxy": "Configure CCX API proxy",
+  "help.commandDescriptions.configureCcrProxy": "Configure Claude Code Router for model proxy",
   "help.commandDescriptions.claudeCodeUsageAnalysis": "Claude Code usage statistics analysis",
   "help.commandDescriptions.uninstallConfigurations": "Remove Claude Code configurations and tools",
   "help.commandDescriptions.checkUpdateVersions": "Check and update to latest versions",
@@ -46,10 +46,10 @@
   "help.exampleDescriptions.checkClaudeCode": "Check and update Claude Code tools",
   "help.exampleDescriptions.checkCodex": "Check and update Codex tools",
   "help.exampleDescriptions.nonInteractiveModeCicd": "Non-interactive mode (CI/CD)",
-  "banner.subtitle": "One-click configuration tool for Claude Code",
-  "banner.updateSubtitle": "Update configuration for Claude Code",
+  "banner.subtitle": "One-click configuration tool for Claude Code / Codex",
+  "banner.updateSubtitle": "Update configuration for Claude Code / Codex",
   "help.defaults.dailyUsage": "Daily usage (default)",
   "help.defaults.interactiveUninstall": "Interactive uninstall menu",
-  "help.defaults.updateTools": "Update Claude Code, CCX and CCometixLine",
+  "help.defaults.updateTools": "Update Claude Code, CCR and CCometixLine",
   "help.defaults.prefix": "default:"
 }

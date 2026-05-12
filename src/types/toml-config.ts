@@ -29,7 +29,7 @@ export interface CodexConfig {
 }
 
 /**
- * General ZCF configuration
+ * General application configuration
  */
 export interface GeneralConfig {
   preferredLang: SupportedLang
@@ -39,9 +39,9 @@ export interface GeneralConfig {
 }
 
 /**
- * Complete ZCF TOML configuration structure
+ * Complete application TOML configuration structure
  */
-export interface ZcfTomlConfig {
+export interface AppTomlConfig {
   version: string
   lastUpdated: string
   general: GeneralConfig
@@ -52,7 +52,7 @@ export interface ZcfTomlConfig {
 /**
  * Partial configuration for updates
  */
-export type PartialZcfTomlConfig = Partial<ZcfTomlConfig> & {
+export type PartialAppTomlConfig = Partial<AppTomlConfig> & {
   general?: Partial<GeneralConfig>
   claudeCode?: Partial<ClaudeCodeConfig>
   codex?: Partial<CodexConfig>

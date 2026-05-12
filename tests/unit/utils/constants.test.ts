@@ -3,6 +3,8 @@ import { join } from 'pathe'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   AI_OUTPUT_LANGUAGES,
+  APP_CONFIG_DIR,
+  APP_CONFIG_FILE,
   ClAUDE_CONFIG_FILE,
   CLAUDE_DIR,
   CLAUDE_MD_FILE,
@@ -11,11 +13,9 @@ import {
   getAiOutputLanguageLabel,
   isCodeToolType,
   LANG_LABELS,
-  LEGACY_ZCF_CONFIG_FILES,
+  LEGACY_APP_CONFIG_FILES,
   SETTINGS_FILE,
   SUPPORTED_LANGS,
-  ZCF_CONFIG_DIR,
-  ZCF_CONFIG_FILE,
 } from '../../../src/constants'
 
 // Mock i18n module
@@ -57,19 +57,16 @@ describe('constants', () => {
       expect(ClAUDE_CONFIG_FILE).toBe(join(homedir(), '.claude.json'))
     })
 
-    it('should define correct ZCF config directory path', () => {
-      expect(ZCF_CONFIG_DIR).toBe(join(homedir(), '.ufomiao', 'zcf'))
+    it('should define correct app config directory path', () => {
+      expect(APP_CONFIG_DIR).toBe(join(homedir(), '.ccx-kit'))
     })
 
-    it('should define correct ZCF config file path', () => {
-      expect(ZCF_CONFIG_FILE).toBe(join(ZCF_CONFIG_DIR, 'config.toml'))
+    it('should define correct app config file path', () => {
+      expect(APP_CONFIG_FILE).toBe(join(APP_CONFIG_DIR, 'config.toml'))
     })
 
-    it('should define legacy ZCF config file paths', () => {
-      expect(LEGACY_ZCF_CONFIG_FILES).toEqual([
-        join(CLAUDE_DIR, '.zcf-config.json'),
-        join(homedir(), '.zcf.json'),
-      ])
+    it('should define legacy app config file paths', () => {
+      expect(LEGACY_APP_CONFIG_FILES).toEqual([])
     })
   })
 
