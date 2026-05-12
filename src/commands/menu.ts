@@ -498,7 +498,7 @@ export async function showMainMenu(options: { codeType?: string } = {}): Promise
     let exitMenu = false
     while (!exitMenu) {
       const codeTool = getCurrentCodeTool()
-      displayBannerWithInfo(CODE_TOOL_BANNERS[codeTool] || 'ZCF')
+      displayBannerWithInfo(CODE_TOOL_BANNERS[codeTool] || 'ccx-kit')
 
       let result: MenuResult
       if (codeTool === 'codex') {

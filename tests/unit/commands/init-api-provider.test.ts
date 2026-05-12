@@ -71,7 +71,7 @@ vi.mock('../../../src/constants', () => ({
   APP_CONFIG_DIR: '/test/.ccx-kit',
   APP_CONFIG_FILE: '/test/.ccx-kit/config.toml',
   CODE_TOOL_BANNERS: {
-    'claude-code': 'ZCF',
+    'claude-code': 'for Claude Code',
   },
   API_DEFAULT_URL: 'https://api.anthropic.com',
   API_ENV_KEY: 'ANTHROPIC_API_KEY',

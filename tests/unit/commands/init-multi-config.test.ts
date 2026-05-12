@@ -54,8 +54,8 @@ vi.mock('../../../src/constants', () => ({
   DEFAULT_CODE_TOOL_TYPE: 'claude-code',
   SETTINGS_FILE: '/test/.claude/settings.json',
   CODE_TOOL_BANNERS: {
-    'claude-code': 'ZCF',
-    'codex': 'Codex',
+    'claude-code': 'for Claude Code',
+    'codex': 'for Codex',
   },
   API_DEFAULT_URL: 'https://api.anthropic.com',
   API_ENV_KEY: 'ANTHROPIC_API_KEY',
