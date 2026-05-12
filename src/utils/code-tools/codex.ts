@@ -210,8 +210,11 @@ export function backupCodexFiles(): string | null {
   const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss')
   const backupDir = createBackupDirectory(timestamp)
 
+  const tmpDir = join(CODEX_DIR, 'tmp')
   const filter = (path: string): boolean => {
-    return !path.includes('/backup')
+    // Skip backup directories and temp directory (runtime artifacts, dangling symlinks)
+    // Use precise path matching to avoid false positives like 'tmp-config.toml'
+    return !path.includes('/backup') && !path.startsWith(tmpDir)
   }
 
   copyDir(CODEX_DIR, backupDir, { filter })
