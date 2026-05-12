@@ -529,7 +529,7 @@ describe('installer utilities', () => {
       expect(success).toBe(true)
       // npm install now includes --force to handle EEXIST errors
       expect(exec).toHaveBeenCalledWith('npm', ['install', '-g', '@anthropic-ai/claude-code', '--force'])
-      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'npm-global' })
+      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'npm-global', hasCompletedOnboarding: true })
     })
 
     it('should install Codex via Homebrew as cask', async () => {
@@ -652,7 +652,7 @@ describe('installer utilities', () => {
 
       await setInstallMethod('npm', 'claude-code')
 
-      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'npm-global' })
+      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'npm-global', hasCompletedOnboarding: true })
     })
 
     it('should mark non-npm installs as native', async () => {
@@ -660,7 +660,7 @@ describe('installer utilities', () => {
 
       await setInstallMethod('homebrew', 'claude-code')
 
-      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'homebrew' })
+      expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({ installMethod: 'homebrew', hasCompletedOnboarding: true })
     })
 
     it('should ignore codex install method persistence', async () => {
@@ -1213,6 +1213,7 @@ describe('installer utilities', () => {
       expect(claudeConfigMock.writeMcpConfig).toHaveBeenCalledWith({
         mcpServers: {},
         installMethod: 'npm-global',
+        hasCompletedOnboarding: true,
       })
     })
 

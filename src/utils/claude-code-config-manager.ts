@@ -243,8 +243,8 @@ export class ClaudeCodeConfigManager {
         const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
 
         settings.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${port}`
-        settings.env.ANTHROPIC_API_KEY = apiKey
-        delete settings.env.ANTHROPIC_AUTH_TOKEN
+        settings.env.ANTHROPIC_AUTH_TOKEN = apiKey
+        delete settings.env.ANTHROPIC_API_KEY
         shouldRestartCcx = true
       }
 

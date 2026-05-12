@@ -334,7 +334,7 @@ describe('claudeCodeConfigManager', () => {
       })
 
       expect(writtenSettings.env.ANTHROPIC_BASE_URL).toBe('http://127.0.0.1:7000')
-      expect(writtenSettings.env.ANTHROPIC_API_KEY).toBe('sk-ccx-kit')
+      expect(writtenSettings.env.ANTHROPIC_AUTH_TOKEN).toBe('sk-ccx-kit')
       expect(mockSetPrimaryApiKey).toHaveBeenCalled()
       expect(mockAddCompletedOnboarding).toHaveBeenCalled()
       expect(mockRestartCcxService).toHaveBeenCalled()

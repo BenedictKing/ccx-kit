@@ -158,17 +158,17 @@ export async function configureCcxProxy(
       new: newBaseUrl,
     })
   }
-  if (existingEnv.ANTHROPIC_API_KEY !== apiKey) {
+  if (existingEnv.ANTHROPIC_AUTH_TOKEN !== apiKey) {
     changes.push({
-      key: 'ANTHROPIC_API_KEY',
-      old: existingEnv.ANTHROPIC_API_KEY ? formatMaskedKey(existingEnv.ANTHROPIC_API_KEY) : i18n.t('ccx:statusSummary.notConfigured'),
+      key: 'ANTHROPIC_AUTH_TOKEN',
+      old: existingEnv.ANTHROPIC_AUTH_TOKEN ? formatMaskedKey(existingEnv.ANTHROPIC_AUTH_TOKEN) : i18n.t('ccx:statusSummary.notConfigured'),
       new: formatMaskedKey(apiKey),
     })
   }
-  if (existingEnv.ANTHROPIC_AUTH_TOKEN) {
+  if (existingEnv.ANTHROPIC_API_KEY) {
     changes.push({
-      key: 'ANTHROPIC_AUTH_TOKEN',
-      old: formatMaskedKey(existingEnv.ANTHROPIC_AUTH_TOKEN),
+      key: 'ANTHROPIC_API_KEY',
+      old: formatMaskedKey(existingEnv.ANTHROPIC_API_KEY),
       new: i18n.t('ccx:settingsDiff.willBeRemoved'),
     })
   }
@@ -192,12 +192,12 @@ export async function configureCcxProxy(
     }
   }
 
-  // Remove ANTHROPIC_AUTH_TOKEN when switching to CCX proxy to avoid conflicts
-  delete settings.env.ANTHROPIC_AUTH_TOKEN
+  // Remove ANTHROPIC_API_KEY when switching to CCX proxy to avoid conflicts
+  delete settings.env.ANTHROPIC_API_KEY
 
   // Set CCX proxy configuration
   settings.env.ANTHROPIC_BASE_URL = newBaseUrl
-  settings.env.ANTHROPIC_API_KEY = apiKey
+  settings.env.ANTHROPIC_AUTH_TOKEN = apiKey
 
   writeJsonConfig(SETTINGS_FILE, settings)
 

@@ -87,7 +87,7 @@ describe('configureCcxProxy diff/confirm', () => {
     readJsonConfig.mockReturnValue({
       env: {
         ANTHROPIC_BASE_URL: 'http://old:1111',
-        ANTHROPIC_API_KEY: 'sk-old-key-value',
+        ANTHROPIC_AUTH_TOKEN: 'sk-old-key-value',
       },
     })
     promptBoolean.mockResolvedValue(true)
@@ -100,7 +100,7 @@ describe('configureCcxProxy diff/confirm', () => {
       expect.objectContaining({
         env: expect.objectContaining({
           ANTHROPIC_BASE_URL: 'http://127.0.0.1:3688',
-          ANTHROPIC_API_KEY: 'sk-new-key-value',
+          ANTHROPIC_AUTH_TOKEN: 'sk-new-key-value',
         }),
       }),
     )
@@ -110,7 +110,7 @@ describe('configureCcxProxy diff/confirm', () => {
     readJsonConfig.mockReturnValue({
       env: {
         ANTHROPIC_BASE_URL: 'http://old:1111',
-        ANTHROPIC_API_KEY: 'sk-old-key-value',
+        ANTHROPIC_AUTH_TOKEN: 'sk-old-key-value',
       },
     })
     promptBoolean.mockResolvedValue(false)
@@ -124,7 +124,7 @@ describe('configureCcxProxy diff/confirm', () => {
     readJsonConfig.mockReturnValue({
       env: {
         ANTHROPIC_BASE_URL: 'http://old:1111',
-        ANTHROPIC_API_KEY: 'sk-old-key-value',
+        ANTHROPIC_AUTH_TOKEN: 'sk-old-key-value',
       },
     })
 
@@ -141,7 +141,7 @@ describe('configureCcxProxy diff/confirm', () => {
     readJsonConfig.mockReturnValue({
       env: {
         ANTHROPIC_BASE_URL: 'http://127.0.0.1:3688',
-        ANTHROPIC_API_KEY: 'sk-same-key-value',
+        ANTHROPIC_AUTH_TOKEN: 'sk-same-key-value',
       },
     })
 
@@ -151,12 +151,12 @@ describe('configureCcxProxy diff/confirm', () => {
     expect(writeJsonConfig).toHaveBeenCalled()
   })
 
-  it('should detect ANTHROPIC_AUTH_TOKEN removal in diff', async () => {
+  it('should detect ANTHROPIC_API_KEY removal in diff', async () => {
     readJsonConfig.mockReturnValue({
       env: {
         ANTHROPIC_AUTH_TOKEN: 'sk-auth-token-old',
         ANTHROPIC_BASE_URL: 'http://127.0.0.1:3688',
-        ANTHROPIC_API_KEY: 'sk-same-key-value',
+        ANTHROPIC_API_KEY: 'sk-some-api-key',
       },
     })
     promptBoolean.mockResolvedValue(true)

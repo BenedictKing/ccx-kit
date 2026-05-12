@@ -548,6 +548,7 @@ export async function setInstallMethod(method: InstallMethod, codeType: CodeType
         config = { mcpServers: {} }
       }
       config.installMethod = method === 'npm' ? 'npm-global' : method
+      config.hasCompletedOnboarding = true
       writeMcpConfig(config)
     }
 
