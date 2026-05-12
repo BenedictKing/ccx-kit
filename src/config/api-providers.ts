@@ -94,8 +94,22 @@ export const API_PROVIDER_PRESETS: ApiProviderPreset[] = [
     description: 'AICodeMirror China Optimized Line',
   },
   {
-    id: 'glm',
-    name: 'GLM',
+    id: 'crazyrouter',
+    name: 'Crazyrouter',
+    supportedCodeTools: ['claude-code', 'codex'],
+    claudeCode: {
+      baseUrl: 'https://crazyrouter.com',
+      authType: 'api_key',
+    },
+    codex: {
+      baseUrl: 'https://crazyrouter.com/v1',
+      wireApi: 'responses',
+    },
+    description: 'Crazyrouter AI API aggregation gateway',
+  },
+  {
+    id: 'glm-cn',
+    name: 'GLM CN',
     supportedCodeTools: ['claude-code'],
     claudeCode: {
       baseUrl: 'https://open.bigmodel.cn/api/anthropic',
@@ -104,25 +118,71 @@ export const API_PROVIDER_PRESETS: ApiProviderPreset[] = [
     description: 'GLM (智谱AI)',
   },
   {
+    id: 'z-ai',
+    name: 'Z.ai',
+    supportedCodeTools: ['claude-code'],
+    claudeCode: {
+      baseUrl: 'https://api.z.ai/api/anthropic',
+      authType: 'auth_token',
+    },
+    description: 'Z.ai API Service',
+  },
+  {
+    id: 'bailian-coding',
+    name: 'Bailian Coding',
+    supportedCodeTools: ['claude-code'],
+    claudeCode: {
+      baseUrl: 'https://coding.dashscope.aliyuncs.com/apps/anthropic',
+      authType: 'auth_token',
+      defaultModels: ['glm-5'],
+    },
+    description: 'Bailian Coding API Service',
+  },
+  {
     id: 'minimax',
     name: 'MiniMax',
     supportedCodeTools: ['claude-code'],
     claudeCode: {
-      baseUrl: 'https://api.minimaxi.com/anthropic',
+      baseUrl: 'https://api.minimax.io/anthropic',
       authType: 'auth_token',
-      defaultModels: ['MiniMax-M2', 'MiniMax-M2'],
+      defaultModels: ['MiniMax-M2.7', 'MiniMax-M2.7-highspeed'],
     },
     description: 'MiniMax API Service',
   },
   {
-    id: 'kimi',
-    name: 'Kimi',
+    id: 'kimi-coding',
+    name: 'Kimi Coding',
     supportedCodeTools: ['claude-code'],
     claudeCode: {
       baseUrl: 'https://api.kimi.com/coding/',
       authType: 'auth_token',
     },
     description: 'Kimi (Moonshot AI)',
+  },
+  {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    supportedCodeTools: ['claude-code'],
+    claudeCode: {
+      baseUrl: 'https://api.deepseek.com/anthropic',
+      authType: 'auth_token',
+      defaultModels: ['deepseek-v4-pro', 'deepseek-v4-flash'],
+    },
+    description: 'DeepSeek official API (Anthropic-compatible endpoint)',
+  },
+  {
+    id: 'pateway',
+    name: 'PatewayAI',
+    supportedCodeTools: ['claude-code', 'codex'],
+    claudeCode: {
+      baseUrl: 'https://api.pateway.ai',
+      authType: 'api_key',
+    },
+    codex: {
+      baseUrl: 'https://api.pateway.ai/v1',
+      wireApi: 'responses',
+    },
+    description: 'PatewayAI official direct-connect relay service',
   },
 ]
 
