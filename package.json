@@ -2,7 +2,7 @@
   "name": "ccx-kit",
   "type": "module",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.33.2",
   "description": "CCX-Kit - One-click setup and management tool for CCX AI API proxy",
   "author": {
     "name": "BenedictKing",
