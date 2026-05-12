@@ -1,0 +1,40 @@
+# Clean-room e2e smoke test for ccx-kit
+#
+# Usage:
+#   # 1. Build tarball on host first:
+#   pnpm build && pnpm pack
+#
+#   # 2. Run the smoke test:
+#   docker compose -f tests/docker/docker-compose.yml run --rm smoke-test
+#
+#   # 3. Or drop into interactive shell:
+#   docker compose -f tests/docker/docker-compose.yml run --rm smoke-test bash
+
+services:
+  smoke-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Override with a registry mirror if docker.io is blocked, e.g.
+        #   NODE_IMAGE=docker.m.daocloud.io/library/node:22-bookworm
+        NODE_IMAGE: ${NODE_IMAGE:-node:22-bookworm}
+    image: ccx-kit-smoke-test:latest
+    container_name: ccx-kit-smoke
+    volumes:
+      # Mount the repo root so the tarball and test script are accessible.
+      # Mounted read-only: container should never mutate the host repo.
+      - ../..:/home/tester/work:ro
+      # Local visible caches, mirroring ob1-inspector's cache/ approach.
+      # This avoids repeated downloads across smoke-test runs.
+      - ./cache/npm:/home/tester/.npm
+      - ./cache/corepack:/home/tester/.cache/node/corepack
+      - ./cache/ccx:/home/tester/.local/share/ccx-kit-cache
+    environment:
+      # Avoid interactive color/TTY assumptions inside the container.
+      - CI=true
+      - NO_COLOR=1
+      # Use skip-prompt mode everywhere so the script stays non-interactive.
+      - CCX_KIT_SKIP_PROMPT=1
+    # Run the smoke test script by default
+    command: [bash, /home/tester/work/tests/docker/smoke-test.sh]
