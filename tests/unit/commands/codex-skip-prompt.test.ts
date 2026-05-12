@@ -181,7 +181,7 @@ describe('codex Skip Prompt Integration', () => {
       })
       vi.mocked(readFile).mockImplementation((path: string) => {
         if (path.includes('config.toml')) {
-          return `# --- model provider added by ZCF ---
+          return `# --- model provider added by CCX-Kit ---
 model = "claude-3-5-sonnet-20241022"
 model_provider = "official"
 

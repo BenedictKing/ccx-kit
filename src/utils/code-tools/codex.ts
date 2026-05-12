@@ -204,7 +204,7 @@ export function backupCodexFiles(): string | null {
     return null
 
   // Skip-prompt模式：只在首次调用时创建备份，其余复用
-  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
+  if (process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
 
   const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss')
@@ -218,7 +218,7 @@ export function backupCodexFiles(): string | null {
   }
 
   copyDir(CODEX_DIR, backupDir, { filter })
-  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true')
+  if (process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true')
     cachedSkipPromptBackup = backupDir
 
   return backupDir
@@ -252,7 +252,7 @@ export function backupCodexConfig(): string | null {
 }
 
 export function backupCodexAgents(): string | null {
-  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
+  if (process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
   if (!exists(CODEX_AGENTS_FILE))
     return null
@@ -270,7 +270,7 @@ export function backupCodexAgents(): string | null {
 }
 
 export function backupCodexPrompts(): string | null {
-  if ((process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP ?? process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP) === 'true' && cachedSkipPromptBackup)
+  if (process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP === 'true' && cachedSkipPromptBackup)
     return cachedSkipPromptBackup
   if (!exists(CODEX_PROMPTS_DIR))
     return null

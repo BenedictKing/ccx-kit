@@ -201,7 +201,7 @@ describe('cli-setup', () => {
     let cli: any
 
     beforeEach(async () => {
-      cli = cac('zcf-test')
+      cli = cac('ccx-kit-test')
       await setupCommands(cli)
     })
 

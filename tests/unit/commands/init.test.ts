@@ -292,7 +292,7 @@ describe('init command', () => {
       })
     })
 
-    it('should persist resolved code tool type to zcf config', async () => {
+    it('should persist resolved code tool type to CCX-Kit config', async () => {
       const { init } = await import('../../../src/commands/init')
 
       testMocks.getInstallationStatus.mockResolvedValue({

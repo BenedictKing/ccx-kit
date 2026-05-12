@@ -112,7 +112,7 @@ export async function update(options: UpdateOptions = {}): Promise<void> {
     // Check for Claude Code updates (update command always checks interactively)
     await checkClaudeCodeVersionAndPrompt(false)
 
-    // Update zcf config with new version, template language, and AI language preference
+    // Update CCX-Kit config with new version, template language, and AI language preference
     updateAppConfig({
       version,
       templateLang: configLang, // 保存模板语言选择

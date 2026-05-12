@@ -98,7 +98,7 @@ function printOtherToolsSection(): void {
   console.log('')
 }
 
-function printZcfSection(options: {
+function printCckSection(options: {
   uninstallOption: string
   uninstallDescription: string
   updateOption: string
@@ -147,7 +147,7 @@ async function showClaudeCodeMenu(): Promise<MenuResult> {
   )
   console.log('')
   printOtherToolsSection()
-  printZcfSection({
+  printCckSection({
     uninstallOption: i18n.t('menu:menuOptions.uninstall'),
     uninstallDescription: i18n.t('menu:menuDescriptions.uninstall'),
     updateOption: i18n.t('menu:menuOptions.checkUpdates'),
@@ -272,7 +272,7 @@ async function showCodexMenu(): Promise<MenuResult> {
   )
   console.log('')
   printOtherToolsSection()
-  printZcfSection({
+  printCckSection({
     uninstallOption: i18n.t('menu:menuOptions.codexUninstall'),
     uninstallDescription: i18n.t('menu:menuDescriptions.codexUninstall'),
     updateOption: i18n.t('menu:menuOptions.codexCheckUpdates'),
@@ -382,7 +382,7 @@ async function showGeminiCliMenu(): Promise<MenuResult> {
   )
   console.log('')
   printOtherToolsSection()
-  printZcfSection({
+  printCckSection({
     uninstallOption: i18n.t('menu:menuOptions.geminiUninstall'),
     uninstallDescription: i18n.t('menu:menuDescriptions.geminiUninstall'),
     updateOption: i18n.t('menu:menuOptions.geminiCheckUpdates'),

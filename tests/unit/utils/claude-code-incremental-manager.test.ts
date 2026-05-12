@@ -48,9 +48,9 @@ vi.mock('../../../src/utils/features', () => ({
   }),
 }))
 vi.mock('../../../src/constants', () => ({
-  APP_CONFIG_DIR: '/test/.zcf',
+  APP_CONFIG_DIR: '/test/.ccx-kit',
   SETTINGS_FILE: '/test/settings.json',
-  APP_CONFIG_FILE: '/test/.zcf/config.toml',
+  APP_CONFIG_FILE: '/test/.ccx-kit/config.toml',
 }))
 describe('claudeCode Incremental Configuration Manager', () => {
   beforeEach(() => {

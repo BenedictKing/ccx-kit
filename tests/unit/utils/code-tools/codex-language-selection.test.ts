@@ -150,7 +150,7 @@ describe('codex Language Selection', () => {
       })
       vi.mocked(readFile).mockImplementation((path: string) => {
         if (path.includes('config.toml')) {
-          return `# --- model provider added by ZCF ---
+          return `# --- model provider added by CCX-Kit ---
 model = "claude-3-5-sonnet-20241022"
 model_provider = "official"
 
@@ -385,7 +385,7 @@ model_provider = "official"
       // Should not prompt for AI language again since it's saved
     })
 
-    it('should respect ZCF config language priority in skip-prompt mode', async () => {
+    it('should respect CCX-Kit config language priority in skip-prompt mode', async () => {
       // Arrange
       const mockAppConfig = {
         preferredLang: 'zh-CN' as const,

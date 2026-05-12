@@ -1028,7 +1028,7 @@ preferredLang = "en"`
 
     it('should preserve comments at the top of the file', () => {
       const configPath = '/test/config.toml'
-      const existingContent = `# ZCF Configuration File
+      const existingContent = `# CCX-Kit Configuration File
 # This is a comment that should be preserved
 
 [general]
@@ -1066,11 +1066,11 @@ preferredLang = "en"`
       const writtenContent = writeCall[1] as string
 
       // Verify comments are preserved
-      expect(writtenContent).toContain('# ZCF Configuration File')
+      expect(writtenContent).toContain('# CCX-Kit Configuration File')
       expect(writtenContent).toContain('# This is a comment that should be preserved')
 
       // Verify version comes after comments but before sections
-      const commentIndex = writtenContent.indexOf('# ZCF Configuration')
+      const commentIndex = writtenContent.indexOf('# CCX-Kit Configuration')
       const versionIndex = writtenContent.indexOf('version =')
       const sectionIndex = writtenContent.indexOf('[general]')
 

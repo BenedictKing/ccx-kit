@@ -426,7 +426,6 @@ export async function init(options: InitOptions = {}): Promise<void> {
     if (codeToolType === 'codex') {
       if (options.skipPrompt)
         process.env.CCKIT_CODEX_SKIP_PROMPT_SINGLE_BACKUP = 'true'
-      process.env.ZCF_CODEX_SKIP_PROMPT_SINGLE_BACKUP = 'true' // backward compat
 
       const hasApiConfigs = Boolean(options.apiConfigs || options.apiConfigsFile)
 
@@ -1019,7 +1018,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
       console.log(ansis.green(`✔ ${i18n.t('cometix:cometixAlreadyInstalled')}`))
     }
 
-    // Step 12: Save zcf config
+    // Step 12: Save CCX-Kit config
     updateAppConfig({
       version,
       preferredLang: i18n.language as SupportedLang, // CCX-Kit界面语言

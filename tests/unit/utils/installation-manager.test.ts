@@ -153,7 +153,7 @@ describe('installation manager utilities', () => {
       expect(console.log).toHaveBeenCalledWith('✔ installation:usingLocalInstallation')
     })
 
-    it('should save local installation path to ZCF config when user chooses local', async () => {
+    it('should save local installation path to CCX-Kit config when user chooses local', async () => {
       const installStatus = {
         hasGlobal: true,
         hasLocal: true,
@@ -171,7 +171,7 @@ describe('installation manager utilities', () => {
       })
     })
 
-    it('should save global installation info to ZCF config when user chooses global', async () => {
+    it('should save global installation info to CCX-Kit config when user chooses global', async () => {
       const installStatus = {
         hasGlobal: true,
         hasLocal: true,

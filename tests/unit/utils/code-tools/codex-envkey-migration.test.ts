@@ -184,7 +184,7 @@ requires_openai_auth = true
       expect(writtenContent).toContain('temp_env_key = "TEST_API_KEY"')
       expect(writtenContent).not.toMatch(/^env_key\s*=/m)
 
-      // Verify ZCF config was updated to mark migration complete
+      // Verify CCX-Kit config was updated to mark migration complete
       expect(appConfig.updateTomlConfig).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({

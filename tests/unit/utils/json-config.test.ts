@@ -310,7 +310,7 @@ describe('json-config utilities', () => {
         expect(console.error).toHaveBeenCalledWith(expect.any(String), expect.any(Error))
       })
 
-      it('should use default language when ZCF config is null', () => {
+      it('should use default language when CCX-Kit config is null', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('{"test": true}')
         vi.mocked(fsOps.ensureDir).mockImplementation(() => {})
@@ -355,7 +355,7 @@ describe('json-config utilities', () => {
     })
 
     describe('readJsonConfig edge cases', () => {
-      it('should handle validation failure with ZCF config', () => {
+      it('should handle validation failure with CCX-Kit config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('{"valid": "json"}')
         vi.mocked(appConfig.readAppConfig).mockReturnValue({ preferredLang: 'zh-CN' } as any)
@@ -370,7 +370,7 @@ describe('json-config utilities', () => {
         expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Invalid configuration'))
       })
 
-      it('should handle validation failure without ZCF config', () => {
+      it('should handle validation failure without CCX-Kit config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('{"valid": "json"}')
         vi.mocked(appConfig.readAppConfig).mockReturnValue(null)
@@ -385,7 +385,7 @@ describe('json-config utilities', () => {
         expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Invalid configuration'))
       })
 
-      it('should handle JSON parse error without ZCF config', () => {
+      it('should handle JSON parse error without CCX-Kit config', () => {
         vi.mocked(fsOps.exists).mockReturnValue(true)
         vi.mocked(fsOps.readFile).mockReturnValue('invalid json')
         vi.mocked(appConfig.readAppConfig).mockReturnValue(null)

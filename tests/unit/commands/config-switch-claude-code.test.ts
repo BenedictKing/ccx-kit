@@ -41,7 +41,7 @@ vi.mock('../../../src/i18n', () => ({
         'common:current': '当前',
         'common:cancelled': '已取消操作',
         'common:operationFailed': '操作失败',
-        'common:goodbye': '👋 感谢使用 ZCF！再见！',
+        'common:goodbye': '👋 感谢使用 CCX-Kit！再见！',
       }
 
       let result = translations[key] || key
@@ -327,7 +327,7 @@ describe('config-switch command - Claude Code Support', () => {
 
       await configSwitchCommand({ codeType: 'claude-code' })
 
-      expect(mockConsoleLog).toHaveBeenCalledWith('\n👋 感谢使用 ZCF！再见！')
+      expect(mockConsoleLog).toHaveBeenCalledWith('\n👋 感谢使用 CCX-Kit！再见！')
     })
 
     it('should show current profile indicator in interactive choices', async () => {
@@ -361,7 +361,7 @@ describe('config-switch command - Claude Code Support', () => {
       expect(mockResolveCodeToolType).toHaveBeenCalledWith('claude-code')
     })
 
-    it('should fallback to ZCF config code type', async () => {
+    it('should fallback to CCX-Kit config code type', async () => {
       const mockReadAppConfig = vi.mocked(readAppConfig)
       mockReadAppConfig.mockReturnValue({
         version: '1.0.0',

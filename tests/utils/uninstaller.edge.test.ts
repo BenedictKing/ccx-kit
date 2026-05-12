@@ -75,7 +75,7 @@ vi.mock('../../src/constants', () => ({
   CLAUDE_MD_FILE: '/home/user/.claude/CLAUDE.md',
 }))
 
-describe('zcfUninstaller - Edge Cases', () => {
+describe('ccxKitUninstaller - Edge Cases', () => {
   let uninstaller: CcxKitUninstaller
 
   beforeEach(() => {
@@ -386,7 +386,7 @@ describe('zcfUninstaller - Edge Cases', () => {
   })
 
   describe('removeAppConfig edge cases', () => {
-    it('should handle zcf config file access issues', async () => {
+    it('should handle CCX-Kit config file access issues', async () => {
       mockFsExtra.pathExists.mockResolvedValue(true)
       mockTrash.moveToTrash.mockResolvedValue([{ success: false, error: 'File is locked' }])
 

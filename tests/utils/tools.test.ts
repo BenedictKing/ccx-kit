@@ -54,7 +54,7 @@ vi.mock('ora', () => ({
   })),
 }))
 
-// Mock ZCF config for code type resolver
+// Mock CCX-Kit app config for code type resolver
 vi.mock('../../src/utils/app-config', () => ({
   readAppConfigAsync: vi.fn(),
 }))
@@ -272,7 +272,7 @@ describe('tools', () => {
         expect(result).toBe('codex')
       })
 
-      it('should return default from ZCF config when no parameter provided', async () => {
+      it('should return default from CCX-Kit config when no parameter provided', async () => {
         const { readAppConfigAsync } = await import('../../src/utils/app-config')
         vi.mocked(readAppConfigAsync).mockResolvedValue({
           version: '3.1.3',

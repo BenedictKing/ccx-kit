@@ -44,7 +44,7 @@ describe('tOML Parser Refactor', () => {
     it('should parse TOML with project sections correctly', async () => {
       const { parseCodexConfig } = await import('../../../../src/utils/code-tools/codex')
 
-      const complexToml = `[projects."/Users/miaoda/Documents/code/zcf"]
+      const complexToml = `[projects."/Users/dev/projects/ccx-kit"]
 trust_level = "trusted"
 local_model = "wenwen"
 
@@ -75,7 +75,7 @@ requires_openai_auth = true`
 
       // Should preserve project configuration in otherConfig
       expect(result.otherConfig).toBeDefined()
-      expect(result.otherConfig!.some(line => line.includes('projects."/Users/miaoda/Documents/code/zcf"'))).toBe(true)
+      expect(result.otherConfig!.some(line => line.includes('projects."/Users/dev/projects/ccx-kit"'))).toBe(true)
     })
 
     it('should parse MCP services correctly', async () => {

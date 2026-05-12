@@ -35,7 +35,7 @@ vi.mock('../../../src/utils/features', () => ({
   configureMcpFeature: vi.fn(),
   configureDefaultModelFeature: vi.fn(),
   configureAiMemoryFeature: vi.fn(),
-  clearZcfCacheFeature: vi.fn(),
+  clearCckCacheFeature: vi.fn(),
   changeScriptLanguageFeature: vi.fn(),
   configureEnvPermissionFeature: vi.fn(),
 }))
