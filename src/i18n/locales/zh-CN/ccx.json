@@ -117,5 +117,20 @@
   "settingsDiff.title": "以下 settings.json 将被修改：",
   "settingsDiff.confirm": "是否应用这些更改？",
   "settingsDiff.skipped": "已跳过 settings.json 更改",
-  "settingsDiff.willBeRemoved": "（将被删除）"
+  "settingsDiff.willBeRemoved": "（将被删除）",
+
+  "ccxMenuOptions.fixConnectivity": "修复连接地址",
+  "ccxMenuDescriptions.fixConnectivity": "检测并更新 CCX 代理连接地址",
+
+  "connectivity.loopbackFailed": "127.0.0.1 无法连接到 CCX 服务",
+  "connectivity.scanning": "正在扫描本机网络接口...",
+  "connectivity.noAddresses": "未找到可用的网络接口",
+  "connectivity.noneReachable": "所有检测到的地址均无法连接 CCX",
+  "connectivity.manualHint": "请手动输入 CCX 服务所在的 IP 地址",
+  "connectivity.enterManualIp": "输入 CCX 地址：",
+  "connectivity.selectAddress": "选择 CCX 连接地址：",
+  "connectivity.fixFailed": "无法找到可用的 CCX 连接地址",
+  "connectivity.loopbackOk": "127.0.0.1 连接正常，无需修复",
+  "connectivity.updatedClaude": "已更新 Claude Code 配置：{{url}}",
+  "connectivity.updatedCodex": "已更新 Codex 配置：{{url}}"
 }

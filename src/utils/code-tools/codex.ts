@@ -2350,3 +2350,14 @@ export async function switchToProvider(providerId: string): Promise<boolean> {
     return false
   }
 }
+
+export function updateCodexCcxBaseUrl(newBaseUrl: string): void {
+  const config = readCodexConfig()
+  if (!config)
+    return
+  const ccxProvider = config.providers.find(p => p.id === 'ccx')
+  if (ccxProvider) {
+    ccxProvider.baseUrl = newBaseUrl
+    writeFile(CODEX_CONFIG_FILE, renderCodexConfig(config))
+  }
+}

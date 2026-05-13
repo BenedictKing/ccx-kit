@@ -99,6 +99,7 @@ export async function showCcxMenu(): Promise<boolean> {
     console.log(`  ${ansis.cyan('7.')} ${i18n.t('ccx:ccxMenuOptions.addPresetChannel')} ${ansis.gray(`- ${i18n.t('ccx:ccxMenuDescriptions.addPresetChannel')}`)}`)
     console.log(`  ${ansis.cyan('8.')} ${i18n.t('ccx:ccxMenuOptions.testChannel')} ${ansis.gray(`- ${i18n.t('ccx:ccxMenuDescriptions.testChannel')}`)}`)
     console.log(`  ${ansis.cyan('9.')} ${i18n.t('ccx:ccxMenuOptions.upgradeCcx')} ${ansis.gray(`- ${i18n.t('ccx:ccxMenuDescriptions.upgradeCcx')}`)}`)
+    console.log(`  ${ansis.cyan('10.')} ${i18n.t('ccx:ccxMenuOptions.fixConnectivity')} ${ansis.gray(`- ${i18n.t('ccx:ccxMenuDescriptions.fixConnectivity')}`)}`)
     console.log(`  ${ansis.yellow('0.')} ${i18n.t('ccx:ccxMenuOptions.back')}`)
     console.log('')
 
@@ -108,7 +109,7 @@ export async function showCcxMenu(): Promise<boolean> {
       name: 'choice',
       message: i18n.t('common:enterChoice'),
       validate: (value) => {
-        const valid = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+        const valid = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '0']
         return valid.includes(value) || i18n.t('common:invalidChoice')
       },
     })
@@ -207,6 +208,13 @@ export async function showCcxMenu(): Promise<boolean> {
       case '9': {
         // Upgrade CCX
         await checkAndUpgradeCcx()
+        break
+      }
+
+      case '10': {
+        // Fix connectivity
+        const { fixCcxBaseUrl } = await import('../ccx/connectivity')
+        await fixCcxBaseUrl()
         break
       }
 

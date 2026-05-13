@@ -117,5 +117,20 @@
   "settingsDiff.title": "The following settings.json changes will be made:",
   "settingsDiff.confirm": "Apply these changes?",
   "settingsDiff.skipped": "Skipped settings.json changes",
-  "settingsDiff.willBeRemoved": "(will be removed)"
+  "settingsDiff.willBeRemoved": "(will be removed)",
+
+  "ccxMenuOptions.fixConnectivity": "Fix Connection Address",
+  "ccxMenuDescriptions.fixConnectivity": "Detect and update CCX proxy connection address",
+
+  "connectivity.loopbackFailed": "Cannot connect to CCX service at 127.0.0.1",
+  "connectivity.scanning": "Scanning local network interfaces...",
+  "connectivity.noAddresses": "No available network interfaces found",
+  "connectivity.noneReachable": "None of the detected addresses can reach CCX",
+  "connectivity.manualHint": "Please enter the IP address where CCX is running",
+  "connectivity.enterManualIp": "Enter CCX address:",
+  "connectivity.selectAddress": "Select CCX connection address:",
+  "connectivity.fixFailed": "Could not find a working CCX connection address",
+  "connectivity.loopbackOk": "127.0.0.1 connection is working, no fix needed",
+  "connectivity.updatedClaude": "Updated Claude Code config: {{url}}",
+  "connectivity.updatedCodex": "Updated Codex config: {{url}}"
 }
