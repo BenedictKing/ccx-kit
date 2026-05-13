@@ -477,7 +477,7 @@ async function showGeminiCliMenu(): Promise<MenuResult> {
 
 export async function showMainMenu(options: { codeType?: string } = {}): Promise<void> {
   try {
-    // Handle code type parameter if provided
+    // Handle code type parameter if provided via CLI flag
     if (options.codeType) {
       try {
         const resolvedType = await resolveCodeType(options.codeType)
@@ -491,6 +491,19 @@ export async function showMainMenu(options: { codeType?: string } = {}): Promise
       catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err)
         console.error(ansis.yellow(errorMessage))
+      }
+    }
+    else {
+      // No CLI flag: prompt user to select code tool upfront
+      const current = getCurrentCodeTool()
+      const selected = await promptCodeToolSelection(current)
+      if (!selected) {
+        // User cancelled selection
+        return
+      }
+      if (selected !== current) {
+        updateAppConfig({ codeToolType: selected })
+        console.log(ansis.green(`✔ ${i18n.t('menu:codeToolSwitched', { tool: getCodeToolLabel(selected) })}`))
       }
     }
 

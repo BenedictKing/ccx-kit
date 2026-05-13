@@ -124,7 +124,9 @@ describe('menu command', () => {
       const { readAppConfig } = await import('../../../src/utils/app-config')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
@@ -137,7 +139,9 @@ describe('menu command', () => {
       const { displayBannerWithInfo } = await import('../../../src/utils/banner')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
@@ -150,7 +154,9 @@ describe('menu command', () => {
       const { displayBannerWithInfo } = await import('../../../src/utils/banner')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'codex' } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
@@ -164,6 +170,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '1' })
       queuePromptBooleans(false)
       vi.mocked(init).mockResolvedValue(undefined)
@@ -180,6 +187,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '3' })
       queuePromptBooleans(false)
       vi.mocked(configureApiFeature).mockResolvedValue(undefined)
@@ -196,6 +204,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '4' })
       queuePromptBooleans(false)
       vi.mocked(configureMcpFeature).mockResolvedValue(undefined)
@@ -212,6 +221,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfigAsync).mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '0' })
         .mockResolvedValueOnce({ choice: 'q' })
       vi.mocked(changeScriptLanguageFeature).mockResolvedValue('en')
@@ -228,6 +238,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfigAsync).mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 'u' })
       queuePromptBooleans(false)
       vi.mocked(runCcusageFeature).mockResolvedValue(undefined)
@@ -244,6 +255,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfigAsync).mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 'u' })
       queuePromptBooleans(false)
       vi.mocked(runCcusageFeature).mockResolvedValue(undefined)
@@ -260,6 +272,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfigAsync).mockResolvedValue({ preferredLang: 'zh-CN', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '+' })
         .mockResolvedValueOnce({ choice: 'q' })
       vi.mocked(checkUpdates).mockResolvedValue(undefined)
@@ -276,6 +289,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfigAsync).mockResolvedValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '+' })
         .mockResolvedValueOnce({ choice: 'q' })
       vi.mocked(checkUpdates).mockResolvedValue(undefined)
@@ -285,12 +299,13 @@ describe('menu command', () => {
       expect(checkUpdates).toHaveBeenCalledWith()
     })
 
-    it('should allow switching code tool type', async () => {
+    it('should allow switching code tool type via menu S option', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
       const { readAppConfig, updateAppConfig } = await import('../../../src/utils/app-config')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 's' })
         .mockResolvedValueOnce({ tool: 'codex' })
         .mockResolvedValueOnce({ choice: 'q' })
@@ -307,6 +322,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'codex' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '1' })
       queuePromptBooleans(false)
 
@@ -322,6 +338,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'codex' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '-' })
       queuePromptBooleans(true, false)
 
@@ -334,7 +351,6 @@ describe('menu command', () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
       const { readAppConfig } = await import('../../../src/utils/app-config')
 
-      // Simply test that the menu handles the update option without error
       vi.mocked(readAppConfig).mockReturnValue({
         preferredLang: 'en',
         codeToolType: 'codex',
@@ -342,12 +358,11 @@ describe('menu command', () => {
         lastUpdated: '2024-01-01',
       } as any)
 
-      // Mock inquirer calls - test that menu handles '+' choice correctly
       vi.mocked(inquirer.prompt)
-        .mockResolvedValueOnce({ choice: '+' }) // User chooses update option
-        .mockResolvedValueOnce({ choice: '0' }) // User chooses exit (0)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: '+' })
+        .mockResolvedValueOnce({ choice: '0' })
 
-      // Test should not throw error
       await expect(showMainMenu()).resolves.not.toThrow()
     })
 
@@ -366,12 +381,40 @@ describe('menu command', () => {
       const error = new Error('Test error')
       vi.mocked(inquirer.prompt).mockRejectedValue(error)
 
-      // Make sure handleExitPromptError returns false so handleGeneralError is called
       vi.mocked(handleExitPromptError).mockReturnValue(false)
 
       await showMainMenu()
 
       expect(handleGeneralError).toHaveBeenCalledWith(error)
+    })
+
+    it('should exit early when upfront tool selection is cancelled', async () => {
+      const { showMainMenu } = await import('../../../src/commands/menu')
+      const { readAppConfig } = await import('../../../src/utils/app-config')
+      const { displayBannerWithInfo } = await import('../../../src/utils/banner')
+
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: '' }) // user cancels upfront selection
+
+      await showMainMenu()
+
+      // Should not enter menu loop
+      expect(displayBannerWithInfo).not.toHaveBeenCalled()
+    })
+
+    it('should update config when upfront selection differs from current', async () => {
+      const { showMainMenu } = await import('../../../src/commands/menu')
+      const { readAppConfig, updateAppConfig } = await import('../../../src/utils/app-config')
+
+      vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront: switch to codex
+        .mockResolvedValueOnce({ choice: 'q' })
+
+      await showMainMenu()
+
+      expect(updateAppConfig).toHaveBeenCalledWith({ codeToolType: 'codex' })
     })
   })
 
@@ -392,6 +435,7 @@ describe('menu command', () => {
       // Setup: current tool is claude-code, user selects to switch
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 's' }) // User chooses switch tool option
         .mockResolvedValueOnce({ tool: 'codex' }) // User selects codex
         .mockResolvedValueOnce({ choice: 'q' }) // User exits
@@ -402,28 +446,30 @@ describe('menu command', () => {
       expect(updateAppConfig).toHaveBeenCalledWith(expect.objectContaining({ codeToolType: 'codex' }))
     })
 
-    it('should handle cancelled tool selection', async () => {
+    it('should handle cancelled tool selection in menu S option', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
       const { readAppConfig, updateAppConfig } = await import('../../../src/utils/app-config')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 's' }) // User chooses switch tool option
         .mockResolvedValueOnce({ tool: '' }) // User cancels selection
         .mockResolvedValueOnce({ choice: 'q' }) // User exits
 
       await showMainMenu()
 
-      // Should not update config when selection is cancelled
-      expect(updateAppConfig).not.toHaveBeenCalledWith(expect.objectContaining({ codeToolType: expect.anything() }))
+      // Should not update config when selection is cancelled (only upfront call doesn't trigger update since same tool)
+      expect(updateAppConfig).not.toHaveBeenCalled()
     })
 
-    it('should handle same tool selection', async () => {
+    it('should handle same tool selection in menu S option', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
       const { readAppConfig, updateAppConfig } = await import('../../../src/utils/app-config')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 's' }) // User chooses switch tool option
         .mockResolvedValueOnce({ tool: 'claude-code' }) // User selects same tool
         .mockResolvedValueOnce({ choice: 'q' }) // User exits
@@ -431,7 +477,7 @@ describe('menu command', () => {
       await showMainMenu()
 
       // Should not update config when same tool is selected
-      expect(updateAppConfig).not.toHaveBeenCalledWith(expect.objectContaining({ codeToolType: 'claude-code' }))
+      expect(updateAppConfig).not.toHaveBeenCalled()
     })
 
     it('should handle menu display for different code tools', async () => {
@@ -441,7 +487,9 @@ describe('menu command', () => {
 
       // Test with codex tool
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'codex' } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
@@ -453,7 +501,9 @@ describe('menu command', () => {
       const { readAppConfig } = await import('../../../src/utils/app-config')
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
@@ -474,6 +524,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'claude-code' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '1' })
       queuePromptBooleans(false)
 
@@ -489,6 +540,7 @@ describe('menu command', () => {
 
       vi.mocked(readAppConfig).mockReturnValue({ preferredLang: 'en', codeToolType: 'codex' } as any)
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'codex' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '1' })
       queuePromptBooleans(false)
 
@@ -507,7 +559,9 @@ describe('menu command', () => {
         lastUpdated: '2024-01-01',
         codeToolType: 'claude-code',
       } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ action: 'unknown-action' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValue({ action: 'unknown-action' })
 
       // Should not throw error for unknown actions
       await expect(showMainMenu()).resolves.not.toThrow()
@@ -526,7 +580,9 @@ describe('menu command', () => {
         codeToolType: 'claude-code',
         preferredLang: 'en',
       } as any)
-      vi.mocked(inquirer.prompt).mockResolvedValue({ choice: 'q' }) // Use 'q' for quit instead of 'exit'
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       // Test should complete without throwing
       await expect(showMainMenu()).resolves.not.toThrow()

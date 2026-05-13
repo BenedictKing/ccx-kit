@@ -172,6 +172,9 @@ describe('menu command - Edge Cases', () => {
       const { displayBannerWithInfo } = await import('../../../src/utils/banner')
       const { handleExitPromptError, handleGeneralError } = await import('../../../src/utils/error-handler')
 
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+
       // Mock banner display to throw error
       const bannerError = new Error('Banner display failed')
       vi.mocked(displayBannerWithInfo).mockImplementation(() => {
@@ -193,6 +196,7 @@ describe('menu command - Edge Cases', () => {
       vi.mocked(init).mockResolvedValue(undefined)
 
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '1' })
 
       mockedPromptBoolean.mockRejectedValueOnce(new Error('Continue prompt failed'))
@@ -236,6 +240,7 @@ describe('menu command - Edge Cases', () => {
       const { uninstall } = await import('../../../src/commands/uninstall')
 
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: '-' })
       queuePromptBooleans(false)
 
@@ -251,6 +256,7 @@ describe('menu command - Edge Cases', () => {
       const { runCcxMenuFeature } = await import('../../../src/utils/tools')
 
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 'r' })
       queuePromptBooleans(false)
 
@@ -266,6 +272,7 @@ describe('menu command - Edge Cases', () => {
       const { runCometixMenuFeature } = await import('../../../src/utils/tools')
 
       vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
         .mockResolvedValueOnce({ choice: 'l' })
       queuePromptBooleans(false)
 
@@ -300,6 +307,7 @@ describe('menu command - Edge Cases', () => {
         mockedPromptBoolean.mockReset()
         mockedPromptBoolean.mockResolvedValue(false)
         vi.mocked(inquirer.prompt)
+          .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
           .mockResolvedValueOnce({ choice: test.choice })
         queuePromptBooleans(false)
 
@@ -316,7 +324,9 @@ describe('menu command - Edge Cases', () => {
     it('should handle empty config gracefully', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
 
-      vi.mocked(inquirer.prompt).mockResolvedValueOnce({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
@@ -326,7 +336,9 @@ describe('menu command - Edge Cases', () => {
     it('should handle null config gracefully', async () => {
       const { showMainMenu } = await import('../../../src/commands/menu')
 
-      vi.mocked(inquirer.prompt).mockResolvedValueOnce({ choice: 'q' })
+      vi.mocked(inquirer.prompt)
+        .mockResolvedValueOnce({ tool: 'claude-code' }) // upfront tool selection
+        .mockResolvedValueOnce({ choice: 'q' })
 
       await showMainMenu()
 
