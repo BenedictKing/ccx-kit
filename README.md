@@ -22,33 +22,6 @@
 </p>
 </div>
 
-## ♥️ Sponsor AI API
-
-[![Sponsor AI API](./src/assets/302.ai-en.jpg)](https://share.302.ai/gAT9VG)
-[302.AI](https://share.302.ai/gAT9VG) is a pay-as-you-go enterprise AI resource hub that offers the latest and most comprehensive AI models and APIs on the market, along with a variety of ready-to-use online AI applications.
-
----
-
-[![GLM](./src/assets/GLM-en.png)](https://z.ai/subscribe?ic=8JVLJQFSKB)
-This project is sponsored by Z.ai, supporting us with their GLM CODING PLAN.
-GLM CODING PLAN is a subscription service designed for AI coding, starting at just $3/month. It provides access to their flagship GLM-4.7 model across 10+ popular AI coding tools (Claude Code, Cline, Roo Code, etc.), offering developers top-tier, fast, and stable coding experiences.
-Get 10% OFF GLM CODING PLAN：https://z.ai/subscribe?ic=8JVLJQFSKB
-
----
-
-<table>
-<tbody>
-<tr>
-<td width="180"><a href="https://www.packyapi.com/register?aff=zcf"><img src="./src/assets/packycode.png" alt="PackyCode" width="150"></a></td>
-<td>Thanks to PackyCode for sponsoring this project! PackyCode is a reliable and efficient API relay service provider, offering relay services for Claude Code, Codex, Gemini, and more. PackyCode provides special discounts for our software users: register using  <a href="https://www.packyapi.com/register?aff=zcf">this link</a>  and enter the "zcf" promo code during recharge to get 10% off.</td>
-</tr>
-<tr>
-<td width="180"><a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF"><img src="./src/assets/AICodeMirror.jpg" alt="AICodeMirror" width="150"></a></td>
-<td>Thanks to AICodeMirror for sponsoring this project! AICodeMirror provides official high-stability relay services for Claude Code/Codex/Gemini CLI, supporting enterprise-level high concurrency, fast invoicing, and 7x24 dedicated technical support. Official channels for Claude Code/Codex/Gemini at discounts as low as 38%/2%/10.9% off, with additional discounts on top-ups! AICodeMirror offers special benefits for ZCF users: users who register through <a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF">this link</a> can enjoy 20% off on first top-up, and enterprise customers can get up to 25% off!</td>
-</tr>
-<tbody>
-</table>
-
 ## 🚀 Quick Start
 
 - Recommended: `npx ccx-kit` opens the interactive menu and guides you through install/update.
@@ -89,54 +62,6 @@ This project is inspired by and incorporates work from:
 - [BMad Method](https://github.com/bmad-code-org/BMAD-METHOD)
 
 Thanks to these community contributors for sharing their amazing projects!
-
-## ❤️ Support & Sponsors
-
-If you find this project helpful, please consider sponsoring its development. Your support is greatly appreciated!
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/UfoMiao)
-
-<table>
-  <tr>
-    <td><img src="/src/assets/alipay.webp" width="200" alt="Alipay" /></td>
-    <td><img src="/src/assets/wechat.webp" width="200" alt="WeChat Pay" /></td>
-  </tr>
-</table>
-
-### Our Sponsors
-
-A huge thank you to all our sponsors for their generous support!
-
-【Corporate Sponsors】
-
-- [302.AI](https://share.302.ai/gAT9VG) (first corporate sponsorship 🤠)
-- [GLM](https://z.ai/subscribe?ic=8JVLJQFSKB) (first AI model sponsorship 🤖)
-- [PackyCode](https://www.packyapi.com/register?aff=zcf) (first API proxy service sponsor 🧝🏻‍♀️)
-- [AICodeMirror](https://www.aicodemirror.com/register?invitecode=ZCFZCF) (official high-stability relay service sponsor 🪞)
-- [UUCode](https://www.uucode.org/auth?ref=JQ2DJ1T8) (sponsored $100 proxy credits 💰)
-
-【Individual Sponsors】
-
-- Tc (first sponsor)
-- Argolinhas (first ko-fi sponsor ٩(•̤̀ᵕ•̤́๑))
-- r\*r (first anonymous sponsor 🤣)
-- \*\*康 (first KFC sponsor 🍗)
-- \*东 (first coffee sponsor ☕️)
-- 炼\*3 (first Termux user sponsor 📱)
-- [chamo101](https://github.com/chamo101) (first GitHub issue sponsor 🎉)
-- 初屿贤 (first Codex user sponsor 🙅🏻‍♂️)
-- Protein (first 1688 sponsor 😏)
-- [musistudio](https://github.com/musistudio) (first open source project author sponsor, the author of [CCR](https://github.com/musistudio/claude-code-router) 🤩)
-- [BeatSeat](https://github.com/BeatSeat) (community expert 😎, provided $1000 Claude credits)
-- [wenwen](https://github.com/wenwen12345) (community expert 🤓, provided daily $100 Claude&GPT credits)
-- 16°C coffee (My best friend 🤪, offered ChatGPT Pro $200 package)
-
-### Promotion Thanks
-
-Thanks to the following authors for promoting this project:
-
-- 逛逛 GitHub, article: https://mp.weixin.qq.com/s/phqwSRb16MKCHHVozTFeiQ
-- Geek, tweet: https://x.com/geekbb/status/1955174718618866076
 
 ## 📄 License
 

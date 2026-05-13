@@ -22,32 +22,6 @@
   </p>
 </div>
 
-## ♥️ 赞助商
-
-[![302.ai](./src/assets/302.ai.jpg)](https://share.302.ai/gAT9VG)
-[302.AI](https://share.302.ai/gAT9VG) 是一个按用量付费的企业级AI资源平台，提供市场上最新、最全面的AI模型和API，以及多种开箱即用的在线AI应用。
-
----
-
-[![GLM](./src/assets/GLM.png)](https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII)
-GLM CODING PLAN 是专为AI编码打造的订阅套餐，每月最低仅需20元，即可在十余款主流AI编码工具如Claude Code、Cline, Roo Code等中畅享智谱旗舰模型GLM-4.7，为开发者提供顶尖的编码体验。
-智谱AI为本软件提供了特别优惠，使用以下链接购买可以享受九折优惠：https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII
-
----
-
-<table>
-<tbody>
-<tr>
-<td width="180"><a href="https://www.packyapi.com/register?aff=zcf"><img src="./src/assets/packycode.png" alt="PackyCode" width="150"></a></td>
-<td>感谢 PackyCode 赞助了本项目！PackyCode 是一家稳定、高效的API中转服务商，提供 Claude Code、Codex、Gemini 等多种中转服务。PackyCode 为本软件的用户提供了特别优惠，使用<a href="https://www.packyapi.com/register?aff=zcf">此链接</a>注册并在充值时填写"zcf"优惠码，可以享受9折优惠。</td>
-</tr>
-<tr>
-<td width="180"><a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF"><img src="./src/assets/AICodeMirror.jpg" alt="AICodeMirror" width="150"></a></td>
-<td>感谢 AICodeMirror 赞助了本项目！AICodeMirror 提供 Claude Code/Codex/Gemini CLI 官方高稳定中转服务，支持企业级高并发、极速开票、7x24专属技术支持。Claude Code/Codex/Gemini 官方渠道低至 3.8/0.2/10.9 折，充值更有折上折！AICodeMirror 为 ZCF 的用户提供了特别福利，通过<a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF">此链接</a>注册的用户，可享受首充8折，企业客户最高可享 7.5折！</td>
-</tr>
-<tbody>
-</table>
-
 ## 🚀 快速开始
 
 - 推荐：`npx ccx-kit` 打开交互式菜单，按需选择。
@@ -89,54 +63,6 @@ npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
   感谢这些社区贡献者的分享！
 
-
-## ❤️ 支持与赞助
-
-如果您觉得这个项目有帮助，请考虑赞助它的开发。非常感谢您的支持！
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/UfoMiao)
-
-<table>
-  <tr>
-    <td><img src="/src/assets/alipay.webp" width="200" alt="Alipay" /></td>
-    <td><img src="/src/assets/wechat.webp" width="200" alt="WeChat Pay" /></td>
-  </tr>
-</table>
-
-### 我们的赞助商
-
-非常感谢所有赞助商的慷慨支持！
-
-【企业赞助商】
-
-- [302.AI](https://share.302.ai/gAT9VG) （第一个企业赞助商 🤠）
-- [GLM](https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII) （第一个 AI 模型赞助商 🤖）
-- [PackyCode](https://www.packyapi.com/register?aff=zcf) （第一个 API 中转服务商赞助商 🧝🏻‍♀️）
-- [AICodeMirror](https://www.aicodemirror.com/register?invitecode=ZCFZCF) （官方高稳定中转服务赞助商 🪞）
-- [UUCode](https://www.uucode.org/auth?ref=JQ2DJ1T8)（赞助了 100$ 中转站额度 💰）
-
-【个人赞助商】
-
-- Tc (第一个赞助者)
-- Argolinhas (第一个 ko-fi 赞助者 ٩(•̤̀ᵕ•̤́๑))
-- r\*r (第一个不愿透露姓名的赞助者 🤣)
-- \*\*康 (第一个 KFC 赞助者 🍗)
-- \*东 (第一个咖啡赞助者 ☕️)
-- 炼\*3 (第一个 termux 用户赞助者 📱)
-- [chamo101](https://github.com/chamo101) (第一个 GitHub issue 赞助者 🎉)
-- 初屿贤 (第一个 codex 用户赞助者 🙅🏻‍♂️)
-- Protein （第一个一路发发赞助者 😏）
-- [musistudio](https://github.com/musistudio) (第一个开源项目作者赞助者，[CCR](https://github.com/musistudio/claude-code-router) 的作者哦 🤩)
-- [BeatSeat](https://github.com/BeatSeat) (社区大佬 😎，提供了 $1000 Claude 额度)
-- [wenwen](https://github.com/wenwen12345) (社区大佬 🤓，提供了每日 $100 Claude&GPT 额度)
-- 16°C 咖啡 (我的好基友 🤪, 提供了 ChatGPT Pro $200 套餐)
-
-### 推广感谢
-
-感谢以下推广本项目的作者：
-
-- 逛逛 GitHub，推文：https://mp.weixin.qq.com/s/phqwSRb16MKCHHVozTFeiQ
-- Geek，推文：https://x.com/geekbb/status/1955174718618866076
 
 ## 📄 许可证
 

@@ -22,33 +22,6 @@
   </p>
 </div>
 
-## ♥️ スポンサー AI API
-
-[![スポンサー AI API](./src/assets/302.ai-jp.jpg)](https://share.302.ai/gAT9VG)
-[302.AI](https://share.302.ai/gAT9VG) は、従量課金制のエンタープライズ向けAIリソースプラットフォームで、市場で最新かつ最も包括的なAIモデルとAPIに加え、すぐに使える多様なオンラインAIアプリを提供します。
-
----
-
-[![GLM](./src/assets/GLM-en.png)](https://z.ai/subscribe?ic=8JVLJQFSKB)
-このプロジェクトは Z.ai の GLM CODING PLAN によってスポンサーされています。
-GLM CODING PLAN はAIコーディング向けに設計されたサブスクリプションサービスで、月額わずか3ドルから利用できます。Z.aiのフラグシップであるGLM-4.7モデルをはじめ、Claude Code、Cline、Roo Code など10以上の人気AIコーディングツールで高速かつ安定した最先端のコーディング体験を開発者に提供します。
-GLM CODING PLANが10%オフで利用可能：https://z.ai/subscribe?ic=8JVLJQFSKB
-
----
-
-<table>
-<tbody>
-<tr>
-<td width="180"><a href="https://www.packyapi.com/register?aff=zcf"><img src="./src/assets/packycode.png" alt="PackyCode" width="150"></a></td>
-<td>PackyCode がこのプロジェクトを支援してくれました！PackyCode は信頼性と効率性の高いAPI中継サービスプロバイダーで、Claude Code、Codex、Gemini などの中継サービスを提供します。PackyCode はこのソフトウェアのユーザーに特別な割引を提供します：<a href="https://www.packyapi.com/register?aff=zcf">このリンク</a> を使用して登録し、再課金時に "zcf" プロモーションコードを入力すると 10% 割引を享受できます。</td>
-</tr>
-<tr>
-<td width="180"><a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF"><img src="./src/assets/AICodeMirror.jpg" alt="AICodeMirror" width="150"></a></td>
-<td>AICodeMirror がこのプロジェクトをスポンサーしてくれたことに感謝します！AICodeMirror は Claude Code/Codex/Gemini CLI の公式高安定性中継サービスを提供し、エンタープライズレベルの高並行処理、迅速な請求書発行、7x24 専用技術サポートをサポートしています。Claude Code/Codex/Gemini の公式チャネルは最大 3.8/0.2/10.9 割引で、チャージでさらに割引があります！AICodeMirror は ZCF ユーザーに特別な特典を提供しています：<a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF">このリンク</a>から登録したユーザーは初回チャージ 20% オフ、企業顧客は最大 25% オフを享受できます！</td>
-</tr>
-<tbody>
-</table>
-
 ## 🚀 クイックスタート
 
 - 推奨：`npx ccx-kit` でインタラクティブメニューを開き、必要な操作を選択。
@@ -90,54 +63,6 @@ Telegramグループに参加して、サポートやディスカッション、
 
 これらのコミュニティ貢献者の皆さまに心より感謝いたします！
 
-
-## ❤️ サポートとスポンサー
-
-このプロジェクトが役立つと思われる場合は、開発をスポンサーすることを検討してください。あなたのサポートに非常に感謝します！
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/UfoMiao)
-
-<table>
-  <tr>
-    <td><img src="/src/assets/alipay.webp" width="200" alt="Alipay" /></td>
-    <td><img src="/src/assets/wechat.webp" width="200" alt="WeChat Pay" /></td>
-  </tr>
-</table>
-
-### スポンサー
-
-すべてのスポンサーの寛大なサポートに感謝します！
-
-【企業スポンサー】
-
-- [302.AI](https://share.302.ai/gAT9VG)（最初の企業スポンサー 🤠）
-- [GLM](https://z.ai/subscribe?ic=8JVLJQFSKB)（最初のAIモデルスポンサー 🤖）
-- [PackyCode](https://www.packyapi.com/register?aff=zcf)（最初のAPIプロキシサービススポンサー 🧝🏻‍♀️）
-- [AICodeMirror](https://www.aicodemirror.com/register?invitecode=ZCFZCF)（公式高安定性中継サービススポンサー 🪞）
-- [UUCode](https://www.uucode.org/auth?ref=JQ2DJ1T8)（$100 プロキシクレジットを提供 💰）
-
-【個人スポンサー】
-
-- Tc（最初のスポンサー）
-- Argolinhas（最初のko-fiスポンサー ٩(•̤̀ᵕ•̤́๑)）
-- r\*r（最初の匿名スポンサー 🤣）
-- \*\*康（最初のKFCスポンサー 🍗）
-- \*东（最初のコーヒースポンサー ☕️）
-- 炼\*3（最初のTermuxユーザースポンサー 📱）
-- [chamo101](https://github.com/chamo101)（最初のGitHub issue ユーザースポンサー 🎉）
-- 初屿贤（最初のCodexユーザースポンサー 🙅🏻‍♂️）
-- Protein（最初の1688スポンサー 😏）
-- [musistudio](https://github.com/musistudio)（最初のオープンソースプロジェクト作者スポンサー、[CCR](https://github.com/musistudio/claude-code-router) の作者です 🤩）
-- [BeatSeat](https://github.com/BeatSeat)（コミュニティエキスパート 😎、$1000 Claude クレジットを提供）
-- [wenwen](https://github.com/wenwen12345)（コミュニティエキスパート 🤓、毎日 $100 Claude&GPT クレジットを提供）
-- 16°C coffee（私の親友 🤪、ChatGPT Pro $200パッケージを提供）
-
-### プロモーション感謝
-
-このプロジェクトを宣伝してくださった以下の著者に感謝します：
-
-- 逛逛 GitHub, ツイート: https://mp.weixin.qq.com/s/phqwSRb16MKCHHVozTFeiQ
-- Geek, ツイート: https://x.com/geekbb/status/1955174718618866076
 
 ## 📄 ライセンス
 
