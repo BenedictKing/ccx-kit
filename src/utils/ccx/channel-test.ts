@@ -1,4 +1,7 @@
 import type { ChannelTestResult } from '../../types/channel'
+import { ensureI18nInitialized, i18n } from '../../i18n'
+
+const TEST_PROMPT = 'Reply with exactly: pong'
 
 interface TestOptions {
   port: number
@@ -25,8 +28,8 @@ async function testChatEndpoint(options: TestOptions): Promise<ChannelTestResult
       },
       body: JSON.stringify({
         model,
-        messages: [{ role: 'user', content: 'hi' }],
-        max_tokens: 5,
+        messages: [{ role: 'user', content: TEST_PROMPT }],
+        max_tokens: 10,
       }),
       signal: controller.signal,
     })
@@ -37,6 +40,13 @@ async function testChatEndpoint(options: TestOptions): Promise<ChannelTestResult
     if (!response.ok) {
       const text = await response.text().catch(() => '')
       return { success: false, latency, error: `HTTP ${response.status}: ${text.slice(0, 200)}` }
+    }
+
+    const data = await response.json() as any
+    const content = data?.choices?.[0]?.message?.content || ''
+    if (!content.toLowerCase().includes('pong')) {
+      ensureI18nInitialized()
+      return { success: false, latency, error: i18n.t('ccx:channel.testUnexpectedResponse', { content: content.slice(0, 100) }) }
     }
 
     return { success: true, latency }
@@ -66,8 +76,8 @@ async function testMessagesEndpoint(options: TestOptions): Promise<ChannelTestRe
       },
       body: JSON.stringify({
         model,
-        max_tokens: 5,
-        messages: [{ role: 'user', content: 'hi' }],
+        max_tokens: 10,
+        messages: [{ role: 'user', content: TEST_PROMPT }],
       }),
       signal: controller.signal,
     })
@@ -78,6 +88,13 @@ async function testMessagesEndpoint(options: TestOptions): Promise<ChannelTestRe
     if (!response.ok) {
       const text = await response.text().catch(() => '')
       return { success: false, latency, error: `HTTP ${response.status}: ${text.slice(0, 200)}` }
+    }
+
+    const data = await response.json() as any
+    const content = data?.content?.[0]?.text || ''
+    if (!content.toLowerCase().includes('pong')) {
+      ensureI18nInitialized()
+      return { success: false, latency, error: i18n.t('ccx:channel.testUnexpectedResponse', { content: content.slice(0, 100) }) }
     }
 
     return { success: true, latency }
@@ -106,8 +123,8 @@ async function testResponsesEndpoint(options: TestOptions): Promise<ChannelTestR
       },
       body: JSON.stringify({
         model,
-        input: 'hi',
-        max_output_tokens: 5,
+        input: TEST_PROMPT,
+        max_output_tokens: 10,
       }),
       signal: controller.signal,
     })
@@ -118,6 +135,13 @@ async function testResponsesEndpoint(options: TestOptions): Promise<ChannelTestR
     if (!response.ok) {
       const text = await response.text().catch(() => '')
       return { success: false, latency, error: `HTTP ${response.status}: ${text.slice(0, 200)}` }
+    }
+
+    const data = await response.json() as any
+    const content = data?.output?.[0]?.content?.[0]?.text || ''
+    if (!content.toLowerCase().includes('pong')) {
+      ensureI18nInitialized()
+      return { success: false, latency, error: i18n.t('ccx:channel.testUnexpectedResponse', { content: content.slice(0, 100) }) }
     }
 
     return { success: true, latency }
@@ -145,8 +169,8 @@ async function testGeminiEndpoint(options: TestOptions): Promise<ChannelTestResu
         'x-goog-api-key': apiKey,
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: 'hi' }] }],
-        generationConfig: { maxOutputTokens: 5 },
+        contents: [{ parts: [{ text: TEST_PROMPT }] }],
+        generationConfig: { maxOutputTokens: 10 },
       }),
       signal: controller.signal,
     })
@@ -157,6 +181,13 @@ async function testGeminiEndpoint(options: TestOptions): Promise<ChannelTestResu
     if (!response.ok) {
       const text = await response.text().catch(() => '')
       return { success: false, latency, error: `HTTP ${response.status}: ${text.slice(0, 200)}` }
+    }
+
+    const data = await response.json() as any
+    const content = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    if (!content.toLowerCase().includes('pong')) {
+      ensureI18nInitialized()
+      return { success: false, latency, error: i18n.t('ccx:channel.testUnexpectedResponse', { content: content.slice(0, 100) }) }
     }
 
     return { success: true, latency }

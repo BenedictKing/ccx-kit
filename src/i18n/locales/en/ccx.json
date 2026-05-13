@@ -81,6 +81,7 @@
   "channel.testRunning": "Testing channel connectivity...",
   "channel.testSuccess": "Test passed! Latency: {latency}ms",
   "channel.testFailed": "Test failed: {error}",
+  "channel.testUnexpectedResponse": "Unexpected model response (expected 'pong'): {content}",
   "channel.noChannels": "No channels found. Please add a channel first.",
 
   "upgrade.currentVersion": "Current version",
