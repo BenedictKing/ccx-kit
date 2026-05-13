@@ -230,7 +230,7 @@ async function configureGeminiSettings(): Promise<void> {
   settings.security.auth = settings.security.auth || {}
   settings.security.auth.selectedType = 'gemini-api-key'
   settings.model = settings.model || {}
-  settings.model.name = 'pro'
+  settings.model.name = 'gemini-3-pro-preview'
   writeJsonConfig(GEMINI_SETTINGS_FILE, settings)
 }
 
@@ -285,7 +285,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     const envConfig: GeminiEnvConfig = {
       ...readGeminiEnv(),
       GEMINI_API_KEY: accessKey,
-      GEMINI_MODEL: 'pro',
+      GEMINI_MODEL: 'gemini-3-pro-preview',
       GOOGLE_GEMINI_BASE_URL: `http://127.0.0.1:${ccxPort}`,
     }
     writeGeminiEnv(envConfig)
