@@ -1930,8 +1930,8 @@ export { configureCodexMcp }
 export interface CodexFullInitOptions extends CodexWorkflowLanguageOptions {
   // Workflow selection options
   workflows?: string[] // Specific workflows to install, empty means all
-  // MCP service options
-  mcpServices?: string[] | false // Specific MCP services to install, false means skip
+  // MCP service options for the standalone MCP configuration entry.
+  mcpServices?: string[] | false
   // API configuration options
   apiMode?: 'official' | 'custom' | 'skip' | 'ccx' // API mode selection
   customApiConfig?: {
@@ -1950,7 +1950,6 @@ export async function runCodexFullInit(
   await installCodexCli(options?.skipPrompt || false)
   const aiOutputLang = await runCodexWorkflowImportWithLanguageSelection(options)
   await configureCodexApi(options)
-  await configureCodexMcp(options)
 
   return aiOutputLang
 }

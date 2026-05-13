@@ -241,9 +241,9 @@ describe('cli-setup', () => {
         expect(parsed.options.apiUrl).toBe('https://api.example.com')
       })
 
-      it('should recognize -m as shortcut for --mcp-services', () => {
+      it('should not expose -m shortcut for --mcp-services in init', () => {
         const parsed = cli.parse(['node', 'test', 'init', '-m', 'context7,exa'], { run: false })
-        expect(parsed.options.mcpServices).toBe('context7,exa')
+        expect(parsed.options.mcpServices).toBeUndefined()
       })
 
       it('should recognize -w as shortcut for --workflows', () => {
@@ -315,7 +315,8 @@ describe('cli-setup', () => {
         expect(optionsSection.body).toContain('-t') // api-type
         expect(optionsSection.body).toContain('-k') // api-key
         expect(optionsSection.body).toContain('-u') // api-url
-        expect(optionsSection.body).toContain('-m') // mcp-services
+        expect(optionsSection.body).not.toContain('--mcp-services') // mcp-services is standalone only
+        expect(optionsSection.body).not.toContain(', -m') // no init shortcut for mcp-services
         expect(optionsSection.body).toContain('-w') // workflows
         expect(optionsSection.body).toContain('-o') // output-styles
         expect(optionsSection.body).toContain('-g') // all-lang

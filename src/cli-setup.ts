@@ -30,7 +30,6 @@ export interface CliOptions {
   apiHaikuModel?: string // Default Haiku model
   apiSonnetModel?: string // Default Sonnet model
   apiOpusModel?: string // Default Opus model
-  mcpServices?: string // default: all non-key services, "skip" to skip all
   workflows?: string // default: all workflows, "skip" to skip all
   outputStyles?: string // default: all custom styles
   defaultOutputStyle?: string // default: engineer-professional
@@ -153,7 +152,6 @@ export function customizeHelp(sections: any[]): any[] {
       `  ${ansis.green('--ai-output-lang, -a')} <lang> ${i18n.t('cli:help.optionDescriptions.aiOutputLanguage')}`,
       `  ${ansis.green('--all-lang, -g')} <lang>     ${i18n.t('cli:help.optionDescriptions.setAllLanguageParams')}`,
       `  ${ansis.green('--config-action, -r')} <action> ${i18n.t('cli:help.optionDescriptions.configHandling')} (${i18n.t('cli:help.defaults.prefix')} backup)`,
-      `  ${ansis.green('--mcp-services, -m')} <list>  ${i18n.t('cli:help.optionDescriptions.mcpServices')} (${i18n.t('cli:help.defaults.prefix')} all non-key services)`,
       `  ${ansis.green('--workflows, -w')} <list>    ${i18n.t('cli:help.optionDescriptions.workflows')} (${i18n.t('cli:help.defaults.prefix')} all workflows)`,
       `  ${ansis.green('--output-styles, -o')} <styles> ${i18n.t('cli:help.optionDescriptions.outputStyles')} (${i18n.t('cli:help.defaults.prefix')} all custom styles)`,
       `  ${ansis.green('--default-output-style, -d')} <style> ${i18n.t('cli:help.optionDescriptions.defaultOutputStyle')} (${i18n.t('cli:help.defaults.prefix')} engineer-professional)`,
@@ -252,7 +250,6 @@ export async function setupCommands(cli: CAC): Promise<void> {
     .option('--api-sonnet-model, -S <model>', 'Default Sonnet model (e.g., claude-sonnet-4-5)')
     .option('--api-opus-model, -O <model>', 'Default Opus model (e.g., claude-opus-4-5)')
     .option('--provider, -p <provider>', 'API provider preset (302ai, glm, minimax, kimi, custom)')
-    .option('--mcp-services, -m <services>', `Comma-separated MCP services to install (context7,mcp-deepwiki,Playwright,exa), "skip" to skip all, "all" for all non-key services, ${i18n.t('cli:help.defaults.prefix')} all`)
     .option('--workflows, -w <workflows>', `Comma-separated workflows to install (sixStepsWorkflow,featPlanUx,gitWorkflow,bmadWorkflow), "skip" to skip all, "all" for all workflows, ${i18n.t('cli:help.defaults.prefix')} all`)
     .option('--output-styles, -o <styles>', `Comma-separated output styles (engineer-professional,nekomata-engineer,laowang-engineer,default,explanatory,learning), "skip" to skip all, "all" for all custom styles, ${i18n.t('cli:help.defaults.prefix')} all`)
     .option('--default-output-style, -d <style>', `Default output style, ${i18n.t('cli:help.defaults.prefix')} engineer-professional`)

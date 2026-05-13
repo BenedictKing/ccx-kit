@@ -1,5 +1,4 @@
 import type { AiOutputLanguage, CodeToolType, SupportedLang } from '../constants'
-import type { McpServerConfig } from '../types'
 import type { ApiConfigDefinition, ClaudeCodeProfile } from '../types/claude-code-config'
 import type { CodexProvider } from '../utils/code-tools/codex'
 import { existsSync } from 'node:fs'
@@ -7,7 +6,6 @@ import process from 'node:process'
 import ansis from 'ansis'
 import inquirer from 'inquirer'
 import { version } from '../../package.json'
-import { getMcpServices, MCP_SERVICE_CONFIGS } from '../config/mcp-services'
 import { WORKFLOW_CONFIG_BASE } from '../config/workflows'
 import { API_DEFAULT_URL, CLAUDE_DIR, CODE_TOOL_BANNERS, DEFAULT_CODE_TOOL_TYPE, SETTINGS_FILE } from '../constants'
 import { i18n } from '../i18n'
@@ -17,13 +15,7 @@ import { backupCcxConfig, configureCcxProxy, createDefaultCcxConfig, readCcxEnv,
 import { installCcx, isCcxInstalled } from '../utils/ccx/installer'
 import {
   addCompletedOnboarding,
-  backupMcpConfig,
-  buildMcpServerConfig,
-  fixWindowsMcpConfig,
-  mergeMcpServers,
-  readMcpConfig,
   setPrimaryApiKey,
-  writeMcpConfig,
 } from '../utils/claude-config'
 import { runCodexFullInit } from '../utils/code-tools/codex'
 import { resolveCodeType } from '../utils/code-type-resolver'
@@ -42,9 +34,8 @@ import { configureApiCompletely, modifyApiConfigPartially } from '../utils/confi
 import { handleExitPromptError, handleGeneralError } from '../utils/error-handler'
 import { handleMultipleInstallations } from '../utils/installation-manager'
 import { getInstallationStatus, installClaudeCode } from '../utils/installer'
-import { selectMcpServices } from '../utils/mcp-selector'
 import { configureOutputStyle } from '../utils/output-style'
-import { isTermux, isWindows } from '../utils/platform'
+import { isTermux } from '../utils/platform'
 import { addNumbersToChoices } from '../utils/prompt-helpers'
 import { resolveAiOutputLanguage } from '../utils/prompts'
 import { promptBoolean } from '../utils/toggle-prompt'
@@ -69,7 +60,7 @@ export interface InitOptions {
   apiSonnetModel?: string // Default Sonnet model
   apiOpusModel?: string // Default Opus model
   provider?: string // API provider preset (302ai, glm, minimax, kimi, custom)
-  mcpServices?: string[] | string | boolean
+  mcpServices?: string[] | string | boolean // Deprecated for full init; use standalone MCP configuration instead
   workflows?: string[] | string | boolean
   outputStyles?: string[] | string | boolean
   defaultOutputStyle?: string
@@ -191,26 +182,8 @@ export async function validateSkipPromptOptions(options: InitOptions): Promise<v
     throw new Error(i18n.t('errors:apiKeyRequiredForAuthToken'))
   }
 
-  // Parse and validate MCP services
-  if (typeof options.mcpServices === 'string') {
-    if (options.mcpServices === 'skip') {
-      options.mcpServices = false
-    }
-    else if (options.mcpServices === 'all') {
-      options.mcpServices = MCP_SERVICE_CONFIGS.filter(s => !s.requiresApiKey).map(s => s.id)
-    }
-    else {
-      options.mcpServices = options.mcpServices.split(',').map(s => s.trim())
-    }
-  }
-  if (Array.isArray(options.mcpServices)) {
-    const validServices = MCP_SERVICE_CONFIGS.map(s => s.id)
-    for (const service of options.mcpServices) {
-      if (!validServices.includes(service)) {
-        throw new Error(i18n.t('errors:invalidMcpService', { service, validServices: validServices.join(', ') }))
-      }
-    }
-  }
+  // MCP is configured through the standalone menu entry only.
+  // Keep the option field for backward compatibility, but full-init ignores it.
 
   // Parse and validate output styles
   if (Array.isArray(options.outputStyles)) {
@@ -249,13 +222,6 @@ export async function validateSkipPromptOptions(options: InitOptions): Promise<v
         throw new Error(i18n.t('errors:invalidWorkflow', { workflow, validWorkflows: validWorkflows.join(', ') }))
       }
     }
-  }
-
-  // Set default MCP services (use "all" as explicit default)
-  if (options.mcpServices === undefined) {
-    options.mcpServices = 'all'
-    // Convert "all" to actual service array
-    options.mcpServices = MCP_SERVICE_CONFIGS.filter(s => !s.requiresApiKey).map(s => s.id)
   }
 
   // Set default workflows (use "all" as explicit default)
@@ -878,120 +844,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
       }
     }
 
-    // Step 10: Configure MCP services (skip if only updating docs)
-    if (action !== 'docs-only') {
-      let shouldConfigureMcp = false
-
-      if (options.skipPrompt) {
-        // In skip-prompt mode, configure MCP only if services are not explicitly disabled
-        shouldConfigureMcp = options.mcpServices !== false
-      }
-      else {
-        const userChoice = await promptBoolean({
-          message: i18n.t('mcp:configureMcp'),
-          defaultValue: false,
-        })
-
-        shouldConfigureMcp = userChoice
-      }
-
-      if (shouldConfigureMcp) {
-        // Show Windows-specific notice
-        if (isWindows()) {
-          console.log(ansis.blue(`ℹ ${i18n.t('installation:windowsDetected')}`))
-        }
-
-        // Use common MCP selector or skip-prompt services
-        let selectedServices: string[] | undefined
-
-        if (options.skipPrompt) {
-          selectedServices = options.mcpServices as string[]
-        }
-        else {
-          selectedServices = await selectMcpServices()
-          if (selectedServices === undefined) {
-            process.exit(0)
-          }
-        }
-
-        if (selectedServices.length > 0) {
-          // Backup existing MCP config if exists
-          const mcpBackupPath = backupMcpConfig()
-          if (mcpBackupPath) {
-            console.log(ansis.gray(`✔ ${i18n.t('mcp:mcpBackupSuccess')}: ${mcpBackupPath}`))
-          }
-
-          // Build MCP server configs
-          const newServers: Record<string, McpServerConfig> = {}
-
-          for (const serviceId of selectedServices) {
-            const services = await getMcpServices()
-            const service = services.find(s => s.id === serviceId)
-            if (!service)
-              continue
-
-            let config = service.config
-
-            // Special handling: serena context differs by code tool
-            if (service.id === 'serena' && Array.isArray(config.args)) {
-              const adjusted = { ...config, args: [...(config.args || [])] }
-              const idx = adjusted.args.indexOf('--context')
-              if (idx >= 0 && idx + 1 < adjusted.args.length) {
-                adjusted.args[idx + 1] = (codeToolType as CodeToolType === 'codex') ? 'codex' : 'ide-assistant'
-              }
-              else {
-                adjusted.args.push('--context', (codeToolType as CodeToolType === 'codex') ? 'codex' : 'ide-assistant')
-              }
-              config = adjusted
-            }
-
-            // Handle services that require API key
-            if (service.requiresApiKey) {
-              if (options.skipPrompt) {
-                // In skip-prompt mode, skip services that require API keys
-                console.log(ansis.yellow(`${i18n.t('common:skip')}: ${service.name} (requires API key)`))
-                continue
-              }
-              else {
-                const response = await inquirer.prompt<{ apiKey: string }>({
-                  type: 'input',
-                  name: 'apiKey',
-                  message: service.apiKeyPrompt!,
-                  validate: (value: string) => !!value || i18n.t('api:keyRequired'),
-                })
-
-                if (!response.apiKey) {
-                  console.log(ansis.yellow(`${i18n.t('common:skip')}: ${service.name}`))
-                  continue
-                }
-
-                config = buildMcpServerConfig(service.config, response.apiKey, service.apiKeyPlaceholder, service.apiKeyEnvVar)
-              }
-            }
-
-            newServers[service.id] = config
-          }
-
-          // Merge with existing config
-          const existingConfig = readMcpConfig()
-          let mergedConfig = mergeMcpServers(existingConfig, newServers)
-
-          // Fix Windows config if needed
-          mergedConfig = fixWindowsMcpConfig(mergedConfig)
-
-          // Write the config with error handling
-          try {
-            writeMcpConfig(mergedConfig)
-            console.log(ansis.green(`✔ ${i18n.t('mcp:mcpConfigSuccess')}`))
-          }
-          catch (error) {
-            console.error(ansis.red(`${i18n.t('errors:failedToWriteMcpConfig')} ${error}`))
-          }
-        }
-      }
-    }
-
-    // Step 11: CCometixLine installation
+    // Step 10: CCometixLine installation
     const cometixInstalled = await isCometixLineInstalled()
     if (!cometixInstalled) {
       let shouldInstallCometix = false
