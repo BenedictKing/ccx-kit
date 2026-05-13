@@ -11,11 +11,11 @@ const presets: ChannelPreset[] = [
     variants: [
       {
         id: 'deepseek-openai',
-        name: 'DeepSeek (OpenAI 协议 / Codex)',
-        kind: 'chat',
+        name: 'DeepSeek (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://api.deepseek.com',
-        description: 'OpenAI 兼容协议，适用于 Codex',
+        description: 'Responses 协议，适用于 Codex',
         modelMapping: {
           gpt: 'deepseek-v4-pro',
           mini: 'deepseek-v4-flash',
@@ -59,8 +59,8 @@ const presets: ChannelPreset[] = [
       },
       {
         id: 'mimo-plan-cn-openai',
-        name: 'MiMo 订阅 Plan - 中国集群 (OpenAI)',
-        kind: 'chat',
+        name: 'MiMo 订阅 Plan - 中国集群 (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://token-plan-cn.xiaomimimo.com/v1',
         description: '订阅 Plan 中国集群，OpenAI 兼容协议',
@@ -71,8 +71,8 @@ const presets: ChannelPreset[] = [
       },
       {
         id: 'mimo-plan-sgp-openai',
-        name: 'MiMo 订阅 Plan - 新加坡集群 (OpenAI)',
-        kind: 'chat',
+        name: 'MiMo 订阅 Plan - 新加坡集群 (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://token-plan-sgp.xiaomimimo.com/v1',
         description: '订阅 Plan 新加坡集群，OpenAI 兼容协议',
@@ -83,8 +83,8 @@ const presets: ChannelPreset[] = [
       },
       {
         id: 'mimo-plan-ams-openai',
-        name: 'MiMo 订阅 Plan - 欧洲集群 (OpenAI)',
-        kind: 'chat',
+        name: 'MiMo 订阅 Plan - 欧洲集群 (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://token-plan-ams.xiaomimimo.com/v1',
         description: '订阅 Plan 欧洲集群，OpenAI 兼容协议',
@@ -166,11 +166,11 @@ const presets: ChannelPreset[] = [
     variants: [
       {
         id: 'zhipu-coding-openai',
-        name: '智谱 GLM Coding (OpenAI 协议 / Codex)',
-        kind: 'chat',
+        name: '智谱 GLM Coding (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://open.bigmodel.cn/api/coding/paas/v4#',
-        description: 'Coding 端点，OpenAI 兼容协议，适用于 Codex',
+        description: 'Coding 端点，适用于 Codex',
         modelMapping: {
           gpt: 'glm-5.1',
           mini: 'glm-5.1',
@@ -201,11 +201,11 @@ const presets: ChannelPreset[] = [
     variants: [
       {
         id: 'kimi-code-openai',
-        name: 'Kimi Code (OpenAI 协议 / Codex)',
-        kind: 'chat',
+        name: 'Kimi Code (Codex)',
+        kind: 'responses',
         serviceType: 'openai',
         baseUrl: 'https://api.kimi.com/coding/v1',
-        description: 'OpenAI 兼容协议，适用于 Codex',
+        description: 'Responses 协议，适用于 Codex',
         modelMapping: {
           gpt: 'kimi-for-coding',
           mini: 'kimi-for-coding',
