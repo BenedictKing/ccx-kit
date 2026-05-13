@@ -25,10 +25,10 @@ Spec Workflow, as part of MCP services, can be selected for installation during 
 
 ```bash
 # Select Spec Workflow during complete initialization
-npx zcf init
+npx ccx-kit init
 
 # Or add MCP service in existing environment
-npx zcf → Select 4 (Configure MCP)
+npx ccx-kit → Select 4 (Configure MCP)
 ```
 
 In MCP service selection interface, select `spec-workflow` to install.

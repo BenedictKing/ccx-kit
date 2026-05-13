@@ -4,24 +4,24 @@ title: Version Check
 
 # Version Check
 
-`zcf check-updates` is used to detect and update various components in the ZCF toolchain, including ZCF itself, Claude Code, CCR, CCometixLine, Codex, and other tools.
+`ccx-kit check-updates` is used to detect and update various components in the ZCF toolchain, including ZCF itself, Claude Code, CCR, CCometixLine, Codex, and other tools.
 
-> **Alias**: `zcf check` provides the same command with a shorter name (`npx zcf check -T cx`).
+> **Alias**: `ccx-kit check` provides the same command with a shorter name (`npx ccx-kit check -T cx`).
 
 ## Command Format
 
 ```bash
 # Check all tool updates (Claude Code mode)
-npx zcf check
+npx ccx-kit check
 
 # Check Codex related tool updates
-npx zcf check -T cx
+npx ccx-kit check -T cx
 
 # Non-interactive mode (auto update, skip confirmation)
-npx zcf check -s
+npx ccx-kit check -s
 
 # Access through main menu
-npx zcf
+npx ccx-kit
 # Then select +. Check Updates
 ```
 
@@ -119,7 +119,7 @@ It's recommended to regularly check for updates to get latest features and fixes
 
 ```bash
 # Check once per week
-npx zcf check
+npx ccx-kit check
 ```
 
 ### Automated Updates
@@ -128,7 +128,7 @@ Use non-interactive mode in CI/CD or automation scripts:
 
 ```bash
 # Automatically update all tools
-npx zcf check -s
+npx ccx-kit check -s
 ```
 
 ### Targeted Updates
@@ -137,7 +137,7 @@ Only check updates for specific tool types:
 
 ```bash
 # Only check Codex related tools
-npx zcf check -T cx
+npx ccx-kit check -T cx
 ```
 
 ## Update Strategy
@@ -175,14 +175,14 @@ Common failure reasons:
 - **Permission Issues**: Need sudo permissions (macOS/Linux)
   ```bash
   # Execute with sudo
-  sudo npx zcf check
+  sudo npx ccx-kit check
   ```
 
 - **Port Occupied**: Service is running and cannot update
   ```bash
   # Stop service first then update
   ccr stop
-  npx zcf check
+  npx ccx-kit check
   ```
 
 ## Version Compatibility
@@ -235,15 +235,15 @@ ccline --version
 codex --version
 ```
 
-## Integration with zcf init
+## Integration with ccx-kit init
 
-`zcf init`'s backup functionality can automatically backup configuration before updating:
+`ccx-kit init`'s backup functionality can automatically backup configuration before updating:
 
 ```bash
 # Initialize before updating (will backup configuration)
-npx zcf init
+npx ccx-kit init
 # Or manually use backup functionality
-npx zcf i -s -r backup
+npx ccx-kit i -s -r backup
 ```
 
 ## Common Questions
@@ -262,7 +262,7 @@ A:
 A: 
 1. Check if tools are correctly installed: `which ccr`
 2. View error logs
-3. Try reinstall: `npx zcf ccr` (for CCR)
+3. Try reinstall: `npx ccx-kit ccx` (for CCR)
 
 ### Q: How to rollback to old version?
 

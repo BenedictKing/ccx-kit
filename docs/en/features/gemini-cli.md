@@ -73,7 +73,7 @@ When adding preset channels in CCX, select the Gemini CLI variant:
 | DeepSeek | DeepSeek (Gemini CLI) | `pro` → `deepseek-v4-pro`, `flash` → `deepseek-v4-flash` |
 
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 7. Add Preset Channel
 # Choose DeepSeek
 # Choose "DeepSeek (Gemini CLI)" variant

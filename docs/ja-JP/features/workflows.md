@@ -4,7 +4,7 @@ title: ワークフローシステム
 
 # ワークフローシステム
 
-ZCF は開発作業を構造化する複数のワークフローを同梱し、`zcf init` で自動導入します。
+ZCF は開発作業を構造化する複数のワークフローを同梱し、`ccx-kit init` で自動導入します。
 
 ## 主なワークフロー
 
@@ -16,8 +16,8 @@ ZCF は開発作業を構造化する複数のワークフローを同梱し、`
 
 ## 使い方
 
-- インタラクティブ導入：`npx zcf` → 2 (Import Workflows)  
-- CLI：`npx zcf init -s --workflows all` または `--workflows skip`  
+- インタラクティブ導入：`npx ccx-kit` → 2 (Import Workflows)  
+- CLI：`npx ccx-kit init -s --workflows all` または `--workflows skip`  
 - 会話中：`/zcf:workflow <内容>`、`/zcf:feat <機能名>`、`/git-commit` など
 
 ## ベストプラクティス

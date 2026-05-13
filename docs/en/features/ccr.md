@@ -79,7 +79,7 @@ Menu option 10 provides automatic connectivity repair for Windows users where `1
 
 ```bash
 # Open CCX management menu directly
-npx ccx-kit ccr
+npx ccx-kit ccx
 
 # Or through the main menu
 npx ccx-kit
@@ -111,7 +111,7 @@ The CCX menu provides 10 options:
 ### Adding a Preset Channel
 
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 7. Add Preset Channel
 # Choose provider (e.g., DeepSeek)
 # Choose variant (e.g., DeepSeek (Codex) for responses protocol)
@@ -122,7 +122,7 @@ npx ccx-kit ccr
 ### Testing a Channel
 
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 8. Test Channel
 # Choose from available channels grouped by protocol
 # Enter model name (or accept default)

@@ -29,8 +29,8 @@ title: 面向贡献者
 
 ```bash
 # Fork 并克隆仓库
-git clone https://github.com/YOUR_USERNAME/zcf.git
-cd zcf
+git clone https://github.com/YOUR_USERNAME/ccx-kit.git
+cd ccx-kit
 
 # 安装依赖
 pnpm install
@@ -174,10 +174,10 @@ ZCF 严格遵循 TDD 方法：
 
 ## 📖 相关资源
 
-- [项目 README](https://github.com/UfoMiao/zcf/blob/main/README.md) - 项目概览和快速开始
-- [CLAUDE.md](https://github.com/UfoMiao/zcf/blob/main/CLAUDE.md) - 完整的项目架构文档
-- [GitHub Issues](https://github.com/UfoMiao/zcf/issues) - 问题和讨论
-- [GitHub Discussions](https://github.com/UfoMiao/zcf/discussions) - 社区讨论
+- [项目 README](https://github.com/BenedictKing/ccx-kit/blob/main/README.md) - 项目概览和快速开始
+- [CLAUDE.md](https://github.com/BenedictKing/ccx-kit/blob/main/CLAUDE.md) - 完整的项目架构文档
+- [GitHub Issues](https://github.com/BenedictKing/ccx-kit/issues) - 问题和讨论
+- [GitHub Discussions](https://github.com/BenedictKing/ccx-kit/discussions) - 社区讨论
 
 ---
 

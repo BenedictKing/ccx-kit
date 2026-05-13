@@ -4,13 +4,13 @@ title: CCX Proxy Management
 
 # CCX Proxy Management
 
-`npx ccx-kit ccr` provides a complete management menu for CCX (the API proxy for Claude Code, Codex, and Gemini CLI), including installation, configuration, service control, channel management, and connectivity repair.
+`npx ccx-kit ccx` provides a complete management menu for CCX (the API proxy for Claude Code, Codex, and Gemini CLI), including installation, configuration, service control, channel management, and connectivity repair.
 
 ## Command Format
 
 ```bash
 # Open CCX management menu
-npx ccx-kit ccr
+npx ccx-kit ccx
 
 # Or access through main menu
 npx ccx-kit
@@ -19,7 +19,7 @@ npx ccx-kit
 
 ## Menu Options
 
-Running `npx ccx-kit ccr` will display the following menu:
+Running `npx ccx-kit ccx` will display the following menu:
 
 ```
 ══════════════════════════════════════════════════════
@@ -61,7 +61,7 @@ Running `npx ccx-kit ccr` will display the following menu:
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 1
 # Complete configuration according to prompts
 ```
@@ -87,7 +87,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 2
 # Browser opens to http://127.0.0.1:3688
 ```
@@ -109,7 +109,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 3
 ```
 
@@ -124,7 +124,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 4
 ```
 
@@ -138,7 +138,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 5
 ```
 
@@ -153,7 +153,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 6
 ```
 
@@ -178,7 +178,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 7
 # Choose DeepSeek
 # Choose "DeepSeek (Codex)" for responses protocol
@@ -204,7 +204,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 8
 # Choose channel from list
 # Confirm model name
@@ -223,7 +223,7 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 9
 ```
 
@@ -245,165 +245,123 @@ npx ccx-kit ccr
 
 **Example**:
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 10
 # Auto-detects working IP and updates configurations
 ```
 
-## Route Rule Configuration
+## Configuration Files
 
-CCR supports flexible route rule configuration, which can be set through Web UI or configuration file. The configuration file is located at `~/.claude-code-router/config.json` and uses JSON format.
+### CCX Environment (`~/.ccx/.env`)
 
-### Complete Configuration Example
+```env
+PROXY_ACCESS_KEY=sk-ccx-kit
+PORT=3688
+ENABLE_WEB_UI=true
+```
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `PROXY_ACCESS_KEY` | `sk-ccx-kit` | Access key for proxy authentication |
+| `PORT` | `3688` | Service listen port |
+| `ENABLE_WEB_UI` | `true` | Enable Web management interface |
+
+### Channel Configuration (`~/.ccx/.config/config.json`)
+
+Channels are organized by protocol:
 
 ```json
 {
-  "LOG": true,
-  "HOST": "127.0.0.1",
-  "PORT": 3456,
-  "APIKEY": "sk-zcf-x-ccr",
-  "API_TIMEOUT_MS": "600000",
-  "PROXY_URL": "",
-  "Providers": [
+  "upstream": [
     {
-      "name": "openrouter",
-      "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
-      "api_key": "sk-xxx",
-      "models": [
-        "google/gemini-2.5-pro-preview",
-        "anthropic/claude-sonnet-4",
-        "anthropic/claude-3.5-sonnet"
-      ],
-      "transformer": {
-        "use": ["openrouter"]
-      }
-    },
-    {
-      "name": "deepseek",
-      "api_base_url": "https://api.deepseek.com/v1/chat/completions",
-      "api_key": "sk-xxx",
-      "models": ["deepseek-chat", "deepseek-reasoner"],
-      "transformer": {
-        "use": ["deepseek"],
-        "deepseek-chat": {
-          "use": ["tooluse"]
-        }
-      }
-    },
-    {
-      "name": "ollama",
-      "api_base_url": "http://localhost:11434/v1/chat/completions",
-      "api_key": "ollama",
-      "models": ["qwen2.5-coder:latest"],
-      "transformer": {
-        "use": ["ollama"]
-      }
-    },
-    {
-      "name": "gemini",
-      "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
-      "api_key": "sk-xxx",
-      "models": ["gemini-2.5-flash", "gemini-2.5-pro"],
-      "transformer": {
-        "use": ["gemini"]
+      "baseUrl": "https://api.deepseek.com/anthropic",
+      "apiKeys": ["sk-xxx"],
+      "serviceType": "claude",
+      "name": "DeepSeek (Claude Code)",
+      "modelMapping": {
+        "sonnet": "deepseek-v4-pro",
+        "haiku": "deepseek-v4-flash"
       }
     }
   ],
-  "Router": {
-    "default": "openrouter,google/gemini-2.5-pro-preview",
-    "background": "deepseek,deepseek-chat",
-    "think": "deepseek,deepseek-reasoner",
-    "longContext": "openrouter,anthropic/claude-sonnet-4",
-    "longContextThreshold": 60000,
-    "webSearch": "gemini,gemini-2.5-flash"
-  }
+  "responsesUpstream": [
+    {
+      "baseUrl": "https://api.deepseek.com",
+      "apiKeys": ["sk-xxx"],
+      "serviceType": "openai",
+      "name": "DeepSeek (Codex)",
+      "modelMapping": {
+        "gpt": "deepseek-v4-pro",
+        "mini": "deepseek-v4-flash"
+      },
+      "normalizeNonstandardChatRoles": true
+    }
+  ],
+  "geminiUpstream": [
+    {
+      "baseUrl": "https://api.deepseek.com",
+      "apiKeys": ["sk-xxx"],
+      "serviceType": "openai",
+      "name": "DeepSeek (Gemini CLI)",
+      "modelMapping": {
+        "pro": "deepseek-v4-pro",
+        "flash": "deepseek-v4-flash"
+      }
+    }
+  ],
+  "chatUpstream": [],
+  "fuzzyModeEnabled": true
 }
 ```
 
-### Configuration Field Descriptions
-
-#### Basic Configuration
-
-| Field | Type | Description | Default |
-|------|------|------|--------|
-| `LOG` | boolean | Enable logging | `true` |
-| `HOST` | string | Service listen address | `127.0.0.1` |
-| `PORT` | number | Service port | `3456` |
-| `APIKEY` | string | CCR API key | `sk-zcf-x-ccr` |
-| `API_TIMEOUT_MS` | string | API timeout (milliseconds) | `600000` |
-| `PROXY_URL` | string | Proxy URL (optional) | `""` |
-
-#### Providers Configuration
-
-`Providers` is an array, each Provider contains:
+### Channel Fields
 
 | Field | Type | Description |
-|------|------|------|
-| `name` | string | Provider name (used for route rules) |
-| `api_base_url` | string | API base URL |
-| `api_key` | string | API key (free models can use `sk-free`) |
-| `models` | string[] | List of models supported by this provider |
-| `transformer` | object | Optional request transformer (for API compatibility) |
-
-#### Router Configuration
-
-`Router` defines model routing rules for different scenarios, format: `${providerName},${modelName}`
-
-| Field | Type | Description |
-|------|------|------|
-| `default` | string | Default route (format: `provider,model`) |
-| `background` | string | Background task route (optional) |
-| `think` | string | Thinking task route (optional) |
-| `longContext` | string | Long context task route (optional) |
-| `longContextThreshold` | number | Long context token threshold (optional) |
-| `webSearch` | string | Web search task route (optional) |
-
-## Provider Presets
-
-ZCF supports multiple CCR provider presets to simplify configuration:
-
-```bash
-npx zcf ccr
-# Select 1. Initialize CCR
-# Select provider preset
-```
-
-Supported presets include:
-- **302.AI**: Enterprise-grade AI service
-- **GLM**: Zhipu AI
-- **MiniMax**: MiniMax AI service
-- **Custom**: Configure custom provider
+|-------|------|-------------|
+| `baseUrl` | string | Provider API base URL |
+| `apiKeys` | string[] | API keys (supports multi-key rotation) |
+| `serviceType` | string | Protocol type (`claude` or `openai`) |
+| `name` | string | Channel display name |
+| `modelMapping` | object | Maps tool model names to upstream model names |
+| `normalizeNonstandardChatRoles` | boolean | Normalize non-standard chat roles (needed for DeepSeek + Codex) |
 
 ## Common Questions
 
-### Q: What to do if prompted "CCR not configured"?
+### Q: What to do if prompted "CCX not configured"?
 
-A: Need to run Option 1 (Initialize CCR) first to complete configuration.
+Run Option 1 (Initialize CCX) first to complete configuration.
 
 ### Q: Web UI cannot be accessed?
 
-A: 
-1. Ensure UI is started (Option 2)
-2. Check if port 3456 is occupied
-3. Use API key `sk-zcf-x-ccr` to log in (or check `APIKEY` in configuration)
-
-### Q: How to modify route rules?
-
-A: You can modify through Web UI or directly edit `~/.claude-code-router/config.json` file, then restart service after modification.
+1. Ensure CCX service is running (Option 3 to check status)
+2. Check if port 3688 is occupied: `lsof -i :3688` (macOS/Linux) or `netstat -ano | findstr :3688` (Windows)
+3. Use access key `sk-ccx-kit` to authenticate (or check `PROXY_ACCESS_KEY` in `~/.ccx/.env`)
 
 ### Q: Service failed to start?
 
-A: 
-1. Check if configuration file format is correct
-2. Check if port is occupied: `lsof -i :3456` (macOS/Linux) or `netstat -ano | findstr :3456` (Windows)
-3. Confirm `@musistudio/claude-code-router` is correctly installed
-4. View error logs or use `ccr status` command
+1. Check if port is occupied
+2. Verify the CCX binary is properly installed (Option 9 to upgrade/reinstall)
+3. Check PID file: `cat ~/.ccx/ccx.pid`
+4. View process: `lsof -i :3688 | grep LISTEN`
 
-### Q: How to configure multiple models?
+### Q: How to add channels for multiple tools?
 
-A: Add multiple provider configurations in the `Providers` array, then specify models for different scenarios in `Router`.
+Add preset channels (Option 7) multiple times, selecting different variants each time:
+- For Claude Code: select the `(Claude Code)` or `(Anthropic)` variant
+- For Codex: select the `(Codex)` variant
+- For Gemini CLI: select the `(Gemini CLI)` variant
+
+### Q: Channel test fails with unexpected response?
+
+The test sends "Reply with exactly: pong" and expects "pong" in the response. If the upstream model doesn't follow this instruction, the test reports failure even though the channel may be functional. Try a different model or verify the model mapping is correct.
+
+### Q: Windows connectivity issues?
+
+Use Option 10 (Fix Connectivity). This is a common issue on Windows where `127.0.0.1` loopback doesn't work. The fix discovers a working local IP and updates all tool configurations.
 
 ## Related Documentation
 
-- [CCR Feature Overview](../features/ccr.md) - Learn about CCR's core benefits
+- [CCX Feature Overview](../features/ccr.md) - Learn about CCX architecture and capabilities
+- [Codex CCX Integration](../features/codex.md#ccx-proxy-integration) - Codex-specific CCX setup
+- [Gemini CLI Support](../features/gemini-cli.md) - Gemini CLI integration
 - [Troubleshooting](../advanced/troubleshooting.md) - Solve common problems

@@ -18,7 +18,7 @@ title: 快速开始
 
 ### 首次使用
 
-1. 运行 `npx zcf` 或 `npx zcf init` 进行完整初始化
+1. 运行 `npx ccx-kit` 或 `npx ccx-kit init` 进行完整初始化
 2. 选择代码工具类型（Claude Code 或 Codex）
 3. 配置 API 密钥或使用 API 提供商预设
 4. 选择需要安装的 MCP 服务
@@ -26,8 +26,8 @@ title: 快速开始
 
 ### 已有环境
 
-- 运行 `npx zcf update` 更新工作流和模板
-- 使用 `npx zcf` 打开交互式菜单进行增量配置
-- 通过 `npx zcf config-switch` 切换不同的配置
+- 运行 `npx ccx-kit update` 更新工作流和模板
+- 使用 `npx ccx-kit` 打开交互式菜单进行增量配置
+- 通过 `npx ccx-kit config-switch` 切换不同的配置
 
 > 💡 **提示**：在操作过程中，如需了解特定功能，请随时跳转到对应的功能章节或 CLI 命令文档。

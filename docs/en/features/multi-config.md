@@ -12,7 +12,7 @@ ZCF provides comprehensive configuration management and backup mechanisms, suppo
 
 ZCF's configuration system is divided into the following levels:
 
-1. **Global Configuration** (`~/.ufomiao/zcf/config.toml`) - ZCF's own configuration
+1. **Global Configuration** (`~/.ccx-kit/config.toml`) - ZCF's own configuration
 2. **Claude Code Configuration** (`~/.claude/settings.json`) - Claude Code runtime configuration
 3. **Codex Configuration** (`~/.codex/config.toml`) - Codex runtime configuration
 4. **CCR Configuration** (`~/.claude-code-router/config.json`) - Claude Code Router proxy configuration
@@ -21,8 +21,8 @@ ZCF's configuration system is divided into the following levels:
 
 ZCF provides powerful CLI tools to create, manage, and switch these configurations.
 
-- **Create Configuration**: You can configure multiple API providers during initialization using `zcf init`.
-- **Switch Configuration**: Use `zcf config-switch` command to quickly switch between different environments, projects, or providers.
+- **Create Configuration**: You can configure multiple API providers during initialization using `ccx-kit init`.
+- **Switch Configuration**: Use `ccx-kit config-switch` command to quickly switch between different environments, projects, or providers.
 
 👉 **For detailed command usage, please refer to:**
 - **[Configuration Switch Command (config-switch)](../cli/config-switch.md)**
@@ -45,14 +45,14 @@ Different types of configurations are backed up to different locations:
 | **Codex Prompts** | `~/.codex/backup/` | `prompts.{timestamp}.tar.gz` |
 | **CCR** | `~/.claude-code-router/` | `config.json.{timestamp}.bak` |
 | **CCometixLine** | `~/.cometix/backup/` | `config.{timestamp}.bak` |
-| **ZCF Global Configuration** | `~/.ufomiao/zcf/backup/` | `config.toml.{timestamp}.bak` |
+| **ZCF Global Configuration** | `~/.ccx-kit/backup/` | `config.toml.{timestamp}.bak` |
 
 ### Automatic Backup Triggers
 
 ZCF automatically creates backups during the following operations:
 
 1. **Initialize Configuration**: First-time configuration or re-initialization
-2. **Update Configuration**: Update workflows or templates via `zcf update`
+2. **Update Configuration**: Update workflows or templates via `ccx-kit update`
 3. **Switch Configuration**: Use `config-switch` to switch configurations
 4. **Modify API**: Update API keys or providers
 5. **Install Workflows**: Import or update workflow templates

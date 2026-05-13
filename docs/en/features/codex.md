@@ -26,7 +26,7 @@ ZCF automatically detects whether `@openai/codex` CLI is installed on the system
 
 ```bash
 # Initialize Codex (auto-detect and install)
-npx zcf i -s -T codex -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -T codex -p 302ai -k "sk-xxx"
 ```
 
 If Codex is not detected, ZCF will automatically execute:
@@ -40,10 +40,10 @@ ZCF supports one-click Codex CLI upgrade:
 
 ```bash
 # Upgrade through update check
-npx zcf check-updates --code-type codex
+npx ccx-kit check-updates --code-type codex
 
 # Or through menu
-npx zcf → Select + (Check Updates) → Select Codex
+npx ccx-kit → Select + (Check Updates) → Select Codex
 ```
 
 > ✅ **Automatic Processing**: If upgrade fails, ZCF will provide detailed error information to help diagnose issues.
@@ -60,7 +60,7 @@ ZCF creates the following directory structure for Codex:
 ├── auth.json            # Authentication information
 ├── AGENTS.md            # AI agent configuration and system prompts
 ├── prompts/             # Workflow prompt directory
-│   ├── zcf/
+│   ├── ccx-kit/
 │   │   ├── workflow.md  # Six-stage workflow
 │   │   └── ...
 │   └── ...
@@ -97,17 +97,17 @@ Codex supports the same API configuration methods as Claude Code:
 
 ```bash
 # Use 302.AI provider
-npx zcf i -s -T codex -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -T codex -p 302ai -k "sk-xxx"
 
 # Use other providers
-npx zcf i -s -T codex -p glm -k "sk-xxx"
-npx zcf i -s -T codex -p minimax -k "sk-xxx"
+npx ccx-kit i -s -T codex -p glm -k "sk-xxx"
+npx ccx-kit i -s -T codex -p minimax -k "sk-xxx"
 ```
 
 #### 2. Official Login
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select S (Switch to Codex)
 # Select 3 (Configure API)
 # Select "Use Official Login"
@@ -116,7 +116,7 @@ npx zcf
 #### 3. Custom API
 
 ```bash
-npx zcf i -s -T codex \
+npx ccx-kit i -s -T codex \
   --api-type api_key \
   --api-key "sk-xxx" \
   --api-url "https://api.example.com" \
@@ -128,20 +128,20 @@ npx zcf i -s -T codex \
 Codex supports configuring multiple API providers:
 
 ```bash
-npx zcf i -s -T codex --api-configs '[
+npx ccx-kit i -s -T codex --api-configs '[
   {"provider":"302ai","key":"sk-xxx","default":true},
   {"name":"custom","type":"api_key","key":"sk-yyy","url":"https://custom.api.com","primaryModel":"gpt-5"}
 ]'
 ```
 
-> 📖 **Switch Provider**: Use `npx zcf config-switch -T codex` to switch between multiple providers.
+> 📖 **Switch Provider**: Use `npx ccx-kit config-switch -T codex` to switch between multiple providers.
 
 ### Model Configuration
 
 Codex supports configuring primary and fast models:
 
 ```bash
-npx zcf i -s -T codex -p 302ai -k "sk-xxx" \
+npx ccx-kit i -s -T codex -p 302ai -k "sk-xxx" \
   --api-model "gpt-5" \
   --api-fast-model "gpt-4"
 ```
@@ -189,7 +189,7 @@ When using DeepSeek as the upstream provider for Codex, the channel requires `no
 ### Setup via CCX Menu
 
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # Select 7. Add Preset Channel
 # Choose DeepSeek (or other provider)
 # Choose the (Codex) variant — uses responses protocol
@@ -198,7 +198,7 @@ npx ccx-kit ccr
 
 CCX will automatically configure Codex's `config.toml` to point at the proxy during initialization.
 
-> 💡 **Tip**: Use `npx ccx-kit ccr` → option 8 to test the channel after setup. Select the responses protocol channel and verify you get a successful response.
+> 💡 **Tip**: Use `npx ccx-kit ccx` → option 8 to test the channel after setup. Select the responses protocol channel and verify you get a successful response.
 
 ## MCP Service Integration
 
@@ -220,13 +220,13 @@ Codex supports the same MCP services as Claude Code:
 
 ```bash
 # Install all MCP services
-npx zcf i -s -T codex --mcp-services all
+npx ccx-kit i -s -T codex --mcp-services all
 
 # Selective installation
-npx zcf i -s -T codex --mcp-services context7,open-websearch
+npx ccx-kit i -s -T codex --mcp-services context7,open-websearch
 
 # Configure through menu
-npx zcf → Select S (Switch to Codex) → Select 4 (Configure MCP)
+npx ccx-kit → Select S (Switch to Codex) → Select 4 (Configure MCP)
 ```
 
 ### Configuration File Location
@@ -265,13 +265,13 @@ Although Codex and Claude Code share the same MCP services, there are difference
 
 ```bash
 # Install all workflows
-npx zcf i -s -T codex --workflows all
+npx ccx-kit i -s -T codex --workflows all
 
 # Selective installation
-npx zcf i -s -T codex --workflows commonTools,sixStepsWorkflow
+npx ccx-kit i -s -T codex --workflows commonTools,sixStepsWorkflow
 
 # Import through menu
-npx zcf → Select S (Switch to Codex) → Select 4 (Import Workflows)
+npx ccx-kit → Select S (Switch to Codex) → Select 4 (Import Workflows)
 ```
 
 Workflow files are saved in the `~/.codex/prompts/` directory.
@@ -297,10 +297,10 @@ Codex supports the same output styles as Claude Code:
 
 ```bash
 # Install output styles
-npx zcf i -s -T codex --output-styles engineer-professional
+npx ccx-kit i -s -T codex --output-styles engineer-professional
 
 # Set default output style
-npx zcf i -s -T codex --default-output-style engineer-professional
+npx ccx-kit i -s -T codex --default-output-style engineer-professional
 ```
 
 ## Tool Switching
@@ -308,7 +308,7 @@ npx zcf i -s -T codex --default-output-style engineer-professional
 ### Switch Through Menu
 
 ```bash
-npx zcf
+npx ccx-kit
 # Enter S to switch between Claude Code and Codex
 ```
 
@@ -337,32 +337,32 @@ ZCF allows seamless switching between Claude Code and Codex while preserving you
 
 ```bash
 # Command line method
-npx zcf i -s -T codex -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -T codex -p 302ai -k "sk-xxx"
 
 # Interactive method
-npx zcf → Select S (Switch to Codex) → Select 1 (Complete Initialization)
+npx ccx-kit → Select S (Switch to Codex) → Select 1 (Complete Initialization)
 ```
 
 ### Update Workflows
 
 ```bash
-npx zcf update -T codex -g zh-CN
+npx ccx-kit update -T codex -g zh-CN
 ```
 
 ### Configuration Switch
 
 ```bash
 # List all providers
-npx zcf config-switch -T codex --list
+npx ccx-kit config-switch -T codex --list
 
 # Switch to specified provider
-npx zcf config-switch -T codex provider-name
+npx ccx-kit config-switch -T codex provider-name
 ```
 
 ### Uninstall Codex
 
 ```bash
-npx zcf uninstall -T codex
+npx ccx-kit uninstall -T codex
 ```
 
 ## Comparison with Claude Code

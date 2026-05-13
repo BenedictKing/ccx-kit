@@ -1,8 +1,8 @@
 ---
-title: ZCF Six-Stage Workflow
+title: CCX-Kit Six-Stage Workflow
 ---
 
-# ZCF Six-Stage Workflow
+# CCX-Kit Six-Stage Workflow
 
 The six-stage workflow is ZCF's core development process, covering the complete software development lifecycle: **Research → Ideate → Plan → Execute → Optimize → Review**.
 

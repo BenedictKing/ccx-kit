@@ -88,16 +88,16 @@ templates/codex/
 
 ```bash
 # 安装所有输出风格
-npx zcf init -o all
+npx ccx-kit init -o all
 
 # 安装特定风格
-npx zcf init -o engineer-professional,nekomata-engineer
+npx ccx-kit init -o engineer-professional,nekomata-engineer
 
 # 设置默认输出风格
-npx zcf init -o all -d engineer-professional
+npx ccx-kit init -o all -d engineer-professional
 
 # 跳过输出风格安装
-npx zcf init -o skip
+npx ccx-kit init -o skip
 ```
 
 ### 切换输出风格
@@ -193,13 +193,13 @@ git commit -m "Add custom output style"
 
 ```bash
 # 安装所有工作流
-npx zcf init -w all
+npx ccx-kit init -w all
 
 # 安装特定工作流
-npx zcf init -w sixStepsWorkflow,gitWorkflow
+npx ccx-kit init -w sixStepsWorkflow,gitWorkflow
 
 # 跳过工作流安装
-npx zcf init -w skip
+npx ccx-kit init -w skip
 ```
 
 ### 自定义工作流
@@ -207,8 +207,8 @@ npx zcf init -w skip
 1. **Fork 仓库并修改模板**：
 ```bash
 # 1. Fork ZCF 仓库
-git clone https://github.com/your-org/zcf.git
-cd zcf
+git clone https://github.com/your-org/ccx-kit.git
+cd ccx-kit
 
 # 2. 修改模板
 vim templates/claude-code/zh-CN/workflow/custom/my-workflow.md
@@ -221,13 +221,13 @@ npm link
 2. **在初始化时使用**：
 ```bash
 # 使用自定义模板目录初始化
-npx zcf init -w custom
+npx ccx-kit init -w custom
 ```
 
 3. **团队发布自定义模板**：
 ```bash
 # 发布包含自定义模板的 npm 包
-npm publish @your-org/zcf-templates
+npm publish @your-org/ccx-kit-templates
 ```
 
 ## 系统提示模板
@@ -276,7 +276,7 @@ npm publish @your-org/zcf-templates
 3. **定期更新**：
 ```bash
 # 更新模板和提示词
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 ```
 
 ## 模板语言支持
@@ -301,13 +301,13 @@ ZCF 支持两种语言的模板：
 
 ```bash
 # 使用中文模板初始化
-npx zcf init -c zh-CN
+npx ccx-kit init -c zh-CN
 
 # 使用英文模板初始化
-npx zcf init -c en
+npx ccx-kit init -c en
 
 # 更新时切换语言
-npx zcf update -c en
+npx ccx-kit update -c en
 ```
 
 ## 模板更新策略
@@ -316,9 +316,9 @@ npx zcf update -c en
 
 | 方式 | 命令 | 说明 |
 |------|------|------|
-| **完整更新** | `npx zcf update` | 更新所有模板 |
-| **仅更新文档** | `npx zcf init --config-action docs-only` | 仅更新提示词和文档 |
-| **合并更新** | `npx zcf init --config-action merge` | 合并新模板到现有配置 |
+| **完整更新** | `npx ccx-kit update` | 更新所有模板 |
+| **仅更新文档** | `npx ccx-kit init --config-action docs-only` | 仅更新提示词和文档 |
+| **合并更新** | `npx ccx-kit init --config-action merge` | 合并新模板到现有配置 |
 
 ### 保留自定义内容
 
@@ -352,8 +352,8 @@ diff -r ~/.claude/workflows/ ~/.claude/backup/latest/workflows/
 1. **创建团队模板仓库**：
 ```bash
 # 创建模板仓库
-mkdir team-zcf-templates
-cd team-zcf-templates
+mkdir team-ccx-kit-templates
+cd team-ccx-kit-templates
 git init
 
 # 添加模板文件
@@ -384,7 +384,7 @@ cp -r team-* ~/.claude/workflows/
 
 ```bash
 # 重新安装模板
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 
 # 检查模板目录
 ls -la ~/.claude/workflows/
@@ -409,10 +409,10 @@ git checkout HEAD -- ~/.claude/workflows/custom/
 
 ```bash
 # 重新初始化并指定语言
-npx zcf init --config-action backup -c zh-CN
+npx ccx-kit init --config-action backup -c zh-CN
 
 # 或仅更新模板语言
-npx zcf update -c zh-CN
+npx ccx-kit update -c zh-CN
 ```
 
 ## 相关资源

@@ -27,8 +27,8 @@
 
 ## CLI コマンド
 * [コマンド概要](cli/index.md)
-* [zcf init](cli/init.md)
-* [zcf update](cli/update.md)
+* [ccx-kit init](cli/init.md)
+* [ccx-kit update](cli/update.md)
 * [メインメニュー](cli/menu.md)
 * [CCX プロキシ管理](cli/ccr.md)
 * [使用分析 ccu](cli/ccu.md)
@@ -38,7 +38,7 @@
 
 ## ワークフロー詳細
 * [ワークフロー概要](workflows/index.md)
-* [ZCF 6段階ワークフロー](workflows/zcf-workflow.md)
+* [CCX-Kit 6段階ワークフロー](workflows/zcf-workflow.md)
 * [機能開発ワークフロー](workflows/feat.md)
 * [BMad アジャイルプロセス](workflows/bmad.md)
 * [Spec ワークフロー統合](workflows/spec.md)

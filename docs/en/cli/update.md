@@ -1,14 +1,14 @@
 ---
-title: zcf update
+title: ccx-kit update
 ---
 
-# zcf update
+# ccx-kit update
 
-`zcf update` (abbreviation `zcf u`) is used to update workflow templates, prompts, and check tool versions. This is a lightweight update command that does not modify API configuration or installed MCP services.
+`ccx-kit update` (abbreviation `ccx-kit u`) is used to update workflow templates, prompts, and check tool versions. This is a lightweight update command that does not modify API configuration or installed MCP services.
 
 ## Feature Overview
 
-The `zcf update` command performs the following operations:
+The `ccx-kit update` command performs the following operations:
 
 1. 📝 **Update Prompts**: Synchronize latest workflow templates and prompt content
 2. 🔄 **Update Workflows**: Update or install new workflow templates
@@ -22,13 +22,13 @@ The `zcf update` command performs the following operations:
 
 ```bash
 # Update using saved preferences
-npx zcf update
+npx ccx-kit update
 
 # Or use abbreviation
-npx zcf u
+npx ccx-kit u
 
 # Or through main menu
-npx zcf
+npx ccx-kit
 # Then select 2 (Import/Update Workflows)
 ```
 
@@ -43,19 +43,19 @@ In interactive mode, ZCF will:
 
 ```bash
 # Update using default language settings
-npx zcf u -s
+npx ccx-kit u -s
 
 # Specify template language
-npx zcf u -s -c zh-CN
+npx ccx-kit u -s -c zh-CN
 
 # Specify AI output language
-npx zcf u -s -a zh-CN
+npx ccx-kit u -s -a zh-CN
 
 # Specify both template and output language
-npx zcf u -s -g zh-CN
+npx ccx-kit u -s -g zh-CN
 
 # Specify code tool type
-npx zcf u -s -T codex
+npx ccx-kit u -s -T codex
 ```
 
 ## Common Parameters
@@ -76,7 +76,7 @@ npx zcf u -s -T codex
 
 ```bash
 # Regularly run to get latest workflow templates
-npx zcf u
+npx ccx-kit u
 
 # Update once per week (recommended)
 # Can be added to cron tasks or CI/CD processes
@@ -86,32 +86,32 @@ npx zcf u
 
 ```bash
 # Update Claude Code workflows
-npx zcf u -T claude-code -c zh-CN
+npx ccx-kit u -T claude-code -c zh-CN
 
 # Update Codex workflows
-npx zcf u -T codex -c zh-CN
+npx ccx-kit u -T codex -c zh-CN
 ```
 
 ### Scenario 3: Sync Language Settings
 
 ```bash
 # Switch all language settings to Chinese
-npx zcf u -g zh-CN
+npx ccx-kit u -g zh-CN
 
 # Template Chinese, AI output English
-npx zcf u -c zh-CN -a en
+npx ccx-kit u -c zh-CN -a en
 ```
 
 ### Scenario 4: Automated Updates
 
 ```bash
 # Non-interactive update (suitable for scripts)
-npx zcf u -s -g zh-CN -T claude-code
+npx ccx-kit u -s -g zh-CN -T claude-code
 ```
 
 ## Execution Flow
 
-The execution flow of `zcf update` is as follows:
+The execution flow of `ccx-kit update` is as follows:
 
 ### Claude Code Flow
 
@@ -131,7 +131,7 @@ The execution flow of `zcf update` is as follows:
 
 ## Update Content
 
-`zcf update` will update the following content:
+`ccx-kit update` will update the following content:
 
 ### Workflow Templates
 
@@ -152,18 +152,18 @@ The execution flow of `zcf update` is as follows:
 
 ### Content That Won't Be Updated
 
-`zcf update` **will not** modify the following content:
+`ccx-kit update` **will not** modify the following content:
 
 - ❌ API configuration (keys, authentication methods, etc.)
 - ❌ MCP service configuration (installed services)
 - ❌ Custom output styles
 - ❌ Project-specific configuration
 
-If you need to update these, please use `zcf init` or corresponding configuration menu.
+If you need to update these, please use `ccx-kit init` or corresponding configuration menu.
 
 ## Version Checking
 
-`zcf update` automatically checks tool versions:
+`ccx-kit update` automatically checks tool versions:
 
 ### Claude Code Version Check
 
@@ -196,14 +196,14 @@ Before updating workflows and prompts, ZCF automatically creates backups:
 
 ### 1. Regular Updates
 
-It's recommended to regularly run `zcf update` to get latest workflows and improvements:
+It's recommended to regularly run `ccx-kit update` to get latest workflows and improvements:
 
 ```bash
 # Update once per week
-npx zcf u -g zh-CN
+npx ccx-kit u -g zh-CN
 
 # Or add to cron task
-0 0 * * 0 /usr/local/bin/npx zcf u -s -g zh-CN
+0 0 * * 0 /usr/local/bin/npx ccx-kit u -s -g zh-CN
 ```
 
 ### 2. Check Before Update
@@ -223,7 +223,7 @@ ls -la ~/.claude/backup/
 If you have custom workflows or prompts:
 
 1. **Backup Custom Content**: Manually backup before updating
-2. **Use `docs-only` Mode**: Use `--config-action docs-only` in `zcf init`
+2. **Use `docs-only` Mode**: Use `--config-action docs-only` in `ccx-kit init`
 3. **View Differences**: Compare backup and current files after updating
 
 ### 4. Team Sync
@@ -236,7 +236,7 @@ In team environments:
 
 ```bash
 # Team unified update command
-npx zcf u -s -g zh-CN -T claude-code
+npx ccx-kit u -s -g zh-CN -T claude-code
 ```
 
 ## Troubleshooting
@@ -263,7 +263,7 @@ If workflows are not updated:
 
 ```bash
 # Force reinstall workflows
-npx zcf init --config-action new -w all
+npx ccx-kit init --config-action new -w all
 
 # Or manually check workflow directory
 ls -la ~/.claude/workflows/
@@ -275,11 +275,11 @@ If version check doesn't prompt:
 
 1. **Confirm Claude Code is Installed**: Check if `claude-code` command is available
 2. **Manually Check Version**: Use `claude-code --version`
-3. **Use check-updates Command**: Run `npx zcf check-updates`
+3. **Use check-updates Command**: Run `npx ccx-kit check-updates`
 
 ## Differences from init
 
-| Feature | `zcf init` | `zcf update` |
+| Feature | `ccx-kit init` | `ccx-kit update` |
 |------|-----------|-------------|
 | **Main Purpose** | Complete environment initialization | Update workflows and templates |
 | **API Configuration** | ✅ Will configure | ❌ Won't modify |
@@ -290,16 +290,16 @@ If version check doesn't prompt:
 | **Backup** | ✅ Creates backup | ✅ Creates backup |
 
 > 💡 **Recommendations**:
-> - Use `zcf init` for first-time use or when you need to modify API/MCP configuration
-> - Use `zcf update` when you only need to update workflows and templates
+> - Use `ccx-kit init` for first-time use or when you need to modify API/MCP configuration
+> - Use `ccx-kit update` when you only need to update workflows and templates
 
 ## Related Resources
 
-- [zcf init](init.md) - Complete initialization command
+- [ccx-kit init](init.md) - Complete initialization command
 - [Workflow System](../features/workflows.md) - Detailed workflow information
 - [Configuration Management](../features/multi-config.md) - Backup and restore
 - [check-updates](check-updates.md) - Version check command
 
-> 💡 **Tip**: It's recommended to regularly run `zcf update` to keep workflow templates and prompts up to date, especially when new features are released or templates are updated.
+> 💡 **Tip**: It's recommended to regularly run `ccx-kit update` to keep workflow templates and prompts up to date, especially when new features are released or templates are updated.
 
 

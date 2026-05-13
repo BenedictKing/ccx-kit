@@ -4,13 +4,13 @@ title: CCX 代理管理
 
 # CCX 代理管理
 
-`npx ccx-kit ccr` 提供 CCX 代理的完整管理菜单，包括安装、配置、服务控制、渠道管理和连通性修复等功能。
+`npx ccx-kit ccx` 提供 CCX 代理的完整管理菜单，包括安装、配置、服务控制、渠道管理和连通性修复等功能。
 
 ## 命令格式
 
 ```bash
 # 打开 CCX 管理菜单
-npx ccx-kit ccr
+npx ccx-kit ccx
 
 # 或通过主菜单访问
 npx ccx-kit
@@ -19,7 +19,7 @@ npx ccx-kit
 
 ## 菜单选项
 
-运行 `npx ccx-kit ccr` 后会显示以下菜单（共 10 项）：
+运行 `npx ccx-kit ccx` 后会显示以下菜单（共 10 项）：
 
 ```
 ═══════════════════════════════════════════════════
@@ -60,7 +60,7 @@ npx ccx-kit
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 1
 # 按提示完成配置
 ```
@@ -86,7 +86,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 2
 # 等待服务启动后，访问 http://localhost:3688/ui
 ```
@@ -103,7 +103,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 3
 ```
 
@@ -118,7 +118,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 4
 ```
 
@@ -132,7 +132,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 5
 ```
 
@@ -147,7 +147,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 6
 ```
 
@@ -178,7 +178,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 7
 # 选择 DeepSeek
 # 选择 DeepSeek (Codex) - Responses 协议
@@ -203,7 +203,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 8
 # 选择要测试的渠道
 # 确认测试模型
@@ -216,7 +216,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 9
 ```
 
@@ -240,7 +240,7 @@ npx ccx-kit ccr
 
 **示例**：
 ```bash
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 10
 # 自动检测并修复
 ```

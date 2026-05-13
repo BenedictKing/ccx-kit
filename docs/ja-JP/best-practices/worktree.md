@@ -4,7 +4,7 @@ title: Worktree 並列開発
 
 # Worktree 並列開発
 
-Git Worktree は同一リポジトリに複数の作業ツリーを作成できる機能です。各作業ツリーは独立したファイルシステムを持ち、異なるブランチを同時に扱えます。ZCF の `/git-worktree` スマートコマンドを使えば Worktree 管理を直感的に行えます。
+Git Worktree は同一リポジトリに複数の作業ツリーを作成できる機能です。各作業ツリーは独立したファイルシステムを持ち、異なるブランチを同時に扱えます。CCX-Kit の `/git-worktree` スマートコマンドを使えば Worktree 管理を直感的に行えます。
 
 ## Worktree とは
 
@@ -95,7 +95,7 @@ Project/
     └── ...
 ```
 
-## ZCF ワークフローとの連携
+## CCX-Kit ワークフローとの連携
 
 ### マルチライン並列 + SL ロールバック
 
@@ -135,11 +135,11 @@ Project/
 
 ```bash
 # メインは GLM プロバイダー設定
-npx zcf config-switch glm-provider
+npx ccx-kit config-switch glm-provider
 
 # Worktree では 302.AI プロバイダー設定
 cd ../.zcf/project-name/feat/test
-npx zcf config-switch 302ai-provider
+npx ccx-kit config-switch 302ai-provider
 ```
 
 ### 5. 進捗ドキュメント
@@ -177,5 +177,5 @@ npx zcf config-switch 302ai-provider
 ## 関連ドキュメント
 
 - [Git スマートコマンド](../workflows/git-commands.md)
-- [ZCF 6 段階ワークフロー](../workflows/zcf-workflow.md)
+- [CCX-Kit 6 段階ワークフロー](../workflows/zcf-workflow.md)
 - [Config Switch](../cli/config-switch.md)

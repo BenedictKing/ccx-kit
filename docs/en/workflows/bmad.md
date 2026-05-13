@@ -158,7 +158,7 @@ Combining with MCP services can improve analysis quality:
 
 ```bash
 # Configure MCP services
-npx zcf
+npx ccx-kit
 # Select 4 (Configure MCP)
 
 # Recommended services:
@@ -228,10 +228,10 @@ pwd
 ls -la ~/.claude/workflows/bmad/
 
 # 3. Reinstall workflow
-npx zcf update -w bmadWorkflow
+npx ccx-kit update -w bmadWorkflow
 
 # 4. Check Claude Code version
-npx zcf check-updates
+npx ccx-kit check-updates
 ```
 
 ### Document Generation Issues
@@ -262,7 +262,7 @@ cat ~/.claude/workflows/bmad/bmad-init.md
 cat ~/.claude/settings.json | jq .mcpServers
 
 # 3. Reconfigure MCP services (if needed)
-npx zcf
+npx ccx-kit
 # Select 4 (Configure MCP)
 ```
 

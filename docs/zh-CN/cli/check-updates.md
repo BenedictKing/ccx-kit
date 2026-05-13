@@ -4,24 +4,24 @@ title: 版本检查
 
 # 版本检查
 
-`zcf check-updates` 用于检测并更新 ZCF 工具链中的各个组件，包括 ZCF 本身、Claude Code、CCR、CCometixLine、Codex 等工具。
+`ccx-kit check-updates` 用于检测并更新 ZCF 工具链中的各个组件，包括 ZCF 本身、Claude Code、CCR、CCometixLine、Codex 等工具。
 
-> **别名**：可使用同等效果的 `zcf check`（如 `npx zcf check -T cx`）。
+> **别名**：可使用同等效果的 `ccx-kit check`（如 `npx ccx-kit check -T cx`）。
 
 ## 命令格式
 
 ```bash
 # 检查所有工具更新（Claude Code 模式）
-npx zcf check
+npx ccx-kit check
 
 # 检查 Codex 相关工具更新
-npx zcf check -T cx
+npx ccx-kit check -T cx
 
 # 非交互模式（自动更新，跳过确认）
-npx zcf check -s
+npx ccx-kit check -s
 
 # 通过主菜单访问
-npx zcf
+npx ccx-kit
 # 然后选择 +. 检查更新
 ```
 
@@ -119,7 +119,7 @@ CCometixLine
 
 ```bash
 # 每周检查一次
-npx zcf check
+npx ccx-kit check
 ```
 
 ### 自动化更新
@@ -128,7 +128,7 @@ npx zcf check
 
 ```bash
 # 自动更新所有工具
-npx zcf check -s
+npx ccx-kit check -s
 ```
 
 ### 针对性更新
@@ -137,7 +137,7 @@ npx zcf check -s
 
 ```bash
 # 只检查 Codex 相关工具
-npx zcf check -T cx
+npx ccx-kit check -T cx
 ```
 
 ## 更新策略
@@ -175,14 +175,14 @@ npx zcf check -T cx
 - **权限问题**：需要 sudo 权限（macOS/Linux）
   ```bash
   # 使用 sudo 执行
-  sudo npx zcf check
+  sudo npx ccx-kit check
   ```
 
 - **端口占用**：服务正在运行无法更新
   ```bash
   # 先停止服务再更新
   ccr stop
-  npx zcf check
+  npx ccx-kit check
   ```
 
 ## 版本兼容性
@@ -235,15 +235,15 @@ ccline --version
 codex --version
 ```
 
-## 与 zcf init 联动
+## 与 ccx-kit init 联动
 
-`zcf init` 的备份功能可以在更新前自动备份配置：
+`ccx-kit init` 的备份功能可以在更新前自动备份配置：
 
 ```bash
 # 更新前先初始化（会备份配置）
-npx zcf init
+npx ccx-kit init
 # 或手动使用备份功能
-npx zcf i -s -r backup
+npx ccx-kit i -s -r backup
 ```
 
 ## 常见问题
@@ -262,7 +262,7 @@ A:
 A: 
 1. 检查工具是否正确安装：`which ccr`
 2. 查看错误日志
-3. 尝试重新安装：`npx zcf ccr`（对于 CCR）
+3. 尝试重新安装：`npx ccx-kit ccx`（对于 CCR）
 
 ### Q: 如何回退到旧版本？
 

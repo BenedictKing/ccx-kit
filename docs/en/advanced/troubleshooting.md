@@ -21,7 +21,7 @@ This document compiles common problems and solutions encountered when using ZCF,
 
 ### 1. Initialization Failed or Stuck
 
-**Symptoms**: No response or error after running `npx zcf init`
+**Symptoms**: No response or error after running `npx ccx-kit init`
 
 **Possible Causes**:
 - Node.js version too low
@@ -44,11 +44,11 @@ nvm use 22
 ls -la ~/.claude ~/.codex
 
 # If directory doesn't exist or insufficient permissions, manually create
-mkdir -p ~/.claude ~/.codex ~/.ufomiao/zcf
-chmod 755 ~/.claude ~/.codex ~/.ufomiao/zcf
+mkdir -p ~/.claude ~/.codex ~/.ccx-kit
+chmod 755 ~/.claude ~/.codex ~/.ccx-kit
 
 # 3. Skip MCP installation (if network issues)
-npx zcf init -s -m skip
+npx ccx-kit init -s -m skip
 
 # 4. Check network connection
 ping npmjs.com
@@ -69,7 +69,7 @@ ls -la ~/.claude/backup/
 cp -r ~/.claude/backup/backup_latest_timestamp/* ~/.claude/
 
 # 3. Reinitialize
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 3. Configuration Directory Creation Failed
@@ -80,13 +80,13 @@ npx zcf init --config-action backup
 
 ```bash
 # macOS/Linux
-mkdir -p ~/.claude ~/.codex ~/.ufomiao/zcf
-chmod 755 ~/.claude ~/.codex ~/.ufomiao/zcf
+mkdir -p ~/.claude ~/.codex ~/.ccx-kit
+chmod 755 ~/.claude ~/.codex ~/.ccx-kit
 
 # Windows (PowerShell)
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude"
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex"
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ufomiao\zcf"
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ccx-kit"
 
 # Check disk space
 df -h ~  # macOS/Linux
@@ -106,14 +106,14 @@ cat ~/.claude/settings.json | jq .env
 cat ~/.codex/config.toml | grep -A 5 apiKey
 
 # 2. Reconfigure API
-npx zcf init
+npx ccx-kit init
 # Select 3 (Configure API or CCR)
 # Or use command line
-npx zcf init -s -t api_key -k "your-api-key"
+npx ccx-kit init -s -t api_key -k "your-api-key"
 
 # 3. For CCR mode, ensure Router is running
-npx zcf ccr status
-npx zcf ccr start
+npx ccx-kit ccx status
+npx ccx-kit ccx start
 ```
 
 ### 2. API Key Format Error
@@ -132,7 +132,7 @@ npx zcf ccr start
 # Or try to verify in provider console
 
 # Re-enter correct key
-npx zcf init -s -p 302ai -k "correct-key"
+npx ccx-kit init -s -p 302ai -k "correct-key"
 ```
 
 ### 3. API Endpoint Unreachable
@@ -158,7 +158,7 @@ export HTTPS_PROXY=http://127.0.0.1:7890
 # MiniMax: https://api.minimaxi.com/anthropic
 
 # 4. Use provider preset (recommended)
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 ```
 
 ### 4. Multiple API Configuration Conflicts
@@ -169,10 +169,10 @@ npx zcf init -s -p 302ai -k "sk-xxx"
 
 ```bash
 # 1. List all configurations
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # 2. Switch to correct configuration
-npx zcf config-switch provider-name
+npx ccx-kit config-switch provider-name
 
 # 3. Check default configuration in configuration file
 cat ~/.claude/settings.json | jq .apiKeys
@@ -193,7 +193,7 @@ ls -la ~/.claude/workflows/
 ls -la ~/.codex/prompts/
 
 # 2. Reimport workflows
-npx zcf update -w all
+npx ccx-kit update -w all
 
 # 3. Check Codex configuration (Codex requires managed = true)
 cat ~/.codex/config.toml | grep managed
@@ -232,10 +232,10 @@ head -20 ~/.claude/workflows/zcf-workflow/workflow.md
 
 ```bash
 # Update workflow templates
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 
 # Or force update
-npx zcf init --config-action docs-only -w all
+npx ccx-kit init --config-action docs-only -w all
 ```
 
 ## MCP Service Issues
@@ -252,7 +252,7 @@ cat ~/.claude/settings.json | jq .mcpServers
 cat ~/.codex/config.toml | grep -A 10 mcp_server
 
 # 2. Reconfigure MCP
-npx zcf
+npx ccx-kit
 # Select 4 (Configure MCP)
 
 # 3. Check service dependencies
@@ -454,7 +454,7 @@ cat ~/.codex/config.toml | grep -A 10 modelProvider
 cat ~/.codex/auth.json
 
 # 5. Reconfigure
-npx zcf init -T codex -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -T codex -s -p 302ai -k "sk-xxx"
 ```
 
 ### 3. Codex Workflow Command Format
@@ -472,7 +472,7 @@ npx zcf init -T codex -s -p 302ai -k "sk-xxx"
 ls -la ~/.codex/prompts/
 
 # Reimport workflows
-npx zcf update -T codex -g zh-CN
+npx ccx-kit update -T codex -g zh-CN
 ```
 
 ## CCR Related Issues
@@ -485,14 +485,14 @@ npx zcf update -T codex -g zh-CN
 
 ```bash
 # 1. Check CCR installation
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # 2. Check port occupancy
 lsof -i :3456  # macOS/Linux
 netstat -ano | findstr :3456  # Windows
 
 # 3. Reinstall CCR
-npx zcf ccr install
+npx ccx-kit ccx install
 
 # 4. Check configuration file
 cat ~/.claude-code-router/config.json
@@ -524,10 +524,10 @@ netstat -ano | findstr :3456
 taskkill /PID 1208 /F
 
 # 3. Restart CCR
-npx zcf ccr restart
+npx ccx-kit ccx restart
 
 # 4. Check status
-npx zcf ccr status
+npx ccx-kit ccx status
 ```
 
 #### macOS/Linux Platform
@@ -540,10 +540,10 @@ lsof -t -i:3456 | xargs kill
 lsof -t -i:3456 | xargs -r kill
 
 # 2. Restart CCR
-npx zcf ccr restart
+npx ccx-kit ccx restart
 
 # 3. Check status
-npx zcf ccr status
+npx ccx-kit ccx status
 ```
 
 **Verification Steps**:
@@ -554,10 +554,10 @@ lsof -i :3456  # macOS/Linux (should have no output)
 netstat -ano | findstr :3456  # Windows (should have no output)
 
 # If port is released, restart
-npx zcf ccr start
+npx ccx-kit ccx start
 
 # Verify CCR running normally
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # If status is normal, Claude Code should be able to connect normally
 ```
@@ -579,9 +579,9 @@ curl http://127.0.0.1:3456/health
 cat ~/.claude/settings.json | jq .env.ANTHROPIC_BASE_URL
 
 # 4. Reconfigure CCR proxy
-npx zcf ccr
+npx ccx-kit ccx
 # Or
-npx zcf init -s -t ccr_proxy
+npx ccx-kit init -s -t ccr_proxy
 ```
 
 ### 3. CCR Web UI Cannot Be Accessed
@@ -592,7 +592,7 @@ npx zcf init -s -t ccr_proxy
 
 ```bash
 # 1. Confirm CCR is running
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # 2. Check port
 lsof -i :3456
@@ -622,7 +622,7 @@ cp -r ~/.claude/backup/backup_latest_timestamp/* ~/.claude/
 cp -r ~/.codex/backup/backup_latest_timestamp/* ~/.codex/
 
 # 3. Reinitialize (if backup unavailable)
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 2. Backup Failed
@@ -654,13 +654,13 @@ cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d)
 
 ```bash
 # 1. View all configurations
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # 2. Backup current configuration
 cp -r ~/.claude ~/.claude.conflict.backup
 
 # 3. Reinitialize using merge strategy
-npx zcf init --config-action merge
+npx ccx-kit init --config-action merge
 
 # 4. Manually merge configuration (if needed)
 # Edit configuration file, merge conflicting configuration items
@@ -693,7 +693,7 @@ cat "$env:USERPROFILE\.claude\settings.json"
 ```bash
 # ZCF automatically fixes Windows MCP configuration format
 # Running update command will automatically fix
-npx zcf update
+npx ccx-kit update
 
 # Or manually check configuration format
 cat "$env:USERPROFILE\.claude\settings.json" | jq .mcpServers
@@ -753,13 +753,13 @@ nvm install 20
 
 ```bash
 # Enable verbose output
-npx zcf init --verbose 2>&1 | tee zcf-debug.log
+npx ccx-kit init --verbose 2>&1 | tee ccx-kit-debug.log
 
 # View error messages
-cat zcf-debug.log | grep -i error
+cat ccx-kit-debug.log | grep -i error
 
 # Check version information
-npx zcf --version
+npx ccx-kit --version
 ```
 
 ### Recovery History
@@ -776,9 +776,9 @@ cp -r ~/.claude/backup/backup_YYYY-MM-DD_HH-mm-ss/* ~/.claude/
 ### Documentation Resources
 
 - Read repository `CLAUDE.md` and `AGENTS.md` to understand system prompt requirements
-- Check [GitHub Issues](https://github.com/UfoMiao/zcf/issues) to search for similar problems
+- Check [GitHub Issues](https://github.com/BenedictKing/ccx-kit/issues) to search for similar problems
 - When submitting issues on GitHub Issues, include:
-  - `npx zcf --version` output
+  - `npx ccx-kit --version` output
   - Complete terminal logs
   - Operating system and Node.js version
   - Reproduction steps

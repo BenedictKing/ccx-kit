@@ -16,7 +16,7 @@ ZCF's configurations are distributed across the following directories:
 |------|------|---------|
 | `~/.claude/` | Claude Code main configuration directory | `settings.json`, `CLAUDE.md`, `prompts/`, `workflows/` |
 | `~/.codex/` | Codex main configuration directory | `config.toml`, `auth.json`, `prompts/`, `AGENTS.md` |
-| `~/.ufomiao/zcf/` | ZCF global configuration directory | `config.toml` |
+| `~/.ccx-kit/` | ZCF global configuration directory | `config.toml` |
 | `~/.claude-code-router/` | CCR configuration directory | `config.json` |
 | `~/.claude/backup/` | Claude Code backup directory | Timestamp backup files |
 | `~/.codex/backup/` | Codex backup directory | Timestamp backup files |
@@ -54,7 +54,7 @@ ZCF's configurations are distributed across the following directories:
 #### ZCF Global Configuration
 
 ```
-~/.ufomiao/zcf/
+~/.ccx-kit/
 ├── config.toml            # ZCF global configuration (TOML format)
 │   ├── preferredLang      # CLI language preference
 │   ├── templateLang       # Template language preference
@@ -86,10 +86,10 @@ In non-interactive mode (`--skip-prompt`), ZCF will automatically apply default 
 
 ```bash
 # Specify configuration handling strategy
-npx zcf init -s --config-action merge
+npx ccx-kit init -s --config-action merge
 
 # Only update documents
-npx zcf init -s --config-action docs-only
+npx ccx-kit init -s --config-action docs-only
 ```
 
 ### Merge Strategy Details
@@ -120,7 +120,7 @@ When configuring API settings, you can specify each model individually:
 
 ```bash
 # Configure all four models
-npx zcf i -s \
+npx ccx-kit i -s \
   --api-key "sk-xxx" \
   --api-model "claude-sonnet-4-5" \
   --api-haiku-model "claude-haiku-4-5" \
@@ -201,7 +201,7 @@ The `applyAiLanguageDirective` function will write corresponding language direct
 Using `custom` option allows input of custom language directives:
 
 ```bash
-npx zcf init --ai-output-lang custom
+npx ccx-kit init --ai-output-lang custom
 # Enter: Reply in Japanese, maintain professional and polite tone
 ```
 
@@ -223,7 +223,7 @@ Language directive configuration locations:
 The `resolveTemplateLanguage` function determines template language by considering the following factors:
 
 1. **Command Line Parameters**: `--config-lang` or `--all-lang`
-2. **Configuration File**: `templateLang` in `~/.ufomiao/zcf/config.toml`
+2. **Configuration File**: `templateLang` in `~/.ccx-kit/config.toml`
 3. **Interactive Input**: If not specified, will prompt user to select
 4. **System Default**: Finally fallback to `en`
 
@@ -233,10 +233,10 @@ Template language and AI output language are independent of each other and can b
 
 ```bash
 # Chinese templates + English output (suitable for projects requiring English code comments)
-npx zcf init --config-lang zh-CN --ai-output-lang en
+npx ccx-kit init --config-lang zh-CN --ai-output-lang en
 
 # English templates + Chinese output (suitable for international teams)
-npx zcf init --config-lang en --ai-output-lang zh-CN
+npx ccx-kit init --config-lang en --ai-output-lang zh-CN
 ```
 
 ### Template Language Effects
@@ -256,8 +256,8 @@ It's recommended to use Git to manage configuration directories:
 
 ```bash
 # Create configuration repository
-mkdir ~/zcf-configs
-cd ~/zcf-configs
+mkdir ~/ccx-kit-configs
+cd ~/ccx-kit-configs
 git init
 
 # Add configuration files (note: exclude sensitive information)
@@ -275,7 +275,7 @@ git commit -m "Add ZCF templates and workflows"
 
 ### Compare Differences
 
-Compare differences before and after executing `zcf update`:
+Compare differences before and after executing `ccx-kit update`:
 
 ```bash
 # Before update
@@ -283,7 +283,7 @@ git add ~/.claude/
 git commit -m "Before update"
 
 # Execute update
-npx zcf update
+npx ccx-kit update
 
 # View differences
 git diff ~/.claude/
@@ -329,8 +329,8 @@ Synchronize configurations across multiple devices:
 
 ```bash
 # Method 1: Use Git
-git clone ~/zcf-configs
-cp -r zcf-configs/templates/* ~/.claude/workflows/
+git clone ~/ccx-kit-configs
+cp -r ccx-kit-configs/templates/* ~/.claude/workflows/
 
 # Method 2: Use cloud storage
 rsync -av ~/.claude/workflows/ ~/Cloud/.claude/workflows/
@@ -369,10 +369,10 @@ If upgrading from old version of ZCF:
 
 ```bash
 # ZCF will automatically detect and migrate configuration
-npx zcf init
+npx ccx-kit init
 
 # Or manually check migration
-cat ~/.ufomiao/zcf/config.toml
+cat ~/.ccx-kit/config.toml
 # Check if there are migration prompts
 ```
 
@@ -385,7 +385,7 @@ Migrate from Claude Code to Codex:
 cp -r ~/.claude ~/.claude.backup
 
 # 2. Initialize Codex
-npx zcf init -T codex
+npx ccx-kit init -T codex
 
 # 3. Manually migrate workflows and templates (if needed)
 # Note: Template formats for Claude Code and Codex may differ
@@ -399,14 +399,14 @@ If you encounter configuration conflicts:
 
 ```bash
 # 1. View conflict details
-npx zcf init
+npx ccx-kit init
 # View conflict prompts when selecting merge strategy
 
 # 2. Manually merge configuration
 # Edit configuration file, manually merge conflicting items
 
 # 3. Use backup strategy to start over
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### Configuration Lost
@@ -421,7 +421,7 @@ ls -lt ~/.claude/backup/ | head -5
 cp -r ~/.claude/backup/backup_latest_timestamp/* ~/.claude/
 
 # 3. Reinitialize (if backup unavailable)
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 ```
 
 ### Configuration File Corrupted
@@ -436,7 +436,7 @@ cat ~/.claude/settings.json | jq .
 cp ~/.claude/backup/backup_*/settings.json ~/.claude/
 
 # 3. Or reinitialize
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 ```
 
 ## Related Resources

@@ -6,7 +6,7 @@ title: Installation Guide
 
 This guide will help you quickly get started with ZCF, covering the complete process from environment check to verification. Whether you're using it for the first time or want to quickly deploy on a new device, you can complete the setup by following this guide.
 
-> 💡 **Tip**: ZCF requires no installation, just run `npx zcf` directly. This guide mainly covers environment configuration and usage flow.
+> 💡 **Tip**: ZCF requires no installation, just run `npx ccx-kit` directly. This guide mainly covers environment configuration and usage flow.
 
 ## Environment Requirements
 
@@ -43,7 +43,7 @@ npx --version
 
 ZCF provides two usage methods: **Interactive Use** (suitable for beginners) and **Command Line Direct Use** (suitable for automation and CI/CD).
 
-> 💡 **Tip**: ZCF requires no installation, just use the `npx zcf` command to run.
+> 💡 **Tip**: ZCF requires no installation, just use the `npx ccx-kit` command to run.
 
 ### Method 1: Interactive Use (Recommended for Beginners)
 
@@ -52,7 +52,7 @@ ZCF provides a friendly interactive menu that allows you to complete all configu
 #### Start ZCF
 
 ```bash
-npx zcf
+npx ccx-kit
 ```
 
 On first run, ZCF will display a welcome screen and ask you which interface language you want to use:
@@ -197,12 +197,12 @@ ZCF supports API provider presets, which can simplify configuration from 5+ para
 
 ```bash
 # Use 302.AI provider (recommended)
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 # Other providers
-npx zcf i -s -p glm -k "sk-xxx"        # GLM
-npx zcf i -s -p minimax -k "sk-xxx"    # MiniMax
-npx zcf i -s -p kimi -k "sk-xxx"       # Kimi
+npx ccx-kit i -s -p glm -k "sk-xxx"        # GLM
+npx ccx-kit i -s -p minimax -k "sk-xxx"    # MiniMax
+npx ccx-kit i -s -p kimi -k "sk-xxx"       # Kimi
 ```
 
 > ✅ **Advantages**: Presets automatically configure baseUrl, authentication method, and default model, greatly simplifying the configuration process.
@@ -213,15 +213,15 @@ If you need to use a custom API endpoint:
 
 ```bash
 # Manually specify all parameters
-npx zcf i -s -g zh-CN -t api_key -k "sk-xxx" -u "https://api.example.com"
+npx ccx-kit i -s -g zh-CN -t api_key -k "sk-xxx" -u "https://api.example.com"
 
 # Configure both primary and fast models
-npx zcf i -s -p 302ai -k "sk-xxx" \
+npx ccx-kit i -s -p 302ai -k "sk-xxx" \
   --api-model "claude-sonnet-4-5" \
   --api-fast-model "claude-haiku-4-5"
 
 # Specify output styles and workflows
-npx zcf i -s -p 302ai -k "sk-xxx" \
+npx ccx-kit i -s -p 302ai -k "sk-xxx" \
   --output-styles engineer-professional,nekomata-engineer \
   --workflows commonTools,sixStepsWorkflow \
   --default-output-style engineer-professional
@@ -233,14 +233,14 @@ ZCF supports configuring multiple APIs for easy switching in different scenarios
 
 ```bash
 # Configure multiple APIs using JSON string
-npx zcf i -s --api-configs '[
+npx ccx-kit i -s --api-configs '[
   {"provider":"302ai","key":"sk-xxx"},
   {"provider":"glm","key":"sk-yyy"},
   {"name":"custom","type":"api_key","key":"sk-zzz","url":"https://custom.api.com","primaryModel":"claude-sonnet-4-5","fastModel":"claude-haiku-4-5","default":true}
 ]'
 
 # Use JSON file configuration (suitable for complex multi-configuration scenarios)
-npx zcf i -s --api-configs-file ./api-configs.json
+npx ccx-kit i -s --api-configs-file ./api-configs.json
 ```
 
 `api-configs.json` file example:
@@ -275,7 +275,7 @@ npx zcf i -s --api-configs-file ./api-configs.json
 | `--mcp-services` | `-m` | MCP services to install | `all`, `skip` or comma-separated list |
 | `--code-type` | `-T` | Target code tool type | `claude-code`, `codex`, `cc`, `cx` |
 
-> 📖 **Complete Parameter List**: For detailed parameter descriptions, please refer to the [CLI Commands - zcf init](../cli/init.md) chapter.
+> 📖 **Complete Parameter List**: For detailed parameter descriptions, please refer to the [CLI Commands - ccx-kit init](../cli/init.md) chapter.
 
 ## Codex Support
 
@@ -285,10 +285,10 @@ ZCF provides complete Codex support, allowing you to manage both Claude Code and
 
 ```bash
 # Method 1: Command line direct initialization
-npx zcf i -s -T codex -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -T codex -p 302ai -k "sk-xxx"
 
 # Method 2: Through interactive menu
-npx zcf → Select S (Switch Tool) → Select 1 (Complete Initialization)
+npx ccx-kit → Select S (Switch Tool) → Select 1 (Complete Initialization)
 ```
 
 ### Codex Configuration Features
@@ -310,7 +310,7 @@ ZCF fully supports cross-platform operation, including Windows, macOS, Linux, WS
 - **Configuration Fix**: Existing incorrect configurations will be automatically fixed during updates
 - **Zero Configuration**: Windows users need no additional operations, consistent with macOS/Linux experience
 
-> ⚠️ **Note**: If you encounter MCP connection issues on Windows, running `npx zcf` will automatically fix the configuration format.
+> ⚠️ **Note**: If you encounter MCP connection issues on Windows, running `npx ccx-kit` will automatically fix the configuration format.
 
 ### WSL Support (v2.12.12+)
 
@@ -334,10 +334,10 @@ After installation is complete, follow these steps to verify that the environmen
 
 ```bash
 # Check if ZCF command is available
-npx zcf --help
+npx ccx-kit --help
 
 # Check version information
-npx zcf --version
+npx ccx-kit --version
 ```
 
 ### 2. Verify Workflows
@@ -384,16 +384,16 @@ Please query the latest documentation for React useState hook
 ```
 If Context7 is working properly, AI will use the latest documentation to answer.
 
-> 🔧 **Troubleshooting**: If services are not connected, run `npx zcf` → `4` to reconfigure MCP services.
+> 🔧 **Troubleshooting**: If services are not connected, run `npx ccx-kit` → `4` to reconfigure MCP services.
 
 ### 4. Verify API Connection
 
 ```bash
 # View usage statistics (if using official API)
-npx zcf ccu
+npx ccx-kit ccu
 
 # Check CCR status (if using CCR proxy)
-npx zcf ccr
+npx ccx-kit ccx
 ```
 
 ### 5. Verify Output Style
@@ -419,13 +419,13 @@ Here's a complete deployment script example:
 #!/bin/bash
 
 # 1. Initialize Claude Code
-npx zcf i -s -p 302ai -k "$API_KEY" \
+npx ccx-kit i -s -p 302ai -k "$API_KEY" \
   --output-styles engineer-professional \
   --workflows all \
   --mcp-services all
 
 # 2. Verify installation
-npx zcf --version
+npx ccx-kit --version
 
 # 3. View configuration location
 echo "Claude Code configuration: ~/.claude/"
@@ -437,17 +437,17 @@ echo "Backup location: ~/.claude/backup/"
 If already initialized, just update workflows and templates:
 
 ```bash
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 ```
 
-> 📖 **Note**: `zcf update` will preserve your existing API configuration and MCP settings by default, only updating workflow templates and documents.
+> 📖 **Note**: `ccx-kit update` will preserve your existing API configuration and MCP settings by default, only updating workflow templates and documents.
 
 ### Scenario: Configure CCR Proxy
 
 If you need to use CCR (Claude Code Router) proxy:
 
 ```bash
-npx zcf ccr
+npx ccx-kit ccx
 ```
 
 After entering the CCR management menu, you can choose:
@@ -469,12 +469,12 @@ After entering the CCR management menu, you can choose:
 - Claude Code: `~/.claude/workflows/`
 - Codex: `~/.codex/prompts/`
 
-If files don't exist, run `npx zcf update` to re-import.
+If files don't exist, run `npx ccx-kit update` to re-import.
 
 ### Q: MCP service connection failed?
 
 **A**: 
-1. Check MCP service configuration: `npx zcf` → `4`
+1. Check MCP service configuration: `npx ccx-kit` → `4`
 2. Confirm services are installed (most are automatically installed via npm)
 3. For Exa, ensure `EXA_API_KEY` environment variable is set
 
@@ -482,14 +482,14 @@ If files don't exist, run `npx zcf update` to re-import.
 
 **A**: Use the config switch command:
 ```bash
-npx zcf config-switch --list  # List all configurations
-npx zcf cs provider-name      # Switch to specified configuration
+npx ccx-kit config-switch --list  # List all configurations
+npx ccx-kit cs provider-name      # Switch to specified configuration
 ```
 
 ### Q: Where are configuration files saved?
 
 **A**: 
-- **ZCF Configuration**: `~/.ufomiao/zcf/config.toml`
+- **ZCF Configuration**: `~/.ccx-kit/config.toml`
 - **Claude Code Configuration**: `~/.claude/settings.json` and `~/.claude/CLAUDE.md`
 - **Codex Configuration**: `~/.codex/config.toml` and `~/.codex/AGENTS.md`
 - **Backup Location**: `~/.claude/backup/` and `~/.codex/backup/`

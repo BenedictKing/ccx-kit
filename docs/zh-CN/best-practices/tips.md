@@ -10,11 +10,11 @@ title: 使用技巧
 
 ### 1. 善用交互式菜单
 
-**技巧**：习惯从 `npx zcf` 开始，所有功能都有编号提示，避免记忆命令细节。
+**技巧**：习惯从 `npx ccx-kit` 开始，所有功能都有编号提示，避免记忆命令细节。
 
 ```bash
 # 打开交互式菜单
-npx zcf
+npx ccx-kit
 
 # 菜单选项包括：
 # 1 - 完整初始化
@@ -43,13 +43,13 @@ npx zcf
 
 ```bash
 # 每周更新一次（推荐）
-npx zcf update
+npx ccx-kit update
 
 # 或使用缩写
-npx zcf u
+npx ccx-kit u
 
 # 非交互式更新
-npx zcf u -s -g zh-CN
+npx ccx-kit u -s -g zh-CN
 ```
 
 **最佳实践**：
@@ -63,13 +63,13 @@ npx zcf u -s -g zh-CN
 
 ```bash
 # 统一设置所有语言为中文
-npx zcf init -g zh-CN
+npx ccx-kit init -g zh-CN
 
 # 模板中文，AI 输出英文（适合需要英文代码注释的场景）
-npx zcf init -c zh-CN -a en
+npx ccx-kit init -c zh-CN -a en
 
 # 仅更新时切换语言
-npx zcf update -c en
+npx ccx-kit update -c en
 ```
 
 **使用场景**：
@@ -99,18 +99,18 @@ cp -r ~/.claude/* ../project-config/.claude/
 # 将配置目录链接到云存储
 
 # macOS/iCloud
-ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/.zcf-configs ~/.zcf-sync
+ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/.ccx-kit-configs ~/.ccx-kit-sync
 
 # 同步配置
-rsync -av ~/.claude/ ~/.zcf-sync/claude/
-rsync -av ~/.codex/ ~/.zcf-sync/codex/
+rsync -av ~/.claude/ ~/.ccx-kit-sync/claude/
+rsync -av ~/.codex/ ~/.ccx-kit-sync/codex/
 ```
 
 #### 方法 3：使用版本控制
 
 ```bash
 # 创建配置仓库
-mkdir ~/zcf-configs && cd ~/zcf-configs
+mkdir ~/ccx-kit-configs && cd ~/ccx-kit-configs
 git init
 
 # 添加配置文件（注意排除敏感信息）
@@ -131,7 +131,7 @@ git pull origin main
 
 ```bash
 #!/bin/bash
-# deploy-zcf.sh - 自动化部署 ZCF 配置
+# deploy-ccx-kit.sh - 自动化部署 CCX-Kit 配置
 
 # 从环境变量读取配置
 API_KEY=${ZCF_API_KEY}
@@ -139,7 +139,7 @@ PROVIDER=${ZCF_PROVIDER:-302ai}
 LANG=${ZCF_LANG:-zh-CN}
 
 # 非交互式初始化
-npx zcf init -s \
+npx ccx-kit init -s \
   --provider "$PROVIDER" \
   --api-key "$API_KEY" \
   --all-lang "$LANG" \
@@ -147,7 +147,7 @@ npx zcf init -s \
   --workflows all \
   --output-styles all
 
-echo "ZCF 配置部署完成"
+echo "CCX-Kit 配置部署完成"
 ```
 
 #### 新员工入职脚本
@@ -159,13 +159,13 @@ echo "ZCF 配置部署完成"
 echo "配置开发环境..."
 
 # 1. 配置 ZCF（使用配置文件）
-npx zcf init -s --api-configs-file ./team-api-configs.json
+npx ccx-kit init -s --api-configs-file ./team-api-configs.json
 
 # 2. 更新工作流
-npx zcf update -s -g zh-CN
+npx ccx-kit update -s -g zh-CN
 
 # 3. 检查工具版本
-npx zcf check-updates
+npx ccx-kit check-updates
 
 echo "开发环境配置完成！"
 ```
@@ -180,7 +180,7 @@ SERVERS=("server1" "server2" "server3")
 
 for server in "${SERVERS[@]}"; do
   echo "部署到 $server..."
-  ssh "$server" "npx zcf init -s -p 302ai -k '${API_KEY}' -g zh-CN"
+  ssh "$server" "npx ccx-kit init -s -p 302ai -k '${API_KEY}' -g zh-CN"
 done
 ```
 
@@ -190,13 +190,13 @@ done
 
 ```bash
 # 查看使用统计
-npx zcf ccu
+npx ccx-kit ccu
 
 # 输出 JSON 格式（用于集成到监控系统）
-npx zcf ccu --json > usage.json
+npx ccx-kit ccu --json > usage.json
 
 # 查看详细统计
-npx zcf ccu --verbose
+npx ccx-kit ccu --verbose
 ```
 
 **集成示例**：
@@ -206,7 +206,7 @@ npx zcf ccu --verbose
 # monitor-usage.sh - 使用量监控脚本
 
 # 获取使用量
-USAGE=$(npx zcf ccu --json)
+USAGE=$(npx ccx-kit ccu --json)
 
 # 解析 JSON（使用 jq）
 TOKENS=$(echo "$USAGE" | jq '.tokens.total')
@@ -226,7 +226,7 @@ fi
 
 ```bash
 # 传统方式（需要多个参数）
-npx zcf init -s \
+npx ccx-kit init -s \
   -t api_key \
   -k "sk-xxx" \
   -u "https://api.302.ai/v1" \
@@ -234,7 +234,7 @@ npx zcf init -s \
   -F "claude-haiku-4-5"
 
 # 使用预设（仅需 2 个参数）
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 ```
 
 **支持的提供商**：`302ai`, `glm`, `minimax`, `kimi`, `custom`
@@ -245,16 +245,16 @@ npx zcf init -s -p 302ai -k "sk-xxx"
 
 ```bash
 # 列出所有配置
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # 切换到工作配置
-npx zcf config-switch work
+npx ccx-kit config-switch work
 
 # 切换到个人配置
-npx zcf config-switch personal
+npx ccx-kit config-switch personal
 
 # 在 Codex 中切换
-npx zcf config-switch work --code-type codex
+npx ccx-kit config-switch work --code-type codex
 ```
 
 **命名建议**：
@@ -287,7 +287,7 @@ npx zcf config-switch work --code-type codex
 
 ```bash
 # 查看可用风格
-npx zcf init -s -o all
+npx ccx-kit init -s -o all
 
 # 在对话中切换风格
 # Claude Code: /output-style engineer-professional
@@ -306,10 +306,10 @@ npx zcf init -s -o all
 
 ```bash
 # 仅安装必需的服务
-npx zcf init -s -m context7,open-websearch
+npx ccx-kit init -s -m context7,open-websearch
 
 # 查看所有可用服务
-npx zcf
+npx ccx-kit
 # 选择 4 (配置 MCP)，查看列表
 ```
 
@@ -326,7 +326,7 @@ npx zcf
 
 ```bash
 # 自动备份（init 和 update 时自动执行）
-npx zcf init  # 自动备份
+npx ccx-kit init  # 自动备份
 
 # 手动备份特定配置
 cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d)
@@ -347,7 +347,7 @@ ls -lt ~/.claude/backup/ | head -5
 cp -r ~/.claude/backup/backup_2025-01-15_10-30-45/* ~/.claude/
 
 # 3. 或重新初始化（会创建新备份）
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 14. 版本管理集成
@@ -356,7 +356,7 @@ npx zcf init --config-action backup
 
 ```bash
 # 创建 .gitignore
-cat > ~/.zcf-configs/.gitignore << EOF
+cat > ~/.ccx-kit-configs/.gitignore << EOF
 # 排除敏感信息
 *.key
 auth.json
@@ -380,13 +380,13 @@ git commit -m "Add ZCF templates and workflows"
 
 ```bash
 # 1. 仅安装需要的 MCP 服务
-npx zcf init -s -m context7,open-websearch  # 仅安装必需服务
+npx ccx-kit init -s -m context7,open-websearch  # 仅安装必需服务
 
 # 2. 使用本地缓存（如果支持）
 # 某些 MCP 服务支持本地缓存，可以加快响应
 
 # 3. 定期清理备份
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ## 团队协作技巧
@@ -408,7 +408,7 @@ cat > team-config.json << EOF
 EOF
 
 # 团队成员使用相同配置
-npx zcf init -s --api-configs-file team-config.json -k "个人API密钥"
+npx ccx-kit init -s --api-configs-file team-config.json -k "个人API密钥"
 ```
 
 ### 17. 文档共享
@@ -451,7 +451,7 @@ cat ~/.claude/settings.json | jq .mcpServers
 ls -la ~/.claude/workflows/
 
 # 检查版本
-npx zcf check-updates
+npx ccx-kit check-updates
 ```
 
 ### 20. 日志分析
@@ -460,10 +460,10 @@ npx zcf check-updates
 
 ```bash
 # 启用详细输出
-npx zcf init --verbose 2>&1 | tee zcf.log
+npx ccx-kit init --verbose 2>&1 | tee ccx-kit.log
 
 # 查看日志
-cat zcf.log | grep -i error
+cat ccx-kit.log | grep -i error
 ```
 
 ## 相关资源

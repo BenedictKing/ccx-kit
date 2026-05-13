@@ -1,14 +1,14 @@
 ---
-title: zcf init
+title: ccx-kit init
 ---
 
-# zcf init
+# ccx-kit init
 
-`zcf init`（缩写 `zcf i`）是 ZCF 的核心命令，用于完整初始化 Claude Code 或 Codex 环境。它会自动安装必要的工具、配置 API、设置 MCP 服务、导入工作流和输出风格等。
+`ccx-kit init`（缩写 `ccx-kit i`）是 ZCF 的核心命令，用于完整初始化 Claude Code 或 Codex 环境。它会自动安装必要的工具、配置 API、设置 MCP 服务、导入工作流和输出风格等。
 
 ## 功能概述
 
-`zcf init` 命令会执行以下操作：
+`ccx-kit init` 命令会执行以下操作：
 
 1. 📦 **安装代码工具**：自动检测并安装 Claude Code 或 Codex CLI
 2. 🔑 **配置 API**：设置 API 密钥、认证方式、模型等
@@ -25,13 +25,13 @@ title: zcf init
 
 ```bash
 # 打开交互式初始化向导
-npx zcf init
+npx ccx-kit init
 
 # 或使用缩写
-npx zcf i
+npx ccx-kit i
 
 # 或通过主菜单
-npx zcf
+npx ccx-kit
 # 然后选择 1 (完整初始化)
 ```
 
@@ -51,10 +51,10 @@ npx zcf
 
 ```bash
 # 使用 API 提供商预设（最简单）
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 # 完整参数示例
-npx zcf i -s \
+npx ccx-kit i -s \
   --provider 302ai \
   --api-key "sk-xxx" \
   --code-type claude-code \
@@ -92,13 +92,13 @@ npx zcf i -s \
 
 ```bash
 # 初始化 Claude Code（默认）
-npx zcf i
+npx ccx-kit i
 
 # 初始化 Codex
-npx zcf i -T codex
+npx ccx-kit i -T codex
 
 # 使用缩写
-npx zcf i -T cx
+npx ccx-kit i -T cx
 ```
 
 ### API 配置参数
@@ -113,19 +113,19 @@ ZCF 支持 API 提供商预设，可以大大简化配置：
 
 ```bash
 # 使用 302.AI 提供商
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 # 使用 GLM 提供商
-npx zcf i -s -p glm -k "sk-xxx"
+npx ccx-kit i -s -p glm -k "sk-xxx"
 
 # 使用 MiniMax 提供商
-npx zcf i -s -p minimax -k "sk-xxx"
+npx ccx-kit i -s -p minimax -k "sk-xxx"
 
 # 使用 Kimi 提供商
-npx zcf i -s -p kimi -k "sk-xxx"
+npx ccx-kit i -s -p kimi -k "sk-xxx"
 
 # 使用自定义提供商（需要 URL）
-npx zcf i -s -p custom -k "sk-xxx" -u "https://api.example.com"
+npx ccx-kit i -s -p custom -k "sk-xxx" -u "https://api.example.com"
 ```
 
 #### 传统 API 配置参数
@@ -142,19 +142,19 @@ npx zcf i -s -p custom -k "sk-xxx" -u "https://api.example.com"
 
 ```bash
 # 使用 API Key
-npx zcf i -s -t api_key -k "sk-ant-xxx"
+npx ccx-kit i -s -t api_key -k "sk-ant-xxx"
 
 # 使用 Auth Token（官方登录）
-npx zcf i -s -t auth_token -k "your-auth-token"
+npx ccx-kit i -s -t auth_token -k "your-auth-token"
 
 # 使用 CCR 代理
-npx zcf i -s -t ccr_proxy
+npx ccx-kit i -s -t ccr_proxy
 
 # 跳过 API 配置
-npx zcf i -s -t skip
+npx ccx-kit i -s -t skip
 
 # 配置自定义模型
-npx zcf i -s -t api_key -k "sk-xxx" -M "claude-sonnet-4-5" -H "claude-haiku-4-5" -S "claude-sonnet-4-5" -O "claude-opus-4-5"
+npx ccx-kit i -s -t api_key -k "sk-xxx" -M "claude-sonnet-4-5" -H "claude-haiku-4-5" -S "claude-sonnet-4-5" -O "claude-opus-4-5"
 ```
 
 #### 多 API 配置
@@ -163,7 +163,7 @@ npx zcf i -s -t api_key -k "sk-xxx" -M "claude-sonnet-4-5" -H "claude-haiku-4-5"
 
 ```bash
 # 使用 JSON 字符串
-npx zcf i -s --api-configs '[
+npx ccx-kit i -s --api-configs '[
   {
     "provider": "302ai",
     "key": "sk-xxx",
@@ -186,7 +186,7 @@ npx zcf i -s --api-configs '[
 ]'
 
 # 使用 JSON 文件
-npx zcf i -s --api-configs-file ./api-configs.json
+npx ccx-kit i -s --api-configs-file ./api-configs.json
 ```
 
 ### MCP 服务配置
@@ -197,13 +197,13 @@ npx zcf i -s --api-configs-file ./api-configs.json
 
 ```bash
 # 安装所有 MCP 服务
-npx zcf i -s -m all
+npx ccx-kit i -s -m all
 
 # 安装特定服务（逗号分隔）
-npx zcf i -s -m context7,open-websearch,spec-workflow
+npx ccx-kit i -s -m context7,open-websearch,spec-workflow
 
 # 跳过 MCP 服务安装
-npx zcf i -s -m skip
+npx ccx-kit i -s -m skip
 ```
 
 ### 工作流配置
@@ -214,13 +214,13 @@ npx zcf i -s -m skip
 
 ```bash
 # 安装所有工作流
-npx zcf i -s -w all
+npx ccx-kit i -s -w all
 
 # 安装特定工作流
-npx zcf i -s -w sixStepsWorkflow,gitWorkflow
+npx ccx-kit i -s -w sixStepsWorkflow,gitWorkflow
 
 # 跳过工作流安装
-npx zcf i -s -w skip
+npx ccx-kit i -s -w skip
 ```
 
 > ⚠️ **注意**：Codex 目前仅支持 `sixStepsWorkflow` 和 `gitWorkflow`，其他工作流暂未在 Codex 中提供。
@@ -234,16 +234,16 @@ npx zcf i -s -w skip
 
 ```bash
 # 安装所有输出风格
-npx zcf i -s -o all
+npx ccx-kit i -s -o all
 
 # 安装特定风格
-npx zcf i -s -o engineer-professional,nekomata-engineer
+npx ccx-kit i -s -o engineer-professional,nekomata-engineer
 
 # 设置默认输出风格
-npx zcf i -s -o all -d engineer-professional
+npx ccx-kit i -s -o all -d engineer-professional
 
 # 跳过输出风格安装
-npx zcf i -s -o skip
+npx ccx-kit i -s -o skip
 ```
 
 ### 其他配置选项
@@ -256,18 +256,18 @@ npx zcf i -s -o skip
 
 ```bash
 # 非交互模式
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 # 配置处理方式
-npx zcf i -s --config-action backup  # 备份后覆盖（默认）
-npx zcf i -s --config-action merge   # 合并配置
-npx zcf i -s --config-action new     # 创建新配置
-npx zcf i -s --config-action docs-only  # 仅更新文档
-npx zcf i -s --config-action skip    # 跳过配置
+npx ccx-kit i -s --config-action backup  # 备份后覆盖（默认）
+npx ccx-kit i -s --config-action merge   # 合并配置
+npx ccx-kit i -s --config-action new     # 创建新配置
+npx ccx-kit i -s --config-action docs-only  # 仅更新文档
+npx ccx-kit i -s --config-action skip    # 跳过配置
 
 # 控制 CCometixLine 安装
-npx zcf i -s -x true   # 安装（默认）
-npx zcf i -s -x false  # 不安装
+npx ccx-kit i -s -x true   # 安装（默认）
+npx ccx-kit i -s -x false  # 不安装
 ```
 
 ## 完整示例
@@ -276,23 +276,23 @@ npx zcf i -s -x false  # 不安装
 
 ```bash
 # 交互式初始化（推荐首次使用）
-npx zcf init
+npx ccx-kit init
 
 # 或使用主菜单
-npx zcf
+npx ccx-kit
 # 选择 1 (完整初始化)
 ```
 
 ### 场景 2：使用 302.AI 提供商快速初始化
 
 ```bash
-npx zcf i -s -p 302ai -k "sk-xxx" -g zh-CN
+npx ccx-kit i -s -p 302ai -k "sk-xxx" -g zh-CN
 ```
 
 ### 场景 3：Codex 完整初始化
 
 ```bash
-npx zcf i -s \
+npx ccx-kit i -s \
   -T codex \
   -p 302ai \
   -k "sk-xxx" \
@@ -327,19 +327,19 @@ cat > api-configs.json << EOF
 EOF
 
 # 使用配置文件初始化
-npx zcf i -s --api-configs-file ./api-configs.json -g zh-CN
+npx ccx-kit i -s --api-configs-file ./api-configs.json -g zh-CN
 ```
 
 ### 场景 5：仅更新文档和模板
 
 ```bash
-npx zcf i -s --config-action docs-only -g zh-CN
+npx ccx-kit i -s --config-action docs-only -g zh-CN
 ```
 
 ### 场景 6：使用 CCR 代理
 
 ```bash
-npx zcf i -s -t ccr_proxy -g zh-CN -m all -w all
+npx ccx-kit i -s -t ccr_proxy -g zh-CN -m all -w all
 ```
 
 ## 配置处理策略
@@ -356,7 +356,7 @@ npx zcf i -s -t ccr_proxy -g zh-CN -m all -w all
 
 ## 执行流程
 
-`zcf init` 的执行流程如下：
+`ccx-kit init` 的执行流程如下：
 
 1. **显示 Banner**：显示 ZCF 版本信息和工具类型
 2. **解析语言偏好**：根据参数设置 i18n 语言
@@ -413,7 +413,7 @@ cat ~/.codex/config.toml | grep -A 5 modelProvider
 
 ```bash
 # 重新导入工作流
-npx zcf update
+npx ccx-kit update
 
 # 检查工作流目录
 ls -la ~/.claude/workflows/

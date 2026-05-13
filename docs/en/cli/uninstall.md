@@ -4,11 +4,11 @@ title: Uninstall and Cleanup
 
 # Uninstall and Cleanup
 
-`zcf uninstall` provides a safe uninstallation process, supporting selective uninstall, complete uninstall, and conflict resolution. Suitable for scenarios requiring environment reset, device migration, or configuration cleanup.
+`ccx-kit uninstall` provides a safe uninstallation process, supporting selective uninstall, complete uninstall, and conflict resolution. Suitable for scenarios requiring environment reset, device migration, or configuration cleanup.
 
 ## Feature Overview
 
-The `zcf uninstall` command supports:
+The `ccx-kit uninstall` command supports:
 
 1. 🗑️ **Selective Uninstall**: Selectively delete specific components
 2. 🔄 **Complete Uninstall**: Completely remove all ZCF configurations and tools
@@ -22,10 +22,10 @@ The `zcf uninstall` command supports:
 
 ```bash
 # Open interactive uninstall menu
-npx zcf uninstall
+npx ccx-kit uninstall
 
 # Or through main menu
-npx zcf
+npx ccx-kit
 # Then select corresponding uninstall option
 ```
 
@@ -42,14 +42,14 @@ Completely remove all ZCF-related configurations and tools:
 
 ```bash
 # Interactive complete uninstall
-npx zcf uninstall
+npx ccx-kit uninstall
 # Then select "Complete Uninstall"
 
 # Non-interactive complete uninstall
-npx zcf uninstall --mode complete
+npx ccx-kit uninstall --mode complete
 
 # Specify language
-npx zcf uninstall --mode complete --lang zh-CN
+npx ccx-kit uninstall --mode complete --lang zh-CN
 ```
 
 ### Custom Uninstall
@@ -58,14 +58,14 @@ Selectively uninstall specific components:
 
 ```bash
 # Interactive custom uninstall
-npx zcf uninstall
+npx ccx-kit uninstall
 # Then select "Custom Uninstall", then select components to uninstall
 
 # Non-interactive custom uninstall (comma-separated)
-npx zcf uninstall --mode custom --items "ccr,backups,cometix"
+npx ccx-kit uninstall --mode custom --items "ccr,backups,cometix"
 
 # Use array format (in code)
-npx zcf uninstall --mode custom --items '["ccr","backups"]'
+npx ccx-kit uninstall --mode custom --items '["ccr","backups"]'
 ```
 
 ## Uninstall Modes
@@ -79,7 +79,7 @@ Remove all ZCF-related configurations and tools:
 - ✅ Codex configuration (`~/.codex/`)
 - ✅ CCR configuration (`~/.claude-code-router/`)
 - ✅ CCometixLine configuration (`~/.cometix/`)
-- ✅ ZCF global configuration (`~/.ufomiao/zcf/`)
+- ✅ ZCF global configuration (`~/.ccx-kit/`)
 - ✅ All backup files
 
 **Will Not Delete**:
@@ -98,17 +98,17 @@ You can selectively uninstall the following components:
 | `ccr` | Claude Code Router configuration | `~/.claude-code-router/` |
 | `cometix` | CCometixLine configuration | `~/.cometix/` |
 | `backups` | All backup files | `~/.claude/backup/`, `~/.codex/backup/` etc. |
-| `zcf-config` | ZCF global configuration | `~/.ufomiao/zcf/` |
+| `ccx-kit-config` | ZCF global configuration | `~/.ccx-kit/` |
 
 ```bash
 # Only uninstall CCR
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 
 # Uninstall multiple components
-npx zcf uninstall --mode custom --items "ccr,cometix,backups"
+npx ccx-kit uninstall --mode custom --items "ccr,cometix,backups"
 
 # Uninstall all backups (free space)
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ## Common Parameters
@@ -125,15 +125,15 @@ npx zcf uninstall --mode custom --items backups
 
 ```bash
 # Complete uninstall and reinitialize
-npx zcf uninstall --mode complete
-npx zcf init
+npx ccx-kit uninstall --mode complete
+npx ccx-kit init
 ```
 
 ### Scenario 2: Clean Backup Files
 
 ```bash
 # Only clean backups to free space
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ### Scenario 3: Migrate to New Device
@@ -145,20 +145,20 @@ cp -r ~/.claude ~/claude-backup
 cp -r ~/.codex ~/codex-backup
 
 # 2. Initialize on new device
-npx zcf init
+npx ccx-kit init
 
 # 3. Clean on old device
-npx zcf uninstall --mode complete
+npx ccx-kit uninstall --mode complete
 ```
 
 ### Scenario 4: Only Remove Specific Tool
 
 ```bash
 # Only uninstall CCR (preserve other configurations)
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 
 # Only uninstall CCometixLine
-npx zcf uninstall --mode custom --items cometix
+npx ccx-kit uninstall --mode custom --items cometix
 ```
 
 ## Backup Mechanism
@@ -230,7 +230,7 @@ tar -czf claude-backup.tar.gz ~/.claude/
 tar -czf codex-backup.tar.gz ~/.codex/
 
 # Backup ZCF configuration
-tar -czf zcf-backup.tar.gz ~/.ufomiao/zcf/
+tar -czf ccx-kit-backup.tar.gz ~/.ccx-kit/
 ```
 
 ### 2. Selective Uninstall
@@ -239,10 +239,10 @@ If you only need to clean part of the configuration:
 
 ```bash
 # Clean backup files (free space)
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 
 # Clean specific tool configuration
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 ```
 
 ### 3. Team Environment
@@ -259,8 +259,8 @@ In test or development environments:
 
 ```bash
 # Quick reset test environment
-npx zcf uninstall --mode complete
-npx zcf init -s -p 302ai -k "test-key" -g zh-CN
+npx ccx-kit uninstall --mode complete
+npx ccx-kit init -s -p 302ai -k "test-key" -g zh-CN
 ```
 
 ## Troubleshooting
@@ -293,7 +293,7 @@ If some files are not deleted:
 # Manual cleanup (use with caution)
 rm -rf ~/.claude/
 rm -rf ~/.codex/
-rm -rf ~/.ufomiao/zcf/
+rm -rf ~/.ccx-kit/
 ```
 
 ### Restore Backup Failed
@@ -306,7 +306,7 @@ If restore backup fails:
 
 ## Differences from Other Operations
 
-| Operation | `zcf uninstall` | `zcf init --config-action new` |
+| Operation | `ccx-kit uninstall` | `ccx-kit init --config-action new` |
 |------|----------------|-------------------------------|
 | **Purpose** | Completely remove configuration | Recreate configuration |
 | **Delete Content** | Delete all configurations and tools | Only reset configuration, preserve tools |
@@ -314,15 +314,15 @@ If restore backup fails:
 | **Restore** | Manually restore backup | Automatically preserve old configuration |
 
 > 💡 **Recommendations**:
-> - Use `zcf uninstall` when you need to completely clean environment
-> - Use `zcf init --config-action new` when you need to reset configuration but preserve tools
+> - Use `ccx-kit uninstall` when you need to completely clean environment
+> - Use `ccx-kit init --config-action new` when you need to reset configuration but preserve tools
 
 ## Related Resources
 
-- [zcf init](init.md) - Reinitialize environment
+- [ccx-kit init](init.md) - Reinitialize environment
 - [Configuration Management](../features/multi-config.md) - Backup and restore mechanisms
 - [Troubleshooting](../advanced/troubleshooting.md) - Common problem solutions
 
-> ⚠️ **Warning**: Uninstall operations are irreversible. Please ensure important configurations are backed up before execution. If you only need to reset part of the configuration, it's recommended to use `zcf init`'s `--config-action` option rather than complete uninstall.
+> ⚠️ **Warning**: Uninstall operations are irreversible. Please ensure important configurations are backed up before execution. If you only need to reset part of the configuration, it's recommended to use `ccx-kit init`'s `--config-action` option rather than complete uninstall.
 
 

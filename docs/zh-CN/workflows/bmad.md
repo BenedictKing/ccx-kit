@@ -158,7 +158,7 @@ BMad 工作流遵循以下阶段：
 
 ```bash
 # 配置 MCP 服务
-npx zcf
+npx ccx-kit
 # 选择 4 (配置 MCP)
 
 # 推荐服务：
@@ -228,10 +228,10 @@ pwd
 ls -la ~/.claude/workflows/bmad/
 
 # 3. 重新安装工作流
-npx zcf update -w bmadWorkflow
+npx ccx-kit update -w bmadWorkflow
 
 # 4. 检查 Claude Code 版本
-npx zcf check-updates
+npx ccx-kit check-updates
 ```
 
 ### 文档生成问题
@@ -262,7 +262,7 @@ cat ~/.claude/workflows/bmad/bmad-init.md
 cat ~/.claude/settings.json | jq .mcpServers
 
 # 3. 重新配置 MCP 服务（如果需要）
-npx zcf
+npx ccx-kit
 # 选择 4 (配置 MCP)
 ```
 

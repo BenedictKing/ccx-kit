@@ -3,17 +3,17 @@ title: ZCF - Zero-Config Code Flow
 ---
 
 <p style="margin: 0; line-height: 1.5;">
-<a href="https://npmjs.com/package/zcf" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/v/zcf?style=flat&colorA=080f12&colorB=1fa669" alt="npm version" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
-<a href="https://npmjs.com/package/zcf" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/dm/zcf?style=flat&colorA=080f12&colorB=1fa669" alt="npm downloads" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
-<a href="https://github.com/UfoMiao/zcf/blob/main/LICENSE" target="_blank" rel="noreferrer"><img src="https://img.shields.io/github/license/ufomiao/zcf.svg?style=flat&colorA=080f12&colorB=1fa669" alt="License" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
+<a href="https://npmjs.com/package/ccx-kit" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/v/ccx-kit?style=flat&colorA=080f12&colorB=1fa669" alt="npm version" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
+<a href="https://npmjs.com/package/ccx-kit" target="_blank" rel="noreferrer"><img src="https://img.shields.io/npm/dm/ccx-kit?style=flat&colorA=080f12&colorB=1fa669" alt="npm downloads" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
+<a href="https://github.com/BenedictKing/ccx-kit/blob/main/LICENSE" target="_blank" rel="noreferrer"><img src="https://img.shields.io/github/license/BenedictKing/ccx-kit.svg?style=flat&colorA=080f12&colorB=1fa669" alt="License" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
 <a href="https://claude.ai/code" target="_blank" rel="noreferrer"><img src="https://img.shields.io/badge/Claude-Code-1fa669?style=flat&colorA=080f12&colorB=1fa669" alt="Claude Code" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
-<a href="https://codecov.io/gh/UfoMiao/zcf" target="_blank" rel="noreferrer"><img src="https://codecov.io/gh/UfoMiao/zcf/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669" alt="codecov" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
-<a href="https://www.jsdocs.io/package/zcf" target="_blank" rel="noreferrer"><img src="https://img.shields.io/badge/jsdocs-reference-1fa669?style=flat&colorA=080f12&colorB=1fa669" alt="JSDocs" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
-<a href="https://deepwiki.com/UfoMiao/zcf" target="_blank" rel="noreferrer"><img src="https://img.shields.io/badge/Ask-DeepWiki-1fa669?style=flat&colorA=080f12&colorB=1fa669" alt="Ask DeepWiki" style="display: inline-block; vertical-align: middle;"></a>
+<a href="https://codecov.io/gh/BenedictKing/ccx-kit" target="_blank" rel="noreferrer"><img src="https://codecov.io/gh/BenedictKing/ccx-kit/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669" alt="codecov" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
+<a href="https://www.jsdocs.io/package/ccx-kit" target="_blank" rel="noreferrer"><img src="https://img.shields.io/badge/jsdocs-reference-1fa669?style=flat&colorA=080f12&colorB=1fa669" alt="JSDocs" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></a>
+<a href="https://deepwiki.com/BenedictKing/ccx-kit" target="_blank" rel="noreferrer"><img src="https://img.shields.io/badge/Ask-DeepWiki-1fa669?style=flat&colorA=080f12&colorB=1fa669" alt="Ask DeepWiki" style="display: inline-block; vertical-align: middle;"></a>
 </p>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/UfoMiao/zcf/main/src/assets/banner.webp" alt="Banner"/>
+  <img src="https://raw.githubusercontent.com/BenedictKing/ccx-kit/main/src/assets/banner.webp" alt="Banner"/>
 
   <h1>
     ZCF - Zero-Config Code Flow
@@ -26,12 +26,12 @@ title: ZCF - Zero-Config Code Flow
 
 ## ♥️ 赞助商 AI API
 
-[![赞助商 AI API](https://raw.githubusercontent.com/UfoMiao/zcf/main/src/assets/302.ai.jpg)](https://share.302.ai/gAT9VG)
+[![赞助商 AI API](https://raw.githubusercontent.com/BenedictKing/ccx-kit/main/src/assets/302.ai.jpg)](https://share.302.ai/gAT9VG)
 [302.AI](https://share.302.ai/gAT9VG) 是一个按用量付费的企业级AI资源平台，提供市场上最新、最全面的AI模型和API，以及多种开箱即用的在线AI应用。
 
 ---
 
-[![GLM](https://raw.githubusercontent.com/UfoMiao/zcf/main/src/assets/GLM.png)](https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII)
+[![GLM](https://raw.githubusercontent.com/BenedictKing/ccx-kit/main/src/assets/GLM.png)](https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII)
 GLM CODING PLAN 是专为AI编码打造的订阅套餐，每月最低仅需20元，即可在十余款主流AI编码工具如Claude Code、Cline, Roo Code等中畅享智谱旗舰模型GLM-4.7，为开发者提供顶尖的编码体验。
 智谱AI为本软件提供了特别优惠，使用以下链接购买可以享受九折优惠：https://www.bigmodel.cn/claude-code?ic=RRVJPB5SII
 
@@ -40,11 +40,11 @@ GLM CODING PLAN 是专为AI编码打造的订阅套餐，每月最低仅需20元
 <table>
 <tbody>
 <tr>
-<td width="180"><a href="https://www.packyapi.com/register?aff=zcf"><img src="https://raw.githubusercontent.com/UfoMiao/zcf/main/src/assets/packycode.png" alt="PackyCode" width="150"></a></td>
-<td>感谢 PackyCode 赞助了本项目！PackyCode 是一家稳定、高效的API中转服务商，提供 Claude Code、Codex、Gemini 等多种中转服务。PackyCode 为本软件的用户提供了特别优惠，使用<a href="https://www.packyapi.com/register?aff=zcf">此链接</a>注册并在充值时填写"zcf"优惠码，可以享受9折优惠。</td>
+<td width="180"><a href="https://www.packyapi.com/register?aff=ccx-kit"><img src="https://raw.githubusercontent.com/BenedictKing/ccx-kit/main/src/assets/packycode.png" alt="PackyCode" width="150"></a></td>
+<td>感谢 PackyCode 赞助了本项目！PackyCode 是一家稳定、高效的API中转服务商，提供 Claude Code、Codex、Gemini 等多种中转服务。PackyCode 为本软件的用户提供了特别优惠，使用<a href="https://www.packyapi.com/register?aff=ccx-kit">此链接</a>注册并在充值时填写"zcf"优惠码，可以享受9折优惠。</td>
 </tr>
 <tr>
-<td width="180"><a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF"><img src="https://raw.githubusercontent.com/UfoMiao/zcf/main/src/assets/AICodeMirror.jpg" alt="AICodeMirror" width="150"></a></td>
+<td width="180"><a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF"><img src="https://raw.githubusercontent.com/BenedictKing/ccx-kit/main/src/assets/AICodeMirror.jpg" alt="AICodeMirror" width="150"></a></td>
 <td>感谢 AICodeMirror 赞助了本项目！AICodeMirror 提供 Claude Code/Codex/Gemini CLI 官方高稳定中转服务，支持企业级高并发、极速开票、7x24专属技术支持。Claude Code/Codex/Gemini 官方渠道低至 3.8/0.2/10.9 折，充值更有折上折！AICodeMirror 为 ZCF 的用户提供了特别福利，通过<a href="https://www.aicodemirror.com/register?invitecode=ZCFZCF">此链接</a>注册的用户，可享受首充8折，企业客户最高可享 7.5折！</td>
 </tr>
 </tbody>
@@ -52,7 +52,7 @@ GLM CODING PLAN 是专为AI编码打造的订阅套餐，每月最低仅需20元
 
 ## 项目概述
 
-ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目标是在几分钟内完成 Claude Code 与 Codex 的端到端环境初始化。通过 `npx zcf` 可以一站式完成配置目录创建、API/代理接入、MCP 服务接入、工作流导入、输出风格与记忆配置，以及常用工具安装。
+ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目标是在几分钟内完成 Claude Code 与 Codex 的端到端环境初始化。通过 `npx ccx-kit` 可以一站式完成配置目录创建、API/代理接入、MCP 服务接入、工作流导入、输出风格与记忆配置，以及常用工具安装。
 
 ### 为什么选择 ZCF
 
@@ -81,9 +81,9 @@ ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目
 
 ## 相关链接
 
-- **GitHub**：<https://github.com/UfoMiao/zcf>
-- **npm**：<https://www.npmjs.com/package/zcf>
-- **更新日志**：[CHANGELOG.md](https://github.com/UfoMiao/zcf/blob/main/CHANGELOG.md)
+- **GitHub**：<https://github.com/BenedictKing/ccx-kit>
+- **npm**：<https://www.npmjs.com/package/ccx-kit>
+- **更新日志**：[CHANGELOG.md](https://github.com/BenedictKing/ccx-kit/blob/main/CHANGELOG.md)
 
 ## 💬 社区
 
@@ -93,17 +93,17 @@ ZCF（Zero-Config Code Flow）是一个面向专业开发者的 CLI 工具，目
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/zcf?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/zcf
-[npm-downloads-src]: https://img.shields.io/npm/dm/zcf?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/zcf
-[license-src]: https://img.shields.io/github/license/ufomiao/zcf.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/UfoMiao/zcf/blob/main/LICENSE
+[npm-version-src]: https://img.shields.io/npm/v/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/ccx-kit
+[npm-downloads-src]: https://img.shields.io/npm/dm/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/ccx-kit
+[license-src]: https://img.shields.io/github/license/BenedictKing/ccx-kit.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/BenedictKing/ccx-kit/blob/main/LICENSE
 [claude-code-src]: https://img.shields.io/badge/Claude-Code-1fa669?style=flat&colorA=080f12&colorB=1fa669
 [claude-code-href]: https://claude.ai/code
-[codecov-src]: https://codecov.io/gh/UfoMiao/zcf/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669
-[codecov-href]: https://codecov.io/gh/UfoMiao/zcf
+[codecov-src]: https://codecov.io/gh/BenedictKing/ccx-kit/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669
+[codecov-href]: https://codecov.io/gh/BenedictKing/ccx-kit
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-1fa669?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/zcf
+[jsdocs-href]: https://www.jsdocs.io/package/ccx-kit
 [deepwiki-src]: https://img.shields.io/badge/Ask-DeepWiki-1fa669?style=flat&colorA=080f12&colorB=1fa669
-[deepwiki-href]: https://deepwiki.com/UfoMiao/zcf
+[deepwiki-href]: https://deepwiki.com/BenedictKing/ccx-kit

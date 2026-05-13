@@ -4,7 +4,7 @@ title: Claude Code Configuration
 
 # Claude Code Configuration
 
-ZCF provides a complete zero-configuration experience for Claude Code. Through the `zcf init` command, you can complete all configurations from environment initialization to workflow import with one click.
+ZCF provides a complete zero-configuration experience for Claude Code. Through the `ccx-kit init` command, you can complete all configurations from environment initialization to workflow import with one click.
 
 ## Core Features
 
@@ -13,8 +13,8 @@ ZCF's configuration for Claude Code includes the following core capabilities:
 | Feature Module | Description | Configuration File Location |
 |---------|------|------------|
 | **API Configuration** | Supports three modes: official login, API Key, and CCR proxy | `~/.claude/settings.json` |
-| **Workflow Commands** | Six-step, Feat, Git, BMAD commands | `~/.claude/commands/zcf/` |
-| **Workflow Agents** | Planner, UX, common helper agents | `~/.claude/agents/zcf/` |
+| **Workflow Commands** | Six-step, Feat, Git, BMAD commands | `~/.claude/commands/ccx-kit/` |
+| **Workflow Agents** | Planner, UX, common helper agents | `~/.claude/agents/ccx-kit/` |
 | **Output Styles** | Multiple AI personalized output styles | `~/.claude/output-styles/` |
 | **MCP Services** | Integrates Context7, Open Web Search, etc. | `~/.claude/settings.json` |
 | **System Prompts** | Global AI memory and instruction configuration | `~/.claude/CLAUDE.md` |
@@ -23,14 +23,14 @@ ZCF's configuration for Claude Code includes the following core capabilities:
 
 ### Automatically Created Directory Structure
 
-After executing `zcf init`, ZCF will automatically create the following directory structure:
+After executing `ccx-kit init`, ZCF will automatically create the following directory structure:
 
 ```
 ~/.claude/
 ├── settings.json                # Main configuration (API, MCP, permissions, etc.)
 ├── CLAUDE.md                    # System prompts and AI memory
 ├── commands/                    # Workflow commands
-│   └── zcf/
+│   └── ccx-kit/
 │       ├── init-project.md
 │       ├── workflow.md          # Six-step workflow command
 │       ├── feat.md              # Feature development workflow command
@@ -40,7 +40,7 @@ After executing `zcf init`, ZCF will automatically create the following director
 │       ├── git-worktree.md
 │       └── bmad-init.md
 ├── agents/                      # Workflow agents
-│   └── zcf/
+│   └── ccx-kit/
 │       ├── common/
 │       │   ├── init-architect.md
 │       │   └── get-current-datetime.md
@@ -59,7 +59,7 @@ ZCF provides a comprehensive backup mechanism to ensure your configuration secur
 - **Automatic Backup**: Automatically creates timestamped backups on each configuration modification
 - **Backup Location**: `~/.claude/backup/YYYY-MM-DD_HH-mm-ss/`
 - **Backup Content**: Includes all configuration files, workflows, and custom settings
-- **Compatibility**: Compatible with legacy files like `~/.claude.json`, `.zcf-config.json`, etc.
+- **Compatibility**: Compatible with legacy files like `~/.claude.json`, `.ccx-kit-config.json`, etc.
 
 > 💡 **Restore Configuration**: If you need to restore previous configuration, you can copy the corresponding files from the backup directory.
 
@@ -97,10 +97,10 @@ Suitable for using third-party API providers:
 
 ```bash
 # Use provider preset (recommended)
-npx zcf i -s -p 302ai -k "sk-xxx"
+npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 # Custom API endpoint
-npx zcf i -s -t api_key -k "sk-xxx" -u "https://api.example.com"
+npx ccx-kit i -s -t api_key -k "sk-xxx" -u "https://api.example.com"
 ```
 
 Supported provider presets:
@@ -114,9 +114,9 @@ Supported provider presets:
 Use multiple models through Claude Code Router proxy:
 
 ```bash
-npx zcf i -s -t ccr_proxy
+npx ccx-kit i -s -t ccr_proxy
 # Or configure CCR first
-npx zcf ccr
+npx ccx-kit ccx
 ```
 
 > 💡 **CCR Advantages**:
@@ -130,7 +130,7 @@ ZCF supports configuring multiple models:
 
 ```bash
 # Configure primary and fast models
-npx zcf i -s -p 302ai -k "sk-xxx" \
+npx ccx-kit i -s -p 302ai -k "sk-xxx" \
   --api-model "claude-sonnet-4-5" \
   --api-fast-model "claude-haiku-4-5"
 ```
@@ -143,14 +143,14 @@ npx zcf i -s -p 302ai -k "sk-xxx" \
 ZCF supports configuring multiple APIs for easy switching in different scenarios:
 
 ```bash
-npx zcf i -s --api-configs '[
+npx ccx-kit i -s --api-configs '[
   {"provider":"302ai","key":"sk-xxx","default":true},
   {"provider":"glm","key":"sk-yyy"},
   {"name":"custom","type":"api_key","key":"sk-zzz","url":"https://custom.api.com"}
 ]'
 ```
 
-> 📖 **Switch Configuration**: Use `npx zcf config-switch` to switch between multiple configurations.
+> 📖 **Switch Configuration**: Use `npx ccx-kit config-switch` to switch between multiple configurations.
 
 ## Workflow System
 
@@ -170,13 +170,13 @@ ZCF provides rich workflow templates to help standardize development processes.
 
 ```bash
 # Install all workflows (default)
-npx zcf i -s --workflows all
+npx ccx-kit i -s --workflows all
 
 # Selective installation
-npx zcf i -s --workflows commonTools,sixStepsWorkflow,featPlanUx
+npx ccx-kit i -s --workflows commonTools,sixStepsWorkflow,featPlanUx
 
 # Skip workflow installation
-npx zcf i -s --workflows skip
+npx ccx-kit i -s --workflows skip
 ```
 
 > 📚 **Workflow Details**: For detailed usage instructions, please refer to the [Workflow Details](../workflows/) chapter.
@@ -198,10 +198,10 @@ ZCF supports multiple AI output styles to personalize your AI assistant experien
 
 ```bash
 # Install multiple output styles
-npx zcf i -s --output-styles engineer-professional,nekomata-engineer
+npx ccx-kit i -s --output-styles engineer-professional,nekomata-engineer
 
 # Set default output style
-npx zcf i -s --default-output-style engineer-professional
+npx ccx-kit i -s --default-output-style engineer-professional
 ```
 
 ### Project-Level Switching
@@ -213,7 +213,7 @@ In Claude Code, you can switch project-level output styles via commands:
 /output-style nekomata-engineer      # Switch to nekomata engineer
 ```
 
-> ⚠️ **Version Requirement**: Claude Code version needs to be greater than 1.0.81 to support output-style. Use `npx zcf check-updates` to update.
+> ⚠️ **Version Requirement**: Claude Code version needs to be greater than 1.0.81 to support output-style. Use `npx ccx-kit check-updates` to update.
 
 ## MCP Service Integration
 
@@ -235,13 +235,13 @@ ZCF has built-in common MCP service configurations, supporting one-click install
 
 ```bash
 # Install all MCP services (recommended)
-npx zcf i -s --mcp-services all
+npx ccx-kit i -s --mcp-services all
 
 # Selective installation
-npx zcf i -s --mcp-services context7,open-websearch,spec-workflow
+npx ccx-kit i -s --mcp-services context7,open-websearch,spec-workflow
 
 # Skip MCP service installation
-npx zcf i -s --mcp-services skip
+npx ccx-kit i -s --mcp-services skip
 ```
 
 ### Configuration Location
@@ -254,7 +254,7 @@ npx zcf i -s --mcp-services skip
 If you need to reconfigure MCP services:
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 4. Configure MCP
 ```
 
@@ -270,10 +270,10 @@ CCometixLine is a high-performance Rust-based status bar tool:
 
 ```bash
 # Install CCometixLine (enabled by default)
-npx zcf i -s --install-cometix-line true
+npx ccx-kit i -s --install-cometix-line true
 
 # Install via menu
-npx zcf → Select L
+npx ccx-kit → Select L
 ```
 
 ### Environment Variables and Permissions
@@ -281,7 +281,7 @@ npx zcf → Select L
 ZCF can import recommended environment variables and permission configurations:
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 7. Import recommended environment variables and permission configurations
 ```
 
@@ -294,26 +294,26 @@ This includes:
 
 ### Save Configuration Preferences
 
-All configuration choices are written to `~/.ufomiao/zcf/config.toml`, including:
+All configuration choices are written to `~/.ccx-kit/config.toml`, including:
 - Language preferences
 - Default tool type
 - Recent installation options
 
 ### Incremental Updates
 
-Use `zcf update` to update workflows and templates while preserving existing configuration:
+Use `ccx-kit update` to update workflows and templates while preserving existing configuration:
 
 ```bash
 # Update workflows and templates, preserve API and MCP configuration
-npx zcf update
+npx ccx-kit update
 
 # Specify language update
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 ```
 
 > 💡 **Best Practices**:
-> - Use `zcf init` for complete initialization on first use
-> - Use `zcf update` to update workflows and templates subsequently
+> - Use `ccx-kit init` for complete initialization on first use
+> - Use `ccx-kit update` to update workflows and templates subsequently
 > - Update specific configurations individually through menu options
 
 ## Next Steps

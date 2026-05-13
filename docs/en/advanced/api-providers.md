@@ -42,10 +42,10 @@ ZCF currently supports the following API provider presets:
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 
 # Codex
-npx zcf init -s -T codex -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -T codex -p 302ai -k "sk-xxx"
 ```
 
 ### AICodeMirror
@@ -66,10 +66,10 @@ npx zcf init -s -T codex -p 302ai -k "sk-xxx"
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p aicodemirror -k "your-auth-token"
+npx ccx-kit init -s -p aicodemirror -k "your-auth-token"
 
 # Codex
-npx zcf init -s -T codex -p aicodemirror -k "your-auth-token"
+npx ccx-kit init -s -T codex -p aicodemirror -k "your-auth-token"
 ```
 
 ### AICodeMirror CN
@@ -90,10 +90,10 @@ npx zcf init -s -T codex -p aicodemirror -k "your-auth-token"
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p aicodemirror-cn -k "your-auth-token"
+npx ccx-kit init -s -p aicodemirror-cn -k "your-auth-token"
 
 # Codex
-npx zcf init -s -T codex -p aicodemirror-cn -k "your-auth-token"
+npx ccx-kit init -s -T codex -p aicodemirror-cn -k "your-auth-token"
 ```
 
 ### GLM (Zhipu AI)
@@ -116,10 +116,10 @@ npx zcf init -s -T codex -p aicodemirror-cn -k "your-auth-token"
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p glm -k "your-auth-token"
+npx ccx-kit init -s -p glm -k "your-auth-token"
 
 # Codex
-npx zcf init -s -T codex -p glm -k "your-auth-token"
+npx ccx-kit init -s -T codex -p glm -k "your-auth-token"
 ```
 
 ### MiniMax
@@ -142,10 +142,10 @@ npx zcf init -s -T codex -p glm -k "your-auth-token"
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p minimax -k "your-auth-token"
+npx ccx-kit init -s -p minimax -k "your-auth-token"
 
 # Codex
-npx zcf init -s -T codex -p minimax -k "your-auth-token"
+npx ccx-kit init -s -T codex -p minimax -k "your-auth-token"
 ```
 
 ### Kimi (Moonshot)
@@ -168,10 +168,10 @@ npx zcf init -s -T codex -p minimax -k "your-auth-token"
 **Usage Example**:
 ```bash
 # Claude Code
-npx zcf init -s -p kimi -k "your-auth-token"
+npx ccx-kit init -s -p kimi -k "your-auth-token"
 
 # Codex
-npx zcf init -s -T codex -p kimi -k "your-auth-token"
+npx ccx-kit init -s -T codex -p kimi -k "your-auth-token"
 ```
 
 ### Custom
@@ -186,10 +186,10 @@ npx zcf init -s -T codex -p kimi -k "your-auth-token"
 **Usage**:
 ```bash
 # Use custom provider (requires URL)
-npx zcf init -s -p custom -k "sk-xxx" -u "https://api.example.com/v1"
+npx ccx-kit init -s -p custom -k "sk-xxx" -u "https://api.example.com/v1"
 
 # Or use traditional method (without preset)
-npx zcf init -s -t api_key -k "sk-xxx" -u "https://api.example.com/v1"
+npx ccx-kit init -s -t api_key -k "sk-xxx" -u "https://api.example.com/v1"
 ```
 
 ## Usage Methods
@@ -200,10 +200,10 @@ Using provider presets is very simple, only need two parameters:
 
 ```bash
 # Use provider preset
-npx zcf init -s -p <provider-id> -k <api-key>
+npx ccx-kit init -s -p <provider-id> -k <api-key>
 
 # Example: Use 302.AI
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 ```
 
 ### Automatic Configuration
@@ -221,12 +221,12 @@ Even when using presets, you can still override default configuration:
 
 ```bash
 # Use preset but override model
-npx zcf init -s -p 302ai -k "sk-xxx" \
+npx ccx-kit init -s -p 302ai -k "sk-xxx" \
   -M "claude-sonnet-4-5" \
   -F "claude-haiku-4-5"
 
 # Use preset but override URL (not recommended, unless testing)
-npx zcf init -s -p 302ai -k "sk-xxx" \
+npx ccx-kit init -s -p 302ai -k "sk-xxx" \
   -u "https://custom.302.ai/api"
 ```
 
@@ -238,7 +238,7 @@ Using `--api-configs` or `--api-configs-file` can configure multiple providers s
 
 ```bash
 # Configure multiple providers using JSON string
-npx zcf init -s --api-configs '[
+npx ccx-kit init -s --api-configs '[
   {
     "provider": "302ai",
     "key": "sk-302ai-xxx",
@@ -278,7 +278,7 @@ npx zcf init -s --api-configs '[
 }
 
 # Use configuration file
-npx zcf init -s --api-configs-file ./api-configs.json
+npx ccx-kit init -s --api-configs-file ./api-configs.json
 ```
 
 ## Provider Switching
@@ -289,20 +289,20 @@ After configuring multiple providers, you can switch anytime:
 
 ```bash
 # List all configurations
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # Switch to specified provider
-npx zcf config-switch 302ai-config
+npx ccx-kit config-switch 302ai-config
 ```
 
 ### Codex
 
 ```bash
 # List Codex providers
-npx zcf config-switch --code-type codex --list
+npx ccx-kit config-switch --code-type codex --list
 
 # Switch to specified provider
-npx zcf config-switch glm-provider --code-type codex
+npx ccx-kit config-switch glm-provider --code-type codex
 ```
 
 ## Best Practices
@@ -316,10 +316,10 @@ Use provider presets whenever possible, which can:
 
 ```bash
 # Recommended: Use preset
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 
 # Not recommended: Manually configure all parameters
-npx zcf init -s -t api_key -k "sk-xxx" -u "https://api.302.ai/cc" -M "claude-sonnet-4-5"
+npx ccx-kit init -s -t api_key -k "sk-xxx" -u "https://api.302.ai/cc" -M "claude-sonnet-4-5"
 ```
 
 ### 2. Test Configuration
@@ -328,13 +328,13 @@ Before formal use, it's recommended to test configuration first:
 
 ```bash
 # 1. Initialize using preset
-npx zcf init -s -p 302ai -k "test-key"
+npx ccx-kit init -s -p 302ai -k "test-key"
 
 # 2. Test API connection
 # Test conversation in Claude Code or Codex
 
 # 3. If normal, reconfigure with production key
-npx zcf init -s -p 302ai -k "production-key"
+npx ccx-kit init -s -p 302ai -k "production-key"
 ```
 
 ### 3. Multi-Provider Strategy
@@ -343,13 +343,13 @@ Configure different providers for different projects:
 
 ```bash
 # Project A: Use 302.AI provider
-npx zcf config-switch 302ai-provider
+npx ccx-kit config-switch 302ai-provider
 
 # Project B: Use GLM provider
-npx zcf config-switch glm-provider
+npx ccx-kit config-switch glm-provider
 
 # Project C: Use MiniMax provider
-npx zcf config-switch minimax-provider
+npx ccx-kit config-switch minimax-provider
 ```
 
 ### 4. Key Security
@@ -362,10 +362,10 @@ npx zcf config-switch minimax-provider
 ```bash
 # Use environment variables
 export ZCF_API_KEY="sk-xxx"
-npx zcf init -s -p 302ai -k "$ZCF_API_KEY"
+npx ccx-kit init -s -p 302ai -k "$ZCF_API_KEY"
 
 # Or read from file (ensure file permissions are correct)
-npx zcf init -s -p 302ai -k "$(cat ~/.zcf/api-key)"
+npx ccx-kit init -s -p 302ai -k "$(cat ~/.zcf/api-key)"
 ```
 
 ## Troubleshooting
@@ -376,7 +376,7 @@ If using unsupported provider ID:
 
 ```bash
 # Error message will display all valid values
-npx zcf init -s -p invalid-provider -k "sk-xxx"
+npx ccx-kit init -s -p invalid-provider -k "sk-xxx"
 # Error: Invalid provider 'invalid-provider'. Valid providers: 302ai, glm, minimax, kimi, custom
 ```
 
@@ -400,7 +400,7 @@ If default model is unavailable:
 
 ```bash
 # Override default model
-npx zcf init -s -p 302ai -k "sk-xxx" -M "claude-sonnet-4-5"
+npx ccx-kit init -s -p 302ai -k "sk-xxx" -M "claude-sonnet-4-5"
 
 # Or manually edit configuration file
 vim ~/.claude/settings.json

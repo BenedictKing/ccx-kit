@@ -4,11 +4,11 @@ title: アンインストールとクリーンアップ
 
 # アンインストールとクリーンアップ
 
-`zcf uninstall` は安全なアンインストールプロセスを提供し、選択的アンインストール、完全アンインストール、競合解決をサポートします。環境をリセット、デバイスを移行、または設定をクリーンアップする必要があるシナリオに適しています。
+`ccx-kit uninstall` は安全なアンインストールプロセスを提供し、選択的アンインストール、完全アンインストール、競合解決をサポートします。環境をリセット、デバイスを移行、または設定をクリーンアップする必要があるシナリオに適しています。
 
 ## 機能概要
 
-`zcf uninstall` コマンドは以下をサポートします：
+`ccx-kit uninstall` コマンドは以下をサポートします：
 
 1. 🗑️ **選択的アンインストール**：特定のコンポーネントを選択的に削除
 2. 🔄 **完全アンインストール**：すべての ZCF 設定とツールを完全に削除
@@ -22,10 +22,10 @@ title: アンインストールとクリーンアップ
 
 ```bash
 # 対話式アンインストールメニューを開く
-npx zcf uninstall
+npx ccx-kit uninstall
 
 # またはメインメニューから
-npx zcf
+npx ccx-kit
 # 次に該当するアンインストールオプションを選択
 ```
 
@@ -42,14 +42,14 @@ npx zcf
 
 ```bash
 # 対話式完全アンインストール
-npx zcf uninstall
+npx ccx-kit uninstall
 # 次に「完全アンインストール」を選択
 
 # 非対話式完全アンインストール
-npx zcf uninstall --mode complete
+npx ccx-kit uninstall --mode complete
 
 # 言語を指定
-npx zcf uninstall --mode complete --lang zh-CN
+npx ccx-kit uninstall --mode complete --lang zh-CN
 ```
 
 ### カスタムアンインストール
@@ -58,14 +58,14 @@ npx zcf uninstall --mode complete --lang zh-CN
 
 ```bash
 # 対話式カスタムアンインストール
-npx zcf uninstall
+npx ccx-kit uninstall
 # 次に「カスタムアンインストール」を選択し、アンインストールするコンポーネントを選択
 
 # 非対話式カスタムアンインストール（カンマ区切り）
-npx zcf uninstall --mode custom --items "ccr,backups,cometix"
+npx ccx-kit uninstall --mode custom --items "ccr,backups,cometix"
 
 # 配列形式を使用（コード内）
-npx zcf uninstall --mode custom --items '["ccr","backups"]'
+npx ccx-kit uninstall --mode custom --items '["ccr","backups"]'
 ```
 
 ## アンインストールモード
@@ -79,7 +79,7 @@ npx zcf uninstall --mode custom --items '["ccr","backups"]'
 - ✅ Codex 設定（`~/.codex/`）
 - ✅ CCR 設定（`~/.claude-code-router/`）
 - ✅ CCometixLine 設定（`~/.cometix/`）
-- ✅ ZCF グローバル設定（`~/.ufomiao/zcf/`）
+- ✅ ZCF グローバル設定（`~/.ccx-kit/`）
 - ✅ すべてのバックアップファイル
 
 **削除されない内容**：
@@ -98,17 +98,17 @@ npx zcf uninstall --mode custom --items '["ccr","backups"]'
 | `ccr` | Claude Code Router 設定 | `~/.claude-code-router/` |
 | `cometix` | CCometixLine 設定 | `~/.cometix/` |
 | `backups` | すべてのバックアップファイル | `~/.claude/backup/`, `~/.codex/backup/` など |
-| `zcf-config` | ZCF グローバル設定 | `~/.ufomiao/zcf/` |
+| `ccx-kit-config` | ZCF グローバル設定 | `~/.ccx-kit/` |
 
 ```bash
 # CCR のみをアンインストール
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 
 # 複数のコンポーネントをアンインストール
-npx zcf uninstall --mode custom --items "ccr,cometix,backups"
+npx ccx-kit uninstall --mode custom --items "ccr,cometix,backups"
 
 # すべてのバックアップをアンインストール（スペースを解放）
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ## よく使うパラメータ
@@ -125,15 +125,15 @@ npx zcf uninstall --mode custom --items backups
 
 ```bash
 # 完全アンインストールして再初期化
-npx zcf uninstall --mode complete
-npx zcf init
+npx ccx-kit uninstall --mode complete
+npx ccx-kit init
 ```
 
 ### シナリオ 2：バックアップファイルをクリーンアップ
 
 ```bash
 # スペースを解放するためにバックアップのみをクリーンアップ
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ### シナリオ 3：新しいデバイスに移行
@@ -145,20 +145,20 @@ cp -r ~/.claude ~/claude-backup
 cp -r ~/.codex ~/codex-backup
 
 # 2. 新しいデバイスで初期化
-npx zcf init
+npx ccx-kit init
 
 # 3. 古いデバイスでクリーンアップ
-npx zcf uninstall --mode complete
+npx ccx-kit uninstall --mode complete
 ```
 
 ### シナリオ 4：特定のツールのみを削除
 
 ```bash
 # CCR のみをアンインストール（他の設定を保持）
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 
 # CCometixLine のみをアンインストール
-npx zcf uninstall --mode custom --items cometix
+npx ccx-kit uninstall --mode custom --items cometix
 ```
 
 ## バックアップメカニズム
@@ -230,7 +230,7 @@ tar -czf claude-backup.tar.gz ~/.claude/
 tar -czf codex-backup.tar.gz ~/.codex/
 
 # ZCF 設定をバックアップ
-tar -czf zcf-backup.tar.gz ~/.ufomiao/zcf/
+tar -czf ccx-kit-backup.tar.gz ~/.ccx-kit/
 ```
 
 ### 2. 選択的アンインストール
@@ -239,10 +239,10 @@ tar -czf zcf-backup.tar.gz ~/.ufomiao/zcf/
 
 ```bash
 # バックアップファイルをクリーンアップ（スペースを解放）
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 
 # 特定のツールの設定をクリーンアップ
-npx zcf uninstall --mode custom --items ccr
+npx ccx-kit uninstall --mode custom --items ccr
 ```
 
 ### 3. チーム環境
@@ -259,8 +259,8 @@ npx zcf uninstall --mode custom --items ccr
 
 ```bash
 # テスト環境をすばやくリセット
-npx zcf uninstall --mode complete
-npx zcf init -s -p 302ai -k "test-key" -g zh-CN
+npx ccx-kit uninstall --mode complete
+npx ccx-kit init -s -p 302ai -k "test-key" -g zh-CN
 ```
 
 ## トラブルシューティング
@@ -293,7 +293,7 @@ lsof ~/.claude/  # macOS/Linux
 # 手動クリーンアップ（注意して使用）
 rm -rf ~/.claude/
 rm -rf ~/.codex/
-rm -rf ~/.ufomiao/zcf/
+rm -rf ~/.ccx-kit/
 ```
 
 ### バックアップの復元が失敗する
@@ -306,7 +306,7 @@ rm -rf ~/.ufomiao/zcf/
 
 ## 他の操作との違い
 
-| 操作 | `zcf uninstall` | `zcf init --config-action new` |
+| 操作 | `ccx-kit uninstall` | `ccx-kit init --config-action new` |
 |------|----------------|-------------------------------|
 | **目的** | 設定を完全に削除 | 設定を再作成 |
 | **削除内容** | すべての設定とツールを削除 | 設定のみをリセットし、ツールを保持 |
@@ -314,13 +314,13 @@ rm -rf ~/.ufomiao/zcf/
 | **復元** | バックアップを手動復元 | 古い設定を自動保持 |
 
 > 💡 **推奨事項**：
-> - 環境を完全にクリーンアップする必要がある場合、`zcf uninstall` を使用
-> - 設定をリセットするがツールを保持する必要がある場合、`zcf init --config-action new` を使用
+> - 環境を完全にクリーンアップする必要がある場合、`ccx-kit uninstall` を使用
+> - 設定をリセットするがツールを保持する必要がある場合、`ccx-kit init --config-action new` を使用
 
 ## 関連リソース
 
-- [zcf init](init.md) - 環境を再初期化
+- [ccx-kit init](init.md) - 環境を再初期化
 - [設定管理](../features/multi-config.md) - バックアップと復元メカニズム
 - [トラブルシューティング](../advanced/troubleshooting.md) - 一般的な問題の解決
 
-> ⚠️ **警告**：アンインストール操作は不可逆です。実行前に重要な設定をバックアップしたことを確認してください。一部の設定のみをリセットする必要がある場合は、完全アンインストールではなく、`zcf init` の `--config-action` オプションを使用することをお勧めします。
+> ⚠️ **警告**：アンインストール操作は不可逆です。実行前に重要な設定をバックアップしたことを確認してください。一部の設定のみをリセットする必要がある場合は、完全アンインストールではなく、`ccx-kit init` の `--config-action` オプションを使用することをお勧めします。

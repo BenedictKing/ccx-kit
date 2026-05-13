@@ -27,20 +27,20 @@ ZCF 在初始化时会自动安装 CCometixLine：
 
 ```bash
 # 完整初始化（默认包含 CCometixLine 安装）
-npx zcf init
+npx ccx-kit init
 
 # 或者在交互式菜单中选择初始化
-npx zcf
+npx ccx-kit
 ```
 
-> 💡 **提示**：`zcf init` 默认启用 `--install-cometix-line true`，若无需安装可显式传入 `false`。
+> 💡 **提示**：`ccx-kit init` 默认启用 `--install-cometix-line true`，若无需安装可显式传入 `false`。
 
 ### 手动管理
 
 在主菜单中输入 `L` 进入 CCometixLine 管理界面：
 
 ```bash
-npx zcf
+npx ccx-kit
 # 然后输入 L
 ```
 
@@ -163,7 +163,7 @@ CCometixLine 支持跨平台安装：
 
 ```bash
 # 通过 ZCF 菜单检查
-npx zcf → 选择 L → 查看版本信息
+npx ccx-kit → 选择 L → 查看版本信息
 
 # 或者直接运行
 ccline --version
@@ -175,10 +175,10 @@ ZCF 在初始化或更新时会自动检查 CCometixLine 版本：
 
 ```bash
 # 使用 check-updates 命令检查并更新
-npx zcf check-updates
+npx ccx-kit check-updates
 
 # 或者在菜单中选择
-npx zcf → 选择 + 检查更新
+npx ccx-kit → 选择 + 检查更新
 ```
 
 ### 手动更新
@@ -188,7 +188,7 @@ npx zcf → 选择 + 检查更新
 npm update -g @cometix/ccline
 
 # 或者通过 ZCF 菜单
-npx zcf → 选择 L → 升级
+npx ccx-kit → 选择 L → 升级
 ```
 
 ## 故障排除

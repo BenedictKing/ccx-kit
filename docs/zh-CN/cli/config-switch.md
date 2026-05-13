@@ -4,26 +4,26 @@ title: 配置切换
 
 # 配置切换
 
-`zcf config-switch` 用于在多套 API 配置之间快速切换，适合在不同项目使用不同 API 提供商的用户。
+`ccx-kit config-switch` 用于在多套 API 配置之间快速切换，适合在不同项目使用不同 API 提供商的用户。
 
-> **别名**：可以使用 `zcf cs` 这一简写，所有示例都可改写为 `npx zcf cs --list` 等形式。
+> **别名**：可以使用 `ccx-kit cs` 这一简写，所有示例都可改写为 `npx ccx-kit cs --list` 等形式。
 
 ## 命令格式
 
 ```bash
 # 交互式切换（推荐）
-npx zcf cs
+npx ccx-kit cs
 
 # 列出所有可用配置
-npx zcf cs --list
+npx ccx-kit cs --list
 
 # 直接切换到指定配置（Claude Code）
-npx zcf cs provider1
+npx ccx-kit cs provider1
 
 # 指定工具类型（支持简写 -T cc/cx）
-npx zcf cs --list -T cc      # 列出 Claude Code 配置
-npx zcf cs --list -T cx      # 列出 Codex 配置
-npx zcf cs provider1 -T cx   # 切换 Codex 配置
+npx ccx-kit cs --list -T cc      # 列出 Claude Code 配置
+npx ccx-kit cs --list -T cx      # 列出 Codex 配置
+npx ccx-kit cs provider1 -T cx   # 切换 Codex 配置
 ```
 
 ## 参数说明
@@ -42,7 +42,7 @@ npx zcf cs provider1 -T cx   # 切换 Codex 配置
 
 1. **官方登录**：使用 Claude 官方 OAuth 登录
 2. **CCR 代理**：使用 Claude Code Router 代理
-3. **自定义配置**：通过 `zcf init` 创建的多 API 配置
+3. **自定义配置**：通过 `ccx-kit init` 创建的多 API 配置
 
 **配置来源**：
 - 配置文件：`~/.claude/settings.json`
@@ -54,7 +54,7 @@ npx zcf cs provider1 -T cx   # 切换 Codex 配置
 支持切换 Codex 的模型提供商：
 
 1. **官方登录**：使用 Codex 官方 OAuth 登录
-2. **自定义提供商**：通过 `zcf init` 配置的提供商（如 302.AI、GLM 等）
+2. **自定义提供商**：通过 `ccx-kit init` 配置的提供商（如 302.AI、GLM 等）
 
 **配置来源**：
 - 配置文件：`~/.codex/config.toml`
@@ -67,7 +67,7 @@ npx zcf cs provider1 -T cx   # 切换 Codex 配置
 最常用的方式，通过交互式菜单选择配置：
 
 ```bash
-npx zcf cs
+npx ccx-kit cs
 ```
 
 **Claude Code 交互界面**：
@@ -95,10 +95,10 @@ npx zcf cs
 
 ```bash
 # Claude Code 配置
-npx zcf cs --list -T cc
+npx ccx-kit cs --list -T cc
 
 # Codex 配置
-npx zcf cs --list -T cx
+npx ccx-kit cs --list -T cx
 ```
 
 **输出示例**：
@@ -117,10 +117,10 @@ npx zcf cs --list -T cx
 
 ```bash
 # 切换到指定 Profile（使用渠道英文名）
-npx zcf cs glm-provider
+npx ccx-kit cs glm-provider
 
 # Codex 切换提供商
-npx zcf cs glm-provider -T cx
+npx ccx-kit cs glm-provider -T cx
 ```
 
 **支持匹配方式**：
@@ -135,7 +135,7 @@ npx zcf cs glm-provider -T cx
 
 ```bash
 # 使用多配置参数
-npx zcf init --api-configs '[
+npx ccx-kit init --api-configs '[
   {
     "name": "GLM Provider",
     "provider": "glm",
@@ -189,33 +189,33 @@ npx zcf init --api-configs '[
 
 ```bash
 # 项目 A 使用 GLM
-npx zcf cs glm-provider
+npx ccx-kit cs glm-provider
 
 # 项目 B 使用 302.AI
-npx zcf cs 302ai-provider
+npx ccx-kit cs 302ai-provider
 
 # 项目 C 使用 MiniMax
-npx zcf cs minimax-provider
+npx ccx-kit cs minimax-provider
 ```
 
 ### 2. 测试新配置
 
 ```bash
 # 切换到测试配置
-npx zcf cs kimi-provider
+npx ccx-kit cs kimi-provider
 
 # 测试完成后切换回去
-npx zcf cs glm-provider
+npx ccx-kit cs glm-provider
 ```
 
 ### 3. 切换 Codex 提供商
 
 ```bash
 # 列出 Codex 提供商
-npx zcf cs -T cx --list
+npx ccx-kit cs -T cx --list
 
 # 切换到指定提供商
-npx zcf cs glm-provider -T cx
+npx ccx-kit cs glm-provider -T cx
 ```
 
 ## 最佳实践
@@ -238,14 +238,14 @@ npx zcf cs glm-provider -T cx
 
 ```bash
 # 主分支使用 GLM 配置
-npx zcf cs glm-provider
+npx ccx-kit cs glm-provider
 
 # 创建功能分支 Worktree
 /git-worktree add feat/new-feature -o
 
 # 在功能分支中切换配置
 cd ../.zcf/project-name/feat/new-feature
-npx zcf cs 302ai-provider
+npx ccx-kit cs 302ai-provider
 ```
 
 ## 常见问题
@@ -261,7 +261,7 @@ A:
 
 A: 您可以通过 ZCF 主菜单进行全面管理：
 
-1. 运行 `npx zcf` 进入主菜单
+1. 运行 `npx ccx-kit` 进入主菜单
 2. 选择 **"3. API 配置"**
 3. 选择 **"自定义 API 配置"**
 

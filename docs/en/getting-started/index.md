@@ -18,7 +18,7 @@ If you're new to ZCF, we recommend following these steps:
 
 ### First-Time Use
 
-1. Run `npx zcf` or `npx zcf init` for complete initialization
+1. Run `npx ccx-kit` or `npx ccx-kit init` for complete initialization
 2. Select code tool type (Claude Code or Codex)
 3. Configure API key or use API provider preset
 4. Select MCP services to install
@@ -26,8 +26,8 @@ If you're new to ZCF, we recommend following these steps:
 
 ### Existing Environment
 
-- Run `npx zcf update` to update workflows and templates
-- Use `npx zcf` to open interactive menu for incremental configuration
-- Use `npx zcf config-switch` to switch between different configurations
+- Run `npx ccx-kit update` to update workflows and templates
+- Use `npx ccx-kit` to open interactive menu for incremental configuration
+- Use `npx ccx-kit config-switch` to switch between different configurations
 
 > 💡 **Tip**: During operation, if you need to understand specific features, feel free to jump to the corresponding feature chapter or CLI command documentation.

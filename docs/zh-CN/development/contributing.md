@@ -43,15 +43,15 @@ title: 贡献指南
 ```bash
 # Fork 仓库到您的 GitHub 账号
 # 然后克隆您的 fork
-git clone https://github.com/YOUR_USERNAME/zcf.git
-cd zcf
+git clone https://github.com/YOUR_USERNAME/ccx-kit.git
+cd ccx-kit
 ```
 
 ### 2. 添加上游仓库
 
 ```bash
 # 添加上游仓库以便同步更新
-git remote add upstream https://github.com/UfoMiao/zcf.git
+git remote add upstream https://github.com/BenedictKing/ccx-kit.git
 
 # 验证远程仓库
 git remote -v

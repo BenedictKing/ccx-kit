@@ -144,7 +144,7 @@ Serena provides IDE-like semantic code search and editing capabilities:
 Select MCP services to install through ZCF menu:
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 4. Configure MCP
 ```
 
@@ -157,13 +157,13 @@ In the interactive interface, you can:
 
 ```bash
 # Install all MCP services (recommended)
-npx zcf i -s --mcp-services all
+npx ccx-kit i -s --mcp-services all
 
 # Selective installation
-npx zcf i -s --mcp-services context7,open-websearch,spec-workflow
+npx ccx-kit i -s --mcp-services context7,open-websearch,spec-workflow
 
 # Skip MCP service installation
-npx zcf i -s --mcp-services skip
+npx ccx-kit i -s --mcp-services skip
 ```
 
 ### Environment Variable Configuration
@@ -227,7 +227,7 @@ ZCF automatically corrects Windows path formats to ensure MCP services run norma
 - Correct path separators and escape characters
 - Use `cmd /c npx` format to ensure command execution
 
-> 💡 **Tip**: If you encounter MCP connection issues on Windows, running `npx zcf` will automatically fix the configuration format.
+> 💡 **Tip**: If you encounter MCP connection issues on Windows, running `npx ccx-kit` will automatically fix the configuration format.
 
 ### WSL and Termux
 
@@ -240,7 +240,7 @@ ZCF fully supports WSL and Termux environments, and MCP services can work normal
 If you need to reconfigure MCP services:
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 4. Configure MCP
 ```
 
@@ -250,7 +250,7 @@ If you manually added new MCP services, ZCF will intelligently merge configurati
 
 ```bash
 # Execute incremental update
-npx zcf i
+npx ccx-kit i
 # Select "Merge Configuration" strategy
 ```
 
@@ -259,7 +259,7 @@ npx zcf i
 Manually remove services from configuration files, or reconfigure through ZCF menu:
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 4. Configure MCP
 # Uncheck services you don't need
 ```
@@ -299,7 +299,7 @@ Query the documentation for TypeScript official repository
 
 **Solution**:
 1. Check if service is correctly installed: `npm list -g | grep <service-name>`
-2. Reconfigure service: `npx zcf` → `4`
+2. Reconfigure service: `npx ccx-kit` → `4`
 3. Check if configuration file format is correct
 
 ### API Key Error
@@ -317,7 +317,7 @@ Query the documentation for TypeScript official repository
 
 **Solution**:
 ```bash
-npx zcf
+npx ccx-kit
 # Select 4. Configure MCP
 # ZCF will automatically fix Windows path format
 ```
@@ -325,7 +325,7 @@ npx zcf
 ## Best Practices
 
 1. **Install on Demand**: Only install MCP services you actually need to reduce resource consumption
-2. **Regular Updates**: Update MCP service configurations through `npx zcf update`
+2. **Regular Updates**: Update MCP service configurations through `npx ccx-kit update`
 3. **Environment Variable Management**: Use `.env` files or system environment variables to manage API Keys
 4. **Test Verification**: Test each service's functionality after installation to ensure normal operation
 

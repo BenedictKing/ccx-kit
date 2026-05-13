@@ -27,8 +27,8 @@
 
 ## CLI 命令
 * [命令概览](cli/index.md)
-* [zcf init](cli/init.md)
-* [zcf update](cli/update.md)
+* [ccx-kit init](cli/init.md)
+* [ccx-kit update](cli/update.md)
 * [主菜单](cli/menu.md)
 * [CCX 代理管理](cli/ccr.md)
 * [使用分析 ccu](cli/ccu.md)
@@ -38,7 +38,7 @@
 
 ## 工作流详解
 * [工作流概览](workflows/index.md)
-* [ZCF 六阶段工作流](workflows/zcf-workflow.md)
+* [CCX-Kit 六阶段工作流](workflows/zcf-workflow.md)
 * [功能开发工作流](workflows/feat.md)
 * [BMad 敏捷流程](workflows/bmad.md)
 * [Spec 工作流集成](workflows/spec.md)

@@ -21,10 +21,10 @@ title: CCometixLine ステータスバー
 
 ```bash
 # メニューから
-npx zcf          # → L を選択
+npx ccx-kit          # → L を選択
 
 # 直接更新を確認
-npx zcf check-updates --code-type claude
+npx ccx-kit check-updates --code-type claude
 ```
 
 ## インストール
@@ -181,8 +181,8 @@ transcript 分析に基づくトークン使用率、コンテキスト制限追
 
 ## よくある質問
 
-- **表示が更新されない**：`npx zcf ccr status` で CCR が動作しているか確認し、VS Code を再起動。  
-- **アイコンが消えた**：拡張機能が無効化されていないか確認し、`npx zcf` → L で再インストール。  
+- **表示が更新されない**：`npx ccx-kit ccx status` で CCR が動作しているか確認し、VS Code を再起動。  
+- **アイコンが消えた**：拡張機能が無効化されていないか確認し、`npx ccx-kit` → L で再インストール。  
 - **別環境で使いたい**：`config-switch` で設定を切替えた後に VS Code 側で再読み込み。
 
 ## 関連

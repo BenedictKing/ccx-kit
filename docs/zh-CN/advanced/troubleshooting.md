@@ -21,7 +21,7 @@ title: 故障排除
 
 ### 1. 初始化失败或卡住
 
-**症状**：运行 `npx zcf init` 后无响应或报错
+**症状**：运行 `npx ccx-kit init` 后无响应或报错
 
 **可能原因**：
 - Node.js 版本过低
@@ -44,11 +44,11 @@ nvm use 22
 ls -la ~/.claude ~/.codex
 
 # 如果目录不存在或权限不足，手动创建
-mkdir -p ~/.claude ~/.codex ~/.ufomiao/zcf
-chmod 755 ~/.claude ~/.codex ~/.ufomiao/zcf
+mkdir -p ~/.claude ~/.codex ~/.ccx-kit
+chmod 755 ~/.claude ~/.codex ~/.ccx-kit
 
 # 3. 跳过 MCP 安装（如果网络问题）
-npx zcf init -s -m skip
+npx ccx-kit init -s -m skip
 
 # 4. 检查网络连接
 ping npmjs.com
@@ -69,7 +69,7 @@ ls -la ~/.claude/backup/
 cp -r ~/.claude/backup/backup_最新时间戳/* ~/.claude/
 
 # 3. 重新初始化
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 3. 配置目录创建失败
@@ -80,13 +80,13 @@ npx zcf init --config-action backup
 
 ```bash
 # macOS/Linux
-mkdir -p ~/.claude ~/.codex ~/.ufomiao/zcf
-chmod 755 ~/.claude ~/.codex ~/.ufomiao/zcf
+mkdir -p ~/.claude ~/.codex ~/.ccx-kit
+chmod 755 ~/.claude ~/.codex ~/.ccx-kit
 
 # Windows (PowerShell)
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude"
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex"
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ufomiao\zcf"
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ccx-kit"
 
 # 检查磁盘空间
 df -h ~  # macOS/Linux
@@ -106,14 +106,14 @@ cat ~/.claude/settings.json | jq .env
 cat ~/.codex/config.toml | grep -A 5 apiKey
 
 # 2. 重新配置 API
-npx zcf init
+npx ccx-kit init
 # 选择 3 (配置 API 或 CCR)
 # 或使用命令行
-npx zcf init -s -t api_key -k "your-api-key"
+npx ccx-kit init -s -t api_key -k "your-api-key"
 
 # 3. 对于 CCR 模式，确保 Router 运行
-npx zcf ccr status
-npx zcf ccr start
+npx ccx-kit ccx status
+npx ccx-kit ccx start
 ```
 
 ### 2. API 密钥格式错误
@@ -132,7 +132,7 @@ npx zcf ccr start
 # 或尝试在提供商控制台验证
 
 # 重新输入正确的密钥
-npx zcf init -s -p 302ai -k "正确的密钥"
+npx ccx-kit init -s -p 302ai -k "正确的密钥"
 ```
 
 ### 3. API 端点无法访问
@@ -158,7 +158,7 @@ export HTTPS_PROXY=http://127.0.0.1:7890
 # MiniMax: https://api.minimaxi.com/anthropic
 
 # 4. 使用提供商预设（推荐）
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 ```
 
 ### 4. 多 API 配置冲突
@@ -169,10 +169,10 @@ npx zcf init -s -p 302ai -k "sk-xxx"
 
 ```bash
 # 1. 列出所有配置
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # 2. 切换到正确的配置
-npx zcf config-switch provider-name
+npx ccx-kit config-switch provider-name
 
 # 3. 检查配置文件中的默认配置
 cat ~/.claude/settings.json | jq .apiKeys
@@ -193,7 +193,7 @@ ls -la ~/.claude/workflows/
 ls -la ~/.codex/prompts/
 
 # 2. 重新导入工作流
-npx zcf update -w all
+npx ccx-kit update -w all
 
 # 3. 检查 Codex 配置（Codex 需要 managed = true）
 cat ~/.codex/config.toml | grep managed
@@ -232,10 +232,10 @@ head -20 ~/.claude/workflows/zcf-workflow/workflow.md
 
 ```bash
 # 更新工作流模板
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 
 # 或强制更新
-npx zcf init --config-action docs-only -w all
+npx ccx-kit init --config-action docs-only -w all
 ```
 
 ## MCP 服务问题
@@ -252,7 +252,7 @@ cat ~/.claude/settings.json | jq .mcpServers
 cat ~/.codex/config.toml | grep -A 10 mcp_server
 
 # 2. 重新配置 MCP
-npx zcf
+npx ccx-kit
 # 选择 4 (配置 MCP)
 
 # 3. 检查服务依赖
@@ -454,7 +454,7 @@ cat ~/.codex/config.toml | grep -A 10 modelProvider
 cat ~/.codex/auth.json
 
 # 5. 重新配置
-npx zcf init -T codex -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -T codex -s -p 302ai -k "sk-xxx"
 ```
 
 ### 3. Codex 工作流命令格式
@@ -472,7 +472,7 @@ npx zcf init -T codex -s -p 302ai -k "sk-xxx"
 ls -la ~/.codex/prompts/
 
 # 重新导入工作流
-npx zcf update -T codex -g zh-CN
+npx ccx-kit update -T codex -g zh-CN
 ```
 
 ## CCR 相关问题
@@ -485,14 +485,14 @@ npx zcf update -T codex -g zh-CN
 
 ```bash
 # 1. 检查 CCR 安装
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # 2. 检查端口占用
 lsof -i :3456  # macOS/Linux
 netstat -ano | findstr :3456  # Windows
 
 # 3. 重新安装 CCR
-npx zcf ccr install
+npx ccx-kit ccx install
 
 # 4. 检查配置文件
 cat ~/.claude-code-router/config.json
@@ -524,10 +524,10 @@ netstat -ano | findstr :3456
 taskkill /PID 1208 /F
 
 # 3. 重启 CCR
-npx zcf ccr restart
+npx ccx-kit ccx restart
 
 # 4. 检查状态
-npx zcf ccr status
+npx ccx-kit ccx status
 ```
 
 #### macOS/Linux 平台
@@ -540,10 +540,10 @@ lsof -t -i:3456 | xargs kill
 lsof -t -i:3456 | xargs -r kill
 
 # 2. 重启 CCR
-npx zcf ccr restart
+npx ccx-kit ccx restart
 
 # 3. 检查状态
-npx zcf ccr status
+npx ccx-kit ccx status
 ```
 
 **验证步骤**：
@@ -554,10 +554,10 @@ lsof -i :3456  # macOS/Linux（应无输出）
 netstat -ano | findstr :3456  # Windows（应无输出）
 
 # 如果端口已释放，重新启动
-npx zcf ccr start
+npx ccx-kit ccx start
 
 # 验证 CCR 正常运行
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # 如果状态正常，Claude Code 应能正常连接
 ```
@@ -579,9 +579,9 @@ curl http://127.0.0.1:3456/health
 cat ~/.claude/settings.json | jq .env.ANTHROPIC_BASE_URL
 
 # 4. 重新配置 CCR 代理
-npx zcf ccr
+npx ccx-kit ccx
 # 或
-npx zcf init -s -t ccr_proxy
+npx ccx-kit init -s -t ccr_proxy
 ```
 
 ### 3. CCR Web UI 无法访问
@@ -592,7 +592,7 @@ npx zcf init -s -t ccr_proxy
 
 ```bash
 # 1. 确认 CCR 正在运行
-npx zcf ccr status
+npx ccx-kit ccx status
 
 # 2. 检查端口
 lsof -i :3456
@@ -622,7 +622,7 @@ cp -r ~/.claude/backup/backup_最新时间戳/* ~/.claude/
 cp -r ~/.codex/backup/backup_最新时间戳/* ~/.codex/
 
 # 3. 重新初始化（如果备份不可用）
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 2. 备份失败
@@ -654,13 +654,13 @@ cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d)
 
 ```bash
 # 1. 查看所有配置
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # 2. 备份当前配置
 cp -r ~/.claude ~/.claude.conflict.backup
 
 # 3. 使用合并策略重新初始化
-npx zcf init --config-action merge
+npx ccx-kit init --config-action merge
 
 # 4. 手动合并配置（如果需要）
 # 编辑配置文件，合并冲突的配置项
@@ -693,7 +693,7 @@ cat "$env:USERPROFILE\.claude\settings.json"
 ```bash
 # ZCF 会自动修复 Windows MCP 配置格式
 # 运行更新命令会自动修复
-npx zcf update
+npx ccx-kit update
 
 # 或手动检查配置格式
 cat "$env:USERPROFILE\.claude\settings.json" | jq .mcpServers
@@ -753,13 +753,13 @@ nvm install 20
 
 ```bash
 # 启用详细输出
-npx zcf init --verbose 2>&1 | tee zcf-debug.log
+npx ccx-kit init --verbose 2>&1 | tee ccx-kit-debug.log
 
 # 查看错误信息
-cat zcf-debug.log | grep -i error
+cat ccx-kit-debug.log | grep -i error
 
 # 检查版本信息
-npx zcf --version
+npx ccx-kit --version
 ```
 
 ### 恢复历史
@@ -776,9 +776,9 @@ cp -r ~/.claude/backup/backup_YYYY-MM-DD_HH-mm-ss/* ~/.claude/
 ### 文档资源
 
 - 阅读仓库 `CLAUDE.md` 和 `AGENTS.md` 了解系统提示要求
-- 查看 [GitHub Issues](https://github.com/UfoMiao/zcf/issues) 搜索类似问题
+- 查看 [GitHub Issues](https://github.com/BenedictKing/ccx-kit/issues) 搜索类似问题
 - 在 GitHub Issues 提交问题时附带：
-  - `npx zcf --version` 输出
+  - `npx ccx-kit --version` 输出
   - 完整的终端日志
   - 操作系统和 Node.js 版本
   - 重现步骤

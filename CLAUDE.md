@@ -36,7 +36,7 @@ graph TD
     C --> C3["mcp.ts - MCP services"];
     C --> C4["platform.ts - Cross-platform support"];
     C --> C5["workflow-installer.ts - Workflow management"];
-    C --> C6["ccr/ - CCX proxy integration"];
+    C --> C6["ccx/ - CCX proxy integration"];
     C --> C7["cometix/ - Status line tools"];
     C --> C8["tools/ - Tool integration"];
     C --> C9["uninstaller.ts - Advanced uninstaller"];
@@ -85,7 +85,7 @@ graph TD
 |------------------------|--------------|---------------------------------------|-------------------------------------------------------|-------------------------------|
 | **Commands** | `src/commands/` | CLI command implementations with advanced interactive and non-interactive modes including comprehensive uninstallation and config switching | init.ts, menu.ts, update.ts, ccr.ts, ccu.ts, check-updates.ts, uninstall.ts, config-switch.ts | High - comprehensive test suites |
 | **Utilities** | `src/utils/` | Core functionality with enhanced configuration management, platform support, Codex integration, and advanced uninstallation capabilities | config.ts, installer.ts, platform.ts, workflow-installer.ts, ccr/, cometix/, code-tools/, uninstaller.ts, trash.ts | High - extensive unit tests |
-| **CCR Integration** | `src/utils/ccr/` | CCX proxy management, preset channels, connectivity detection, and channel testing | presets.ts, commands.ts, installer.ts, config.ts, connectivity.ts, channel-manager.ts, channel-test.ts | High - comprehensive CCX tests |
+| **CCR Integration** | `src/utils/ccx/` | CCX proxy management, preset channels, connectivity detection, and channel testing | presets.ts, commands.ts, installer.ts, config.ts, connectivity.ts, channel-manager.ts, channel-test.ts | High - comprehensive CCX tests |
 | **Cometix Tools** | `src/utils/cometix/` | Status line tools and configuration management | errors.ts, common.ts, types.ts, commands.ts, installer.ts, menu.ts | High - extensive Cometix tests |
 | **Code Tools** | `src/utils/code-tools/` | Codex and Gemini CLI integration, dual code tool support | codex-config-detector.ts, codex-provider-manager.ts, codex-uninstaller.ts, codex-platform.ts, codex-config-switch.ts, codex-configure.ts, codex.ts, gemini-cli.ts | High - comprehensive Codex/Gemini tests |
 | **Internationalization** | `src/i18n/` | Advanced i18next multilingual support with namespace organization and complete uninstall translations | index.ts, locales/zh-CN/, locales/en/ | High - translation validation |
@@ -105,7 +105,7 @@ graph TD
 
 ## CLI Usage
 
-ZCF provides both direct commands and an interactive menu system with advanced internationalization and comprehensive uninstallation:
+CCX-Kit provides both direct commands and an interactive menu system with advanced internationalization and comprehensive uninstallation:
 
 ```bash
 # Interactive menu (recommended)
@@ -394,7 +394,7 @@ graph TD
 3. **Enhanced API Configuration**: Supports Auth Token (OAuth), API Key, and CCR Proxy authentication with comprehensive validation and API provider preset system (v3.3.3+)
 4. **API Provider Preset System**: Pre-configured settings for popular providers (302.AI, GLM, MiniMax, Kimi) simplifying configuration from 5+ prompts to just 2 (provider + API key)
 5. **Advanced Workflow System**: Modular workflow installation with sophisticated dependency resolution and conflict management
-6. **Advanced CCX Integration**: CCX proxy management with preset channels (DeepSeek, MiMo, GLM, Kimi Code, SiliconFlow, OpenRouter), built-in model mapping, channel testing with response validation, and connectivity auto-fix for Windows users
+6. **Advanced CCX Integration**: CCX proxy management with preset channels (DeepSeek, MiMo, GLM, Kimi Code, Kimi Open Platform, SiliconFlow, OpenRouter), built-in model mapping, channel testing with response validation, and connectivity auto-fix for Windows users
 7. **Intelligent Auto-Update System**: Automated tool updating for Claude Code, CCR, and CCometixLine with comprehensive version checking
 8. **Advanced Common Tools Workflow**: Enhanced workflow category with init-project command and comprehensive agent ecosystem
 9. **Consolidated Template System**: Shared templates architecture with `templates/common/` containing output-styles, git workflows, and sixStep workflows for code reuse

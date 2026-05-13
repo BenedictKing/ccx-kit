@@ -20,8 +20,8 @@ ZCF pre-configures multiple workflows through `WORKFLOW_CONFIG_BASE` and automat
 
 ## Installation and Updates
 
-- `zcf init` imports all workflows by default. Users can selectively install via `--workflows`.
-- `zcf update` re-executes workflow import after template updates to ensure content synchronization.
+- `ccx-kit init` imports all workflows by default. Users can selectively install via `--workflows`.
+- `ccx-kit update` re-executes workflow import after template updates to ensure content synchronization.
 - Workflow files are automatically installed to Claude Code/Codex's `prompts/workflows/` directory.
 
 ## Agent Auto Installation

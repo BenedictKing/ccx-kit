@@ -29,8 +29,8 @@ Ensure your development environment meets the following requirements:
 
 ```bash
 # Fork and clone repository
-git clone https://github.com/YOUR_USERNAME/zcf.git
-cd zcf
+git clone https://github.com/YOUR_USERNAME/ccx-kit.git
+cd ccx-kit
 
 # Install dependencies
 pnpm install
@@ -174,10 +174,10 @@ In addition to code contributions, you can also:
 
 ## 📖 Related Resources
 
-- [Project README](https://github.com/UfoMiao/zcf/blob/main/README.md) - Project overview and quick start
-- [CLAUDE.md](https://github.com/UfoMiao/zcf/blob/main/CLAUDE.md) - Complete project architecture documentation
-- [GitHub Issues](https://github.com/UfoMiao/zcf/issues) - Issues and discussions
-- [GitHub Discussions](https://github.com/UfoMiao/zcf/discussions) - Community discussions
+- [Project README](https://github.com/BenedictKing/ccx-kit/blob/main/README.md) - Project overview and quick start
+- [CLAUDE.md](https://github.com/BenedictKing/ccx-kit/blob/main/CLAUDE.md) - Complete project architecture documentation
+- [GitHub Issues](https://github.com/BenedictKing/ccx-kit/issues) - Issues and discussions
+- [GitHub Discussions](https://github.com/BenedictKing/ccx-kit/discussions) - Community discussions
 
 ---
 

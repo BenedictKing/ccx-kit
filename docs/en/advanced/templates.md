@@ -88,16 +88,16 @@ In addition to pre-configured styles, built-in styles are also supported:
 
 ```bash
 # Install all output styles
-npx zcf init -o all
+npx ccx-kit init -o all
 
 # Install specific styles
-npx zcf init -o engineer-professional,nekomata-engineer
+npx ccx-kit init -o engineer-professional,nekomata-engineer
 
 # Set default output style
-npx zcf init -o all -d engineer-professional
+npx ccx-kit init -o all -d engineer-professional
 
 # Skip output style installation
-npx zcf init -o skip
+npx ccx-kit init -o skip
 ```
 
 ### Switch Output Style
@@ -193,13 +193,13 @@ Workflow templates define structured development processes. Each workflow includ
 
 ```bash
 # Install all workflows
-npx zcf init -w all
+npx ccx-kit init -w all
 
 # Install specific workflows
-npx zcf init -w sixStepsWorkflow,gitWorkflow
+npx ccx-kit init -w sixStepsWorkflow,gitWorkflow
 
 # Skip workflow installation
-npx zcf init -w skip
+npx ccx-kit init -w skip
 ```
 
 ### Custom Workflows
@@ -207,8 +207,8 @@ npx zcf init -w skip
 1. **Fork Repository and Modify Templates**:
 ```bash
 # 1. Fork ZCF repository
-git clone https://github.com/your-org/zcf.git
-cd zcf
+git clone https://github.com/your-org/ccx-kit.git
+cd ccx-kit
 
 # 2. Modify templates
 vim templates/claude-code/zh-CN/workflow/custom/my-workflow.md
@@ -221,13 +221,13 @@ npm link
 2. **Use During Initialization**:
 ```bash
 # Initialize using custom template directory
-npx zcf init -w custom
+npx ccx-kit init -w custom
 ```
 
 3. **Team Publishing Custom Templates**:
 ```bash
 # Publish npm package containing custom templates
-npm publish @your-org/zcf-templates
+npm publish @your-org/ccx-kit-templates
 ```
 
 ## System Prompt Templates
@@ -276,7 +276,7 @@ Project Root/
 3. **Regular Updates**:
 ```bash
 # Update templates and prompts
-npx zcf update -g zh-CN
+npx ccx-kit update -g zh-CN
 ```
 
 ## Template Language Support
@@ -301,13 +301,13 @@ ZCF supports templates in two languages:
 
 ```bash
 # Initialize using Chinese templates
-npx zcf init -c zh-CN
+npx ccx-kit init -c zh-CN
 
 # Initialize using English templates
-npx zcf init -c en
+npx ccx-kit init -c en
 
 # Switch language during update
-npx zcf update -c en
+npx ccx-kit update -c en
 ```
 
 ## Template Update Strategy
@@ -316,9 +316,9 @@ npx zcf update -c en
 
 | Method | Command | Description |
 |------|------|------|
-| **Complete Update** | `npx zcf update` | Update all templates |
-| **Documents Only** | `npx zcf init --config-action docs-only` | Only update prompts and documents |
-| **Merge Update** | `npx zcf init --config-action merge` | Merge new templates into existing configuration |
+| **Complete Update** | `npx ccx-kit update` | Update all templates |
+| **Documents Only** | `npx ccx-kit init --config-action docs-only` | Only update prompts and documents |
+| **Merge Update** | `npx ccx-kit init --config-action merge` | Merge new templates into existing configuration |
 
 ### Preserve Custom Content
 
@@ -352,8 +352,8 @@ Unify template standards within team:
 1. **Create Team Template Repository**:
 ```bash
 # Create template repository
-mkdir team-zcf-templates
-cd team-zcf-templates
+mkdir team-ccx-kit-templates
+cd team-ccx-kit-templates
 git init
 
 # Add template files
@@ -384,7 +384,7 @@ If templates are not correctly installed:
 
 ```bash
 # Reinstall templates
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 
 # Check template directories
 ls -la ~/.claude/workflows/
@@ -409,10 +409,10 @@ If template language doesn't match configuration:
 
 ```bash
 # Reinitialize and specify language
-npx zcf init --config-action backup -c zh-CN
+npx ccx-kit init --config-action backup -c zh-CN
 
 # Or only update template language
-npx zcf update -c zh-CN
+npx ccx-kit update -c zh-CN
 ```
 
 ## Related Resources

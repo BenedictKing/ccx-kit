@@ -4,7 +4,7 @@ title: Worktree Parallel Development
 
 # Worktree Parallel Development
 
-Git Worktree is a powerful Git feature that allows you to create multiple work areas (copies) in the same repository, each work area can switch to different branches without interference, sharing the same Git history. ZCF's `/git-worktree` smart command makes Worktree management simple and intuitive.
+Git Worktree is a powerful Git feature that allows you to create multiple work areas (copies) in the same repository, each work area can switch to different branches without interference, sharing the same Git history. CCX-Kit's `/git-worktree` smart command makes Worktree management simple and intuitive.
 
 ## What is Worktree
 
@@ -26,7 +26,7 @@ Worktree can conveniently create a work area (copy) of a project and switch to d
 
 ## Basic Commands
 
-ZCF's `/git-worktree` command provides complete Worktree management functionality:
+CCX-Kit's `/git-worktree` command provides complete Worktree management functionality:
 
 ### Create Worktree
 
@@ -86,7 +86,7 @@ ZCF's `/git-worktree` command provides complete Worktree management functionalit
 
 ### Natural Language Execution
 
-ZCF's `/git-worktree` command supports natural language, no need to remember command details:
+CCX-Kit's `/git-worktree` command supports natural language, no need to remember command details:
 
 ✅ **Recommended to use natural language**:
 ```
@@ -102,7 +102,7 @@ git worktree add ../.zcf/project-name/feat/test -b feat/test
 
 ### Work Area Location
 
-ZCF's Worktree is created by default in the project-level `../.zcf/project-name/` directory to avoid confusion:
+CCX-Kit's Worktree is created by default in the project-level `../.zcf/project-name/` directory to avoid confusion:
 
 ```
 Project Directory/
@@ -121,7 +121,7 @@ Project Directory/
 - Unified naming convention, easy to manage
 - Supports IDE auto-open
 
-## Integration with ZCF Workflows
+## Integration with CCX-Kit Workflows
 
 ### Multi-Line Parallel + SL Rollback Method
 
@@ -170,7 +170,7 @@ If generated results deviate too much, it's not recommended to continue letting 
 /zcf:workflow Develop xxx feature, reference solution2 implementation, but avoid xxx problem
 ```
 
-### Combine with ZCF Workflows
+### Combine with CCX-Kit Workflows
 
 Run workflows independently in each Worktree:
 
@@ -227,11 +227,11 @@ Use different API configurations in different Worktrees:
 
 ```bash
 # Main branch uses GLM provider configuration
-npx zcf config-switch glm-provider
+npx ccx-kit config-switch glm-provider
 
 # Worktree uses 302.AI provider configuration
 cd ../.zcf/project-name/feat/test
-npx zcf config-switch 302ai-provider
+npx ccx-kit config-switch 302ai-provider
 ```
 
 ### 5. Project Progress Documents
@@ -307,7 +307,7 @@ Features:
 ## Related Documentation
 
 - [Git Smart Commands](../workflows/git-commands.md) - Other Git operation commands
-- [ZCF Six-Stage Workflow](../workflows/zcf-workflow.md) - Use with workflows
+- [CCX-Kit Six-Stage Workflow](../workflows/zcf-workflow.md) - Use with workflows
 - [Config Switch](../cli/config-switch.md) - Use different configurations in different Worktrees
 
 

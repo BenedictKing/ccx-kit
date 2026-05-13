@@ -60,7 +60,7 @@ ZCF 为 Codex 创建以下目录结构：
 ├── auth.json            # 认证信息
 ├── AGENTS.md            # AI 代理配置和系统提示
 ├── prompts/             # 工作流提示词目录
-│   ├── zcf/
+│   ├── ccx-kit/
 │   │   ├── workflow.md  # 六阶段工作流
 │   │   └── ...
 │   └── ...
@@ -363,16 +363,16 @@ export OPENAI_API_KEY="sk-ccx-kit"  # CCX 的 PROXY_ACCESS_KEY
 
 ```bash
 # 1. 初始化 CCX
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 1（初始化 CCX）
 
 # 2. 添加 Codex 渠道
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 7（添加预设渠道）
 # 选择提供商 → 选择 (Codex) 变体 → 输入 API Key
 
 # 3. 测试连通性
-npx ccx-kit ccr
+npx ccx-kit ccx
 # 选择 8（测试渠道）
 ```
 

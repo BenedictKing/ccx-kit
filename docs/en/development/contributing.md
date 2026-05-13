@@ -43,15 +43,15 @@ You can contribute in the following ways:
 ```bash
 # Fork repository to your GitHub account
 # Then clone your fork
-git clone https://github.com/YOUR_USERNAME/zcf.git
-cd zcf
+git clone https://github.com/YOUR_USERNAME/ccx-kit.git
+cd ccx-kit
 ```
 
 ### 2. Add Upstream Repository
 
 ```bash
 # Add upstream repository to sync updates
-git remote add upstream https://github.com/UfoMiao/zcf.git
+git remote add upstream https://github.com/BenedictKing/ccx-kit.git
 
 # Verify remote repositories
 git remote -v

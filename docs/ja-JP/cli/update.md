@@ -1,14 +1,14 @@
 ---
-title: zcf update
+title: ccx-kit update
 ---
 
-# zcf update
+# ccx-kit update
 
-`zcf update`（省略形 `zcf u`）は、ワークフローテンプレート、プロンプト、ツールバージョンの確認を更新するために使用されます。これは軽量な更新コマンドで、API 設定やインストール済みの MCP サービスを変更しません。
+`ccx-kit update`（省略形 `ccx-kit u`）は、ワークフローテンプレート、プロンプト、ツールバージョンの確認を更新するために使用されます。これは軽量な更新コマンドで、API 設定やインストール済みの MCP サービスを変更しません。
 
 ## 機能概要
 
-`zcf update` コマンドは以下の操作を実行します：
+`ccx-kit update` コマンドは以下の操作を実行します：
 
 1. 📝 **プロンプトを更新**：最新のワークフローテンプレートとプロンプト内容を同期
 2. 🔄 **ワークフローを更新**：ワークフローテンプレートを更新またはインストール
@@ -22,13 +22,13 @@ title: zcf update
 
 ```bash
 # 保存された設定を使用して更新
-npx zcf update
+npx ccx-kit update
 
 # または省略形を使用
-npx zcf u
+npx ccx-kit u
 
 # またはメインメニューから
-npx zcf
+npx ccx-kit
 # 次に 2 (ワークフローをインポート) を選択
 ```
 
@@ -43,19 +43,19 @@ npx zcf
 
 ```bash
 # デフォルト言語設定を使用して更新
-npx zcf u -s
+npx ccx-kit u -s
 
 # テンプレート言語を指定
-npx zcf u -s -c zh-CN
+npx ccx-kit u -s -c zh-CN
 
 # AI 出力言語を指定
-npx zcf u -s -a zh-CN
+npx ccx-kit u -s -a zh-CN
 
 # テンプレートと出力言語を同時に指定
-npx zcf u -s -g zh-CN
+npx ccx-kit u -s -g zh-CN
 
 # コードツールタイプを指定
-npx zcf u -s -T codex
+npx ccx-kit u -s -T codex
 ```
 
 ## よく使うパラメータ
@@ -76,7 +76,7 @@ npx zcf u -s -T codex
 
 ```bash
 # 最新のワークフローテンプレートを取得するために定期的に実行
-npx zcf u
+npx ccx-kit u
 
 # 週に1回更新（推奨）
 # cron タスクまたは CI/CD プロセスに追加できます
@@ -86,32 +86,32 @@ npx zcf u
 
 ```bash
 # Claude Code ワークフローを更新
-npx zcf u -T claude-code -c zh-CN
+npx ccx-kit u -T claude-code -c zh-CN
 
 # Codex ワークフローを更新
-npx zcf u -T codex -c zh-CN
+npx ccx-kit u -T codex -c zh-CN
 ```
 
 ### シナリオ 3：言語設定を同期
 
 ```bash
 # すべての言語設定を中国語に切替
-npx zcf u -g zh-CN
+npx ccx-kit u -g zh-CN
 
 # テンプレートは中国語、AI 出力は英語
-npx zcf u -c zh-CN -a en
+npx ccx-kit u -c zh-CN -a en
 ```
 
 ### シナリオ 4：自動化更新
 
 ```bash
 # 非対話式更新（スクリプトに適している）
-npx zcf u -s -g zh-CN -T claude-code
+npx ccx-kit u -s -g zh-CN -T claude-code
 ```
 
 ## 実行フロー
 
-`zcf update` の実行フローは以下のとおりです：
+`ccx-kit update` の実行フローは以下のとおりです：
 
 ### Claude Code フロー
 
@@ -131,7 +131,7 @@ npx zcf u -s -g zh-CN -T claude-code
 
 ## 更新内容
 
-`zcf update` は以下の内容を更新します：
+`ccx-kit update` は以下の内容を更新します：
 
 ### ワークフローテンプレート
 
@@ -152,18 +152,18 @@ npx zcf u -s -g zh-CN -T claude-code
 
 ### 更新されない内容
 
-`zcf update` は以下の内容を**変更しません**：
+`ccx-kit update` は以下の内容を**変更しません**：
 
 - ❌ API 設定（キー、認証方式など）
 - ❌ MCP サービス設定（インストール済みサービス）
 - ❌ カスタム出力スタイル
 - ❌ プロジェクト固有の設定
 
-これらの内容を更新する必要がある場合は、`zcf init` または対応する設定メニューを使用してください。
+これらの内容を更新する必要がある場合は、`ccx-kit init` または対応する設定メニューを使用してください。
 
 ## バージョン確認
 
-`zcf update` は自動的にツールバージョンを確認します：
+`ccx-kit update` は自動的にツールバージョンを確認します：
 
 ### Claude Code バージョン確認
 
@@ -196,14 +196,14 @@ npx zcf u -s -g zh-CN -T claude-code
 
 ### 1. 定期的な更新
 
-最新のワークフローと改善を取得するために、定期的に `zcf update` を実行することをお勧めします：
+最新のワークフローと改善を取得するために、定期的に `ccx-kit update` を実行することをお勧めします：
 
 ```bash
 # 週に1回更新
-npx zcf u -g zh-CN
+npx ccx-kit u -g zh-CN
 
 # または cron タスクに追加
-0 0 * * 0 /usr/local/bin/npx zcf u -s -g zh-CN
+0 0 * * 0 /usr/local/bin/npx ccx-kit u -s -g zh-CN
 ```
 
 ### 2. 更新前の確認
@@ -223,7 +223,7 @@ ls -la ~/.claude/backup/
 カスタムワークフローまたはプロンプトがある場合：
 
 1. **カスタム内容をバックアップ**：更新前に手動でバックアップ
-2. **`docs-only` モードを使用**：`zcf init` で `--config-action docs-only` を使用
+2. **`docs-only` モードを使用**：`ccx-kit init` で `--config-action docs-only` を使用
 3. **差分を確認**：更新後、バックアップと現在のファイルを比較
 
 ### 4. チーム同期
@@ -236,7 +236,7 @@ ls -la ~/.claude/backup/
 
 ```bash
 # チーム統一の更新コマンド
-npx zcf u -s -g zh-CN -T claude-code
+npx ccx-kit u -s -g zh-CN -T claude-code
 ```
 
 ## トラブルシューティング
@@ -263,7 +263,7 @@ mkdir -p ~/.claude/backup ~/.codex/backup
 
 ```bash
 # ワークフローを強制的に再インストール
-npx zcf init --config-action new -w all
+npx ccx-kit init --config-action new -w all
 
 # または手動でワークフローディレクトリを確認
 ls -la ~/.claude/workflows/
@@ -275,11 +275,11 @@ ls -la ~/.claude/workflows/
 
 1. **Claude Code がインストールされていることを確認**：`claude-code` コマンドが利用可能か確認
 2. **手動でバージョンを確認**：`claude-code --version` を使用
-3. **check-updates コマンドを使用**：`npx zcf check-updates` を実行
+3. **check-updates コマンドを使用**：`npx ccx-kit check-updates` を実行
 
 ## init との違い
 
-| 特性 | `zcf init` | `zcf update` |
+| 特性 | `ccx-kit init` | `ccx-kit update` |
 |------|-----------|-------------|
 | **主な用途** | 環境を完全に初期化 | ワークフローとテンプレートを更新 |
 | **API 設定** | ✅ 設定する | ❌ 変更しない |
@@ -290,14 +290,14 @@ ls -la ~/.claude/workflows/
 | **バックアップ** | ✅ バックアップを作成 | ✅ バックアップを作成 |
 
 > 💡 **推奨事項**：
-> - 初回使用時、または API/MCP 設定を変更する必要がある場合、`zcf init` を使用
-> - ワークフローとテンプレートのみを更新する必要がある場合、`zcf update` を使用
+> - 初回使用時、または API/MCP 設定を変更する必要がある場合、`ccx-kit init` を使用
+> - ワークフローとテンプレートのみを更新する必要がある場合、`ccx-kit update` を使用
 
 ## 関連リソース
 
-- [zcf init](init.md) - 完全初期化コマンド
+- [ccx-kit init](init.md) - 完全初期化コマンド
 - [ワークフローシステム](../features/workflows.md) - ワークフローの詳細な紹介
 - [設定管理](../features/multi-config.md) - バックアップと復元
 - [check-updates](check-updates.md) - バージョン確認コマンド
 
-> 💡 **ヒント**：特に新機能がリリースされたり、テンプレートが更新されたりした場合、ワークフローテンプレートとプロンプトを最新の状態に保つために、定期的に `zcf update` を実行することをお勧めします。
+> 💡 **ヒント**：特に新機能がリリースされたり、テンプレートが更新されたりした場合、ワークフローテンプレートとプロンプトを最新の状態に保つために、定期的に `ccx-kit update` を実行することをお勧めします。

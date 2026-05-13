@@ -16,7 +16,7 @@ ZCF 的配置分布在以下目录：
 |------|------|---------|
 | `~/.claude/` | Claude Code 主配置目录 | `settings.json`, `CLAUDE.md`, `prompts/`, `workflows/` |
 | `~/.codex/` | Codex 主配置目录 | `config.toml`, `auth.json`, `prompts/`, `AGENTS.md` |
-| `~/.ufomiao/zcf/` | ZCF 全局配置目录 | `config.toml` |
+| `~/.ccx-kit/` | ZCF 全局配置目录 | `config.toml` |
 | `~/.claude-code-router/` | CCR 配置目录 | `config.json` |
 | `~/.claude/backup/` | Claude Code 备份目录 | 时间戳备份文件 |
 | `~/.codex/backup/` | Codex 备份目录 | 时间戳备份文件 |
@@ -54,7 +54,7 @@ ZCF 的配置分布在以下目录：
 #### ZCF 全局配置
 
 ```
-~/.ufomiao/zcf/
+~/.ccx-kit/
 ├── config.toml            # ZCF 全局配置（TOML 格式）
 │   ├── preferredLang      # CLI 语言偏好
 │   ├── templateLang       # 模板语言偏好
@@ -86,10 +86,10 @@ ZCF 的配置分布在以下目录：
 
 ```bash
 # 指定配置处理策略
-npx zcf init -s --config-action merge
+npx ccx-kit init -s --config-action merge
 
 # 仅更新文档
-npx zcf init -s --config-action docs-only
+npx ccx-kit init -s --config-action docs-only
 ```
 
 ### 合并策略详解
@@ -120,7 +120,7 @@ ZCF 采用四模型架构,提供细粒度的 AI 模型选择控制:
 
 ```bash
 # 配置全部四个模型
-npx zcf i -s \
+npx ccx-kit i -s \
   --api-key "sk-xxx" \
   --api-model "claude-sonnet-4-5" \
   --api-haiku-model "claude-haiku-4-5" \
@@ -201,7 +201,7 @@ npx zcf i -s \
 使用 `custom` 选项可以输入自定义语言指令：
 
 ```bash
-npx zcf init --ai-output-lang custom
+npx ccx-kit init --ai-output-lang custom
 # 输入：使用日语回复，保持专业和礼貌的语调
 ```
 
@@ -223,7 +223,7 @@ npx zcf init --ai-output-lang custom
 `resolveTemplateLanguage` 函数会综合以下因素确定模板语言：
 
 1. **命令行参数**：`--config-lang` 或 `--all-lang`
-2. **配置文件**：`~/.ufomiao/zcf/config.toml` 中的 `templateLang`
+2. **配置文件**：`~/.ccx-kit/config.toml` 中的 `templateLang`
 3. **交互输入**：如果没有指定，会提示用户选择
 4. **系统默认**：最后回退到 `en`
 
@@ -233,10 +233,10 @@ npx zcf init --ai-output-lang custom
 
 ```bash
 # 中文模板 + 英文输出（适合需要英文代码注释）
-npx zcf init --config-lang zh-CN --ai-output-lang en
+npx ccx-kit init --config-lang zh-CN --ai-output-lang en
 
 # 英文模板 + 中文输出（适合国际化团队）
-npx zcf init --config-lang en --ai-output-lang zh-CN
+npx ccx-kit init --config-lang en --ai-output-lang zh-CN
 ```
 
 ### 模板语言作用
@@ -256,8 +256,8 @@ npx zcf init --config-lang en --ai-output-lang zh-CN
 
 ```bash
 # 创建配置仓库
-mkdir ~/zcf-configs
-cd ~/zcf-configs
+mkdir ~/ccx-kit-configs
+cd ~/ccx-kit-configs
 git init
 
 # 添加配置文件（注意排除敏感信息）
@@ -275,7 +275,7 @@ git commit -m "Add ZCF templates and workflows"
 
 ### 对比差异
 
-在执行 `zcf update` 前后对比差异：
+在执行 `ccx-kit update` 前后对比差异：
 
 ```bash
 # 更新前
@@ -283,7 +283,7 @@ git add ~/.claude/
 git commit -m "Before update"
 
 # 执行更新
-npx zcf update
+npx ccx-kit update
 
 # 查看差异
 git diff ~/.claude/
@@ -329,8 +329,8 @@ cp ~/.claude/backup/backup_*/workflows/custom/my-workflow.md ~/.claude/workflows
 
 ```bash
 # 方法 1：使用 Git
-git clone ~/zcf-configs
-cp -r zcf-configs/templates/* ~/.claude/workflows/
+git clone ~/ccx-kit-configs
+cp -r ccx-kit-configs/templates/* ~/.claude/workflows/
 
 # 方法 2：使用云存储
 rsync -av ~/.claude/workflows/ ~/Cloud/.claude/workflows/
@@ -369,10 +369,10 @@ ls -la ~/.claude/workflows/
 
 ```bash
 # ZCF 会自动检测并迁移配置
-npx zcf init
+npx ccx-kit init
 
 # 或手动检查迁移
-cat ~/.ufomiao/zcf/config.toml
+cat ~/.ccx-kit/config.toml
 # 检查是否有迁移提示
 ```
 
@@ -385,7 +385,7 @@ cat ~/.ufomiao/zcf/config.toml
 cp -r ~/.claude ~/.claude.backup
 
 # 2. 初始化 Codex
-npx zcf init -T codex
+npx ccx-kit init -T codex
 
 # 3. 手动迁移工作流和模板（如果需要）
 # 注意：Claude Code 和 Codex 的模板格式可能不同
@@ -399,14 +399,14 @@ npx zcf init -T codex
 
 ```bash
 # 1. 查看冲突详情
-npx zcf init
+npx ccx-kit init
 # 选择 merge 策略时查看冲突提示
 
 # 2. 手动合并配置
 # 编辑配置文件，手动合并冲突项
 
 # 3. 使用 backup 策略重新开始
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 配置丢失
@@ -421,7 +421,7 @@ ls -lt ~/.claude/backup/ | head -5
 cp -r ~/.claude/backup/backup_最新时间戳/* ~/.claude/
 
 # 3. 重新初始化（如果备份不可用）
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 ```
 
 ### 配置文件损坏
@@ -436,7 +436,7 @@ cat ~/.claude/settings.json | jq .
 cp ~/.claude/backup/backup_*/settings.json ~/.claude/
 
 # 3. 或重新初始化
-npx zcf init --config-action new
+npx ccx-kit init --config-action new
 ```
 
 ## 相关资源

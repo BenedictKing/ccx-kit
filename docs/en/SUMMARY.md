@@ -27,8 +27,8 @@
 
 ## CLI Commands
 * [Commands Overview](cli/index.md)
-* [zcf init](cli/init.md)
-* [zcf update](cli/update.md)
+* [ccx-kit init](cli/init.md)
+* [ccx-kit update](cli/update.md)
 * [Main Menu](cli/menu.md)
 * [CCX Proxy Management](cli/ccr.md)
 * [Usage Analysis ccu](cli/ccu.md)
@@ -38,7 +38,7 @@
 
 ## Workflow Details
 * [Workflow Overview](workflows/index.md)
-* [ZCF Six-Stage Workflow](workflows/zcf-workflow.md)
+* [CCX-Kit Six-Stage Workflow](workflows/zcf-workflow.md)
 * [Feature Development Workflow](workflows/feat.md)
 * [BMad Agile Process](workflows/bmad.md)
 * [Spec Workflow Integration](workflows/spec.md)

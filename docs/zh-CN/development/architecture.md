@@ -43,9 +43,9 @@ title: 架构说明
 ### 目录层次
 
 ```
-zcf/
+ccx-kit/
 ├── bin/
-│   └── zcf.mjs              # CLI 可执行入口
+│   └── ccx-kit.mjs              # CLI 可执行入口
 ├── src/                     # 源代码
 │   ├── cli.ts              # CLI 主入口（cac 初始化）
 │   ├── cli-setup.ts        # 命令注册和设置
@@ -146,7 +146,7 @@ zcf/
 ```typescript
 // cli.ts
 async function main(): Promise<void> {
-  const cli = cac('zcf')
+  const cli = cac('ccx-kit')
   await setupCommands(cli)
   cli.parse()
 }
@@ -262,7 +262,7 @@ graph TD
 
 ```mermaid
 graph TD
-    A[zcf init] --> B{code-type?}
+    A[ccx-kit init] --> B{code-type?}
     B -->|claude-code| C[Claude Code 流程]
     B -->|codex| D[Codex 流程]
     
@@ -470,4 +470,4 @@ export function getConfigPath(): string {
 
 - [贡献指南](contributing.md) - 参与开发的详细指南
 - [测试指南](testing.md) - 测试编写和运行
-- [CLAUDE.md](https://github.com/UfoMiao/zcf/blob/main/CLAUDE.md) - 项目完整架构文档
+- [CLAUDE.md](https://github.com/BenedictKing/ccx-kit/blob/main/CLAUDE.md) - 项目完整架构文档

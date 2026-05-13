@@ -10,11 +10,11 @@ This document compiles practical tips and best practices for daily use of ZCF, h
 
 ### 1. Make Good Use of Interactive Menu
 
-**Tip**: Get used to starting with `npx zcf`. All functions have numbered prompts, avoiding the need to remember command details.
+**Tip**: Get used to starting with `npx ccx-kit`. All functions have numbered prompts, avoiding the need to remember command details.
 
 ```bash
 # Open interactive menu
-npx zcf
+npx ccx-kit
 
 # Menu options include:
 # 1 - Complete Initialization
@@ -43,13 +43,13 @@ npx zcf
 
 ```bash
 # Update once per week (recommended)
-npx zcf update
+npx ccx-kit update
 
 # Or use abbreviation
-npx zcf u
+npx ccx-kit u
 
 # Non-interactive update
-npx zcf u -s -g zh-CN
+npx ccx-kit u -s -g zh-CN
 ```
 
 **Best Practices**:
@@ -63,13 +63,13 @@ npx zcf u -s -g zh-CN
 
 ```bash
 # Set all languages to Chinese uniformly
-npx zcf init -g zh-CN
+npx ccx-kit init -g zh-CN
 
 # Templates Chinese, AI output English (suitable for scenarios requiring English code comments)
-npx zcf init -c zh-CN -a en
+npx ccx-kit init -c zh-CN -a en
 
 # Only switch language during update
-npx zcf update -c en
+npx ccx-kit update -c en
 ```
 
 **Usage Scenarios**:
@@ -99,18 +99,18 @@ cp -r ~/.claude/* ../project-config/.claude/
 # Link configuration directory to cloud storage
 
 # macOS/iCloud
-ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/.zcf-configs ~/.zcf-sync
+ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/.ccx-kit-configs ~/.ccx-kit-sync
 
 # Sync configuration
-rsync -av ~/.claude/ ~/.zcf-sync/claude/
-rsync -av ~/.codex/ ~/.zcf-sync/codex/
+rsync -av ~/.claude/ ~/.ccx-kit-sync/claude/
+rsync -av ~/.codex/ ~/.ccx-kit-sync/codex/
 ```
 
 #### Method 3: Use Version Control
 
 ```bash
 # Create configuration repository
-mkdir ~/zcf-configs && cd ~/zcf-configs
+mkdir ~/ccx-kit-configs && cd ~/ccx-kit-configs
 git init
 
 # Add configuration files (note: exclude sensitive information)
@@ -131,7 +131,7 @@ git pull origin main
 
 ```bash
 #!/bin/bash
-# deploy-zcf.sh - Automated ZCF configuration deployment
+# deploy-ccx-kit.sh - Automated ZCF configuration deployment
 
 # Read configuration from environment variables
 API_KEY=${ZCF_API_KEY}
@@ -139,7 +139,7 @@ PROVIDER=${ZCF_PROVIDER:-302ai}
 LANG=${ZCF_LANG:-zh-CN}
 
 # Non-interactive initialization
-npx zcf init -s \
+npx ccx-kit init -s \
   --provider "$PROVIDER" \
   --api-key "$API_KEY" \
   --all-lang "$LANG" \
@@ -159,13 +159,13 @@ echo "ZCF configuration deployment completed"
 echo "Configuring development environment..."
 
 # 1. Configure ZCF (using configuration file)
-npx zcf init -s --api-configs-file ./team-api-configs.json
+npx ccx-kit init -s --api-configs-file ./team-api-configs.json
 
 # 2. Update workflows
-npx zcf update -s -g zh-CN
+npx ccx-kit update -s -g zh-CN
 
 # 3. Check tool versions
-npx zcf check-updates
+npx ccx-kit check-updates
 
 echo "Development environment configuration completed!"
 ```
@@ -180,7 +180,7 @@ SERVERS=("server1" "server2" "server3")
 
 for server in "${SERVERS[@]}"; do
   echo "Deploying to $server..."
-  ssh "$server" "npx zcf init -s -p 302ai -k '${API_KEY}' -g zh-CN"
+  ssh "$server" "npx ccx-kit init -s -p 302ai -k '${API_KEY}' -g zh-CN"
 done
 ```
 
@@ -190,13 +190,13 @@ done
 
 ```bash
 # View usage statistics
-npx zcf ccu
+npx ccx-kit ccu
 
 # Output JSON format (for integration into monitoring systems)
-npx zcf ccu --json > usage.json
+npx ccx-kit ccu --json > usage.json
 
 # View detailed statistics
-npx zcf ccu --verbose
+npx ccx-kit ccu --verbose
 ```
 
 **Integration Example**:
@@ -206,7 +206,7 @@ npx zcf ccu --verbose
 # monitor-usage.sh - Usage monitoring script
 
 # Get usage
-USAGE=$(npx zcf ccu --json)
+USAGE=$(npx ccx-kit ccu --json)
 
 # Parse JSON (using jq)
 TOKENS=$(echo "$USAGE" | jq '.tokens.total')
@@ -226,7 +226,7 @@ fi
 
 ```bash
 # Traditional method (requires multiple parameters)
-npx zcf init -s \
+npx ccx-kit init -s \
   -t api_key \
   -k "sk-xxx" \
   -u "https://api.302.ai/v1" \
@@ -234,7 +234,7 @@ npx zcf init -s \
   -F "claude-haiku-4-5"
 
 # Use preset (only 2 parameters needed)
-npx zcf init -s -p 302ai -k "sk-xxx"
+npx ccx-kit init -s -p 302ai -k "sk-xxx"
 ```
 
 **Supported Providers**: `302ai`, `glm`, `minimax`, `kimi`, `custom`
@@ -245,16 +245,16 @@ npx zcf init -s -p 302ai -k "sk-xxx"
 
 ```bash
 # List all configurations
-npx zcf config-switch --list
+npx ccx-kit config-switch --list
 
 # Switch to work configuration
-npx zcf config-switch work
+npx ccx-kit config-switch work
 
 # Switch to personal configuration
-npx zcf config-switch personal
+npx ccx-kit config-switch personal
 
 # Switch in Codex
-npx zcf config-switch work --code-type codex
+npx ccx-kit config-switch work --code-type codex
 ```
 
 **Naming Suggestions**:
@@ -287,7 +287,7 @@ npx zcf config-switch work --code-type codex
 
 ```bash
 # View available styles
-npx zcf init -s -o all
+npx ccx-kit init -s -o all
 
 # Switch style in conversation
 # Claude Code: /output-style engineer-professional
@@ -306,10 +306,10 @@ npx zcf init -s -o all
 
 ```bash
 # Only install necessary services
-npx zcf init -s -m context7,open-websearch
+npx ccx-kit init -s -m context7,open-websearch
 
 # View all available services
-npx zcf
+npx ccx-kit
 # Select 4 (Configure MCP), view list
 ```
 
@@ -326,7 +326,7 @@ npx zcf
 
 ```bash
 # Automatic backup (automatically executed during init and update)
-npx zcf init  # Automatic backup
+npx ccx-kit init  # Automatic backup
 
 # Manual backup of specific configuration
 cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d)
@@ -347,7 +347,7 @@ ls -lt ~/.claude/backup/ | head -5
 cp -r ~/.claude/backup/backup_2025-01-15_10-30-45/* ~/.claude/
 
 # 3. Or reinitialize (will create new backup)
-npx zcf init --config-action backup
+npx ccx-kit init --config-action backup
 ```
 
 ### 14. Version Control Integration
@@ -356,7 +356,7 @@ npx zcf init --config-action backup
 
 ```bash
 # Create .gitignore
-cat > ~/.zcf-configs/.gitignore << EOF
+cat > ~/.ccx-kit-configs/.gitignore << EOF
 # Exclude sensitive information
 *.key
 auth.json
@@ -380,13 +380,13 @@ git commit -m "Add ZCF templates and workflows"
 
 ```bash
 # 1. Only install needed MCP services
-npx zcf init -s -m context7,open-websearch  # Only install necessary services
+npx ccx-kit init -s -m context7,open-websearch  # Only install necessary services
 
 # 2. Use local cache (if supported)
 # Some MCP services support local cache, can speed up response
 
 # 3. Regularly clean backups
-npx zcf uninstall --mode custom --items backups
+npx ccx-kit uninstall --mode custom --items backups
 ```
 
 ## Team Collaboration Tips
@@ -408,7 +408,7 @@ cat > team-config.json << EOF
 EOF
 
 # Team members use same configuration
-npx zcf init -s --api-configs-file team-config.json -k "Personal API Key"
+npx ccx-kit init -s --api-configs-file team-config.json -k "Personal API Key"
 ```
 
 ### 17. Document Sharing
@@ -451,7 +451,7 @@ cat ~/.claude/settings.json | jq .mcpServers
 ls -la ~/.claude/workflows/
 
 # Check version
-npx zcf check-updates
+npx ccx-kit check-updates
 ```
 
 ### 20. Log Analysis
@@ -460,10 +460,10 @@ npx zcf check-updates
 
 ```bash
 # Enable verbose output
-npx zcf init --verbose 2>&1 | tee zcf.log
+npx ccx-kit init --verbose 2>&1 | tee ccx-kit.log
 
 # View logs
-cat zcf.log | grep -i error
+cat ccx-kit.log | grep -i error
 ```
 
 ## Related Resources

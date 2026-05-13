@@ -23,13 +23,13 @@ Specify styles to install via `--output-styles` parameter during initialization:
 
 ```bash
 # Install all output styles
-npx zcf init -o all
+npx ccx-kit init -o all
 
 # Install specific styles
-npx zcf init -o engineer-professional,nekomata-engineer
+npx ccx-kit init -o engineer-professional,nekomata-engineer
 
 # Skip output style installation
-npx zcf init -o skip
+npx ccx-kit init -o skip
 ```
 
 ### Switch Output Style
@@ -37,7 +37,7 @@ npx zcf init -o skip
 #### Switch in Main Menu
 
 ```bash
-npx zcf
+npx ccx-kit
 # Select 6 (Configure AI Memory & Output Style)
 # Then select output style management
 ```
@@ -235,7 +235,7 @@ You are a professional full-stack engineer, focusing on:
 3. **Use Custom Style**:
 ```bash
 # Set default style
-npx zcf
+npx ccx-kit
 # Select 6, then select my-style
 
 # Or use in project
@@ -331,7 +331,7 @@ This style defines our team's development standards and quality standards.
 ### Claude Code Version Requirements
 
 - ⚠️ **Version Requirement**: Claude Code version must be > 1.0.81 to support output styles
-- ✅ **Check Version**: Use `npx zcf check-updates` to check and update
+- ✅ **Check Version**: Use `npx ccx-kit check-updates` to check and update
 - 📝 **Migration Note**: Global memory rules from old versions have been migrated to `engineer-professional` style
 
 ### Style File Locations
