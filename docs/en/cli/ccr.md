@@ -1,106 +1,106 @@
 ---
-title: CCR Proxy Management
+title: CCX Proxy Management
 ---
 
-# CCR Proxy Management
+# CCX Proxy Management
 
-`zcf ccr` provides a complete management menu for Claude Code Router (CCR), including installation, configuration, service control, and Web UI access.
+`npx ccx-kit ccr` provides a complete management menu for CCX (the API proxy for Claude Code, Codex, and Gemini CLI), including installation, configuration, service control, channel management, and connectivity repair.
 
 ## Command Format
 
 ```bash
-# Open CCR management menu
-npx zcf ccr
+# Open CCX management menu
+npx ccx-kit ccr
 
 # Or access through main menu
-npx zcf
-# Then select R. CCR Management
+npx ccx-kit
+# Then select R. CCX Management
 ```
 
 ## Menu Options
 
-Running `zcf ccr` will display the following menu:
+Running `npx ccx-kit ccr` will display the following menu:
 
 ```
-═══════════════════════════════════════════════════
-  CCR Management Menu
-═══════════════════════════════════════════════════
+══════════════════════════════════════════════════════
+  CCX Management Menu
+══════════════════════════════════════════════════════
 
-  1. Initialize CCR - Install and configure CCR
-  2. Start UI - Start CCR Web interface
-  3. Check Status - View current CCR service status
-  4. Restart Service - Restart CCR service
-  5. Start Service - Start CCR service
-  6. Stop Service - Stop CCR service
+  1. Initialize CCX       - Install and configure CCX
+  2. Open Web UI          - Open CCX Web management interface
+  3. Check Status         - View current service status
+  4. Restart Service      - Restart CCX service
+  5. Start Service        - Start CCX service
+  6. Stop Service         - Stop CCX service
+  7. Add Preset Channel   - Add a preset upstream channel
+  8. Test Channel         - Test channel connectivity
+  9. Upgrade CCX          - Check and upgrade CCX binary
+  10. Fix Connectivity    - Fix base URL for Windows users
   0. Return to Main Menu
 ```
 
 ## Function Details
 
-### 1. Initialize CCR
+### 1. Initialize CCX
 
-**Function**: First-time CCR setup or reconfigure CCR
+**Function**: First-time CCX setup or reconfigure CCX
 
 **Process**:
-1. Automatically detect if CCR CLI tool is installed
-2. If not installed, automatically install `@musistudio/claude-code-router`
-3. Guide configuration wizard:
-   - Select provider preset (302.AI, GLM, MiniMax, Kimi, etc.)
-   - Configure API keys (if needed)
-   - Select default model
-   - Create configuration file `~/.claude-code-router/config.json`
-4. Automatically configure Claude Code to use CCR proxy
-5. Backup existing configuration (if exists)
+1. Automatically detect if CCX binary is installed
+2. If not installed, download and install the CCX binary from GitHub Releases
+3. Create or update CCX configuration (`~/.ccx/.env`)
+4. Configure Claude Code to use CCX proxy (update `settings.json`)
+5. Start CCX service
+6. Verify connectivity and fix base URL if needed
+7. Backup existing configuration (if exists)
 
 **Use Cases**:
-- First-time use of CCR
-- Need to change provider or reconfigure
+- First-time use of CCX
+- Need to reconfigure after changes
 - Configuration lost and needs reset
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 1
 # Complete configuration according to prompts
 ```
 
-### 2. Start UI
+### 2. Open Web UI
 
-**Function**: Start CCR Web management interface
+**Function**: Open CCX Web management interface in browser
 
-**Access Address**: `http://localhost:3456/ui` (default port)
+**Access Address**: `http://127.0.0.1:3688` (default port)
 
 **Web UI Features**:
-- 📊 Real-time usage statistics and cost analysis
-- ⚙️ Route rule configuration
-- 🔧 Model management (add, edit, delete)
-- 📈 Detailed usage statistics
-- 🔄 Service control (start, stop, restart)
+- Channel management (add, edit, delete upstream channels)
+- Service status monitoring
+- Configuration management
 
 **Prerequisites**:
-- Must complete CCR initialization first (Option 1)
-- Configuration file `~/.claude-code-router/config.json` must exist
+- Must complete CCX initialization first (Option 1)
+- CCX service must be running
 
-**API Key**:
-- When starting UI, CCR API key will be displayed (default: `sk-zcf-x-ccr`)
-- Use this key to log in to Web UI
+**Access Key**:
+- Default access key: `sk-ccx-kit`
+- Use this key to authenticate with the Web UI
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 2
-# After service starts, access http://localhost:3456/ui
+# Browser opens to http://127.0.0.1:3688
 ```
 
 ### 3. Check Status
 
-**Function**: View CCR service current running status
+**Function**: View CCX service current running status
 
 **Displayed Information**:
 - Whether service is running
 - Running port
-- Number of configured providers
-- Route rule summary
+- Process ID (PID)
+- Web UI URL
 
 **Use Cases**:
 - Verify service started normally
@@ -109,28 +109,28 @@ npx zcf ccr
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 3
 ```
 
 ### 4. Restart Service
 
-**Function**: Restart CCR service, reload configuration
+**Function**: Restart CCX service, reload configuration
 
 **Use Cases**:
-- Need to reload after modifying configuration file
+- Need to reload after modifying channel configuration
 - Service abnormal and needs restart
 - Need to restart after port conflict
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 4
 ```
 
 ### 5. Start Service
 
-**Function**: Start CCR service
+**Function**: Start CCX service
 
 **Use Cases**:
 - Need to restart after service stopped
@@ -138,23 +138,116 @@ npx zcf ccr
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 5
 ```
 
 ### 6. Stop Service
 
-**Function**: Stop currently running CCR service
+**Function**: Stop currently running CCX service
 
 **Use Cases**:
-- Need to pause CCR proxy
+- Need to pause CCX proxy
 - Need to stop service for debugging
 - Stop service before changing configuration
 
 **Example**:
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # Select 6
+```
+
+### 7. Add Preset Channel
+
+**Function**: Add a pre-configured upstream channel from built-in presets
+
+**Available Presets**:
+- **DeepSeek** — with variants for Codex (responses), Claude Code (messages), and Gemini CLI (gemini)
+- **MiMo (Xiaomi)** — with variants for multiple regions and protocols
+- **SiliconFlow** — chat protocol, aggregated open-source models
+- **OpenRouter** — chat protocol, unified multi-provider access
+- **Zhipu GLM** — with variants for Codex and Claude Code
+- **Kimi Code** — with variants for Codex and Claude Code
+- **Kimi Open Platform** — chat protocol, pay-per-use
+
+**Process**:
+1. Select provider from preset list
+2. If provider has variants, select the appropriate variant for your tool
+3. Enter API key
+4. Channel is automatically added and tested
+
+**Example**:
+```bash
+npx ccx-kit ccr
+# Select 7
+# Choose DeepSeek
+# Choose "DeepSeek (Codex)" for responses protocol
+# Enter API key
+# Auto-test runs to verify connectivity
+```
+
+### 8. Test Channel
+
+**Function**: Test an existing channel's connectivity and response
+
+**Process**:
+1. Lists all configured channels grouped by protocol (chat, messages, responses, gemini)
+2. Select a channel to test
+3. Enter or confirm model name
+4. Sends test prompt: "Reply with exactly: pong"
+5. Validates response contains "pong" and reports latency
+
+**Use Cases**:
+- Verify a newly added channel works
+- Diagnose connectivity issues
+- Check response latency
+
+**Example**:
+```bash
+npx ccx-kit ccr
+# Select 8
+# Choose channel from list
+# Confirm model name
+# View test result
+```
+
+### 9. Upgrade CCX
+
+**Function**: Check for and install CCX binary updates
+
+**Process**:
+1. Check current installed version
+2. Query latest version from GitHub Releases (with fallback sources)
+3. If update available, download and install new binary
+4. Restart service if it was running
+
+**Example**:
+```bash
+npx ccx-kit ccr
+# Select 9
+```
+
+### 10. Fix Connectivity
+
+**Function**: Fix base URL connectivity issues, primarily for Windows users
+
+**Problem**: On some Windows systems, `127.0.0.1` loopback doesn't work correctly, preventing tools from connecting to the local CCX proxy.
+
+**Process**:
+1. Test connectivity to `127.0.0.1` on the CCX port
+2. If loopback fails, scan local network interfaces using `os.networkInterfaces()`
+3. Test each discovered IPv4 address for CCX reachability
+4. If multiple addresses work, prompt user to select one
+5. Update base URLs in all tool configurations:
+   - Claude Code: `ANTHROPIC_BASE_URL` in `settings.json`
+   - Codex: `base_url` in `config.toml` (with `/v1` suffix)
+   - Gemini CLI: `GOOGLE_GEMINI_BASE_URL` in `.env`
+
+**Example**:
+```bash
+npx ccx-kit ccr
+# Select 10
+# Auto-detects working IP and updates configurations
 ```
 
 ## Route Rule Configuration

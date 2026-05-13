@@ -1,58 +1,144 @@
 ---
-title: Claude Code Router (CCR)
+title: CCX プロキシ管理
 ---
 
-# Claude Code Router (CCR)
+# CCX プロキシ管理
 
-[CCR](https://github.com/musistudio/claude-code-router/blob/main/README_zh.md) (Claude Code Router) は、複数の AI モデルへのインテリジェントなルーティングとコスト最適化を実現する強力なプロキシルーターです。ZCF には完全な CCR 管理機能が組み込まれており、高可用性の Claude Code プロキシシステムを迅速に構築できます。
+CCX（旧称 CCR / Claude Code Router）は、複数の AI コードツールに対応する API プロキシです。ccx-kit に完全統合されており、Claude Code、Codex、Gemini CLI など異なるツールのリクエストを各種モデルプロバイダーへ中継します。
 
-## CCR とは
+## CCX とは
 
-CCR は、単一モデルの高コストや低可用性の問題を解決するために設計された強力なプロキシルーターです。中間層として機能し、Claude Code のリクエストを異なるモデルプロバイダーにインテリジェントに転送します。
+CCX は AI コードツール向けの統合プロキシサーバーです。各ツールが使用するプロトコルの違いを吸収し、単一のプロキシ経由で複数のモデルプロバイダーにアクセスできるようにします。
 
-## 主な利点
+## 対応プロトコル
 
-### 🎯 インテリジェントなモデルルーティング
+CCX は 4 種類のプロトコルをサポートしています：
 
-タスクの種類に基づいて最適なモデルを自動選択：
+| プロトコル | 対象ツール | エンドポイント |
+|-----------|-----------|--------------|
+| `messages` | Claude Code | `/v1/messages` |
+| `responses` | Codex | `/v1/responses` |
+| `gemini` | Gemini CLI | `/v1beta/models/{model}:generateContent` |
+| `chat` | OpenAI 互換 | `/v1/chat/completions` |
 
-- **単純なタスク** → 無料モデルを使用（Gemini、DeepSeek）
-- **複雑なタスク** → 高性能モデルを使用（Claude Opus、GPT-4）
-- **高速なタスク** → 高速モデルを使用（Claude Haiku、GPT-3.5）
-- **思考タスク** → 推論モデルを使用（DeepSeek R1）
+各プリセットチャンネルは対応するプロトコルに応じて適切なエンドポイントへリクエストを転送します。
 
-### 💰 コスト最適化
+## 内蔵プリセットチャンネル
 
-インテリジェントなルーティングにより、タスクごとに最も経済的なモデルを選択し、API コストを 50-80% 削減できる可能性があります。
+CCX には以下のプロバイダーがプリセットとして組み込まれています：
 
-### 🌐 マルチプロバイダーサポート
+| プリセット | 対応プロトコル | 説明 |
+|-----------|--------------|------|
+| **DeepSeek** | messages / responses / gemini | DeepSeek AI - 高性能推論モデル |
+| **MiMo（小米）** | messages / responses | 小米 MiMo AI - 複数リージョン対応 |
+| **SiliconFlow** | chat | 硅基流動 - 複数オープンソースモデルを集約 |
+| **OpenRouter** | chat | OpenRouter - 統一モデルアクセス |
+| **智谱 GLM** | messages / responses | 智谱 AI - GLM シリーズ |
+| **Kimi Code** | messages / responses | Kimi Code - サブスクリプション制コーディングモデル |
+| **Kimi 開放平台** | chat | Kimi 開放平台 - 従量課金 |
 
-特定のベンダーへのロックインを避けるため、多様なモデルプロバイダーをサポート：
+### モデルマッピング
 
-- **OpenRouter**：統一 AI モデルインターフェース
-- **DeepSeek**：DeepSeek シリーズモデル
-- **Ollama**：ローカルデプロイモデル
-- **Gemini**：Google Gemini シリーズモデル
-- **Volcengine**：Volcengine AI サービス
-- **SiliconFlow**：SiliconFlow AI プラットフォーム
+プリセットにはモデルマッピングが組み込まれており、ツールが要求するモデル名を実際のプロバイダーモデルに自動変換します。
 
-### 📊 ビジュアル管理
+**DeepSeek の例：**
 
-Web UI を内蔵し、直感的な設定インターフェースと詳細な使用統計を提供します。
+| ツール側モデル名 | マッピング先 |
+|----------------|------------|
+| `gpt` | `deepseek-v4-pro` |
+| `mini` | `deepseek-v4-flash` |
+| `haiku` | `deepseek-v4-flash` |
+| `sonnet` | `deepseek-v4-pro` |
+| `opus` | `deepseek-v4-pro` |
+| `pro` | `deepseek-v4-pro` |
+| `flash` | `deepseek-v4-flash` |
 
-- **リアルタイム監視**：リクエストトラフィックと応答時間を表示
-- **コスト分析**：詳細なコスト統計レポート
-- **グラフィカル設定**：JSON を手動編集せずにルーティングルールを調整
+これにより、Claude Code が `sonnet` を要求した場合は `deepseek-v4-pro` に、Codex が `mini` を要求した場合は `deepseek-v4-flash` に自動的にルーティングされます。
+
+## CCX メニュー
+
+`npx ccx-kit ccr` を実行すると、以下の管理メニューが表示されます：
+
+```
+═══════════════════════════════════════════════════
+  CCX 管理メニュー
+═══════════════════════════════════════════════════
+
+  1. CCX を初期化 - インストールと初期設定
+  2. UI を起動 - Web 管理画面を開く
+  3. 状態を確認 - サービスの実行状態を表示
+  4. サービスを再起動
+  5. サービスを起動
+  6. サービスを停止
+  7. プリセットチャンネルを追加
+  8. チャンネルをテスト
+  9. CCX をアップグレード
+  10. 接続を修復
+  0. メインメニューに戻る
+```
+
+### チャンネルテスト
+
+メニューの項目 8「チャンネルをテスト」では、設定済みチャンネルに対して実際にリクエストを送信し、接続性を検証します。テストでは `pong` という応答が返ってくることを確認します。
+
+テストの流れ：
+1. チャンネルのプロトコル種別に応じたエンドポイントへリクエスト送信
+2. モデルに「Reply with exactly: pong」というプロンプトを送信
+3. レスポンスに `pong` が含まれていれば成功
+4. レイテンシ（応答時間）も計測して表示
+
+### 接続の自動修復
+
+メニューの項目 10「接続を修復」は、ローカルの CCX サービスに接続できない場合に使用します。
+
+修復の流れ：
+1. `127.0.0.1` での接続を試行
+2. 失敗した場合、ローカルネットワークインターフェースをスキャン
+3. 到達可能なアドレスを検出し、Claude Code / Codex / Gemini CLI の設定を自動更新
+
+これは WSL 環境やリモートサーバーなど、ループバックアドレスが使えない環境で特に有用です。
 
 ## 使用ガイド
 
-CCR のインストール、設定、サービス管理、Web UI の使用はすべて CLI コマンドを通じて行います。
+### 基本的な使い方
 
-詳細な操作ガイドについては、CLI ドキュメントを参照してください：
+```bash
+# CCX 管理メニューを開く
+npx ccx-kit ccr
 
-👉 **[CCR プロキシ管理コマンド](../cli/ccr.md)**
+# メインメニューからアクセス
+npx ccx-kit
+# → R. CCX 管理 を選択
+```
+
+### 初期設定の流れ
+
+1. `npx ccx-kit ccr` を実行
+2. 「1. CCX を初期化」を選択
+3. プリセットチャンネルを選択（DeepSeek、MiMo など）
+4. API キーを入力
+5. CCX が自動的にインストール・設定され、各ツールのプロキシ設定も更新
+
+### 設定ファイル
+
+CCX の設定は `~/.ccx/.env` に保存されます。PID ファイルは `~/.ccx/ccx.pid` です。
+
+## 各ツールとの連携
+
+### Claude Code
+
+Claude Code は `messages` プロトコルを使用します。CCX 初期化時に `ANTHROPIC_BASE_URL` が自動設定されます。
+
+### Codex
+
+Codex は `responses` プロトコルを使用します。詳細は [Codex サポート](codex.md) の CCX プロキシセクションを参照してください。
+
+### Gemini CLI
+
+Gemini CLI は `gemini` プロトコルを使用します。CCX 経由で DeepSeek などのモデルを Gemini CLI から利用できます。
 
 ## もっと詳しく
 
-- [Claude Code 設定](claude-code.md) - Claude Code と CCR の統合について学ぶ
-- [CCR 公式ドキュメント](https://github.com/musistudio/claude-code-router/blob/main/README_zh.md) - CCR の詳細ドキュメントを見る
+- [Codex サポート](codex.md) - Codex と CCX の連携について
+- [Claude Code 設定](claude-code.md) - Claude Code と CCX の統合について
+- [CCX プロキシ管理コマンド](../cli/ccr.md) - CLI コマンドの詳細

@@ -1,20 +1,20 @@
 # CLAUDE.md
 
-**Last Updated**: Thu Dec 25 01:53:27 CST 2025
+**Last Updated**: Wed May 14 00:30:00 CST 2026
 
 ## Project Overview
 
-ZCF (Zero-Config Code Flow) is a CLI tool that automatically configures Claude Code environments. Built with TypeScript and distributed as an npm package, it provides one-click setup for Claude Code including configuration files, API settings, MCP services, and AI workflows. The current version v3.4.3 features advanced i18next internationalization, enhanced engineering templates, intelligent IDE detection, comprehensive multi-platform support including Termux compatibility, sophisticated uninstallation capabilities with advanced conflict resolution, and API provider preset system for simplified configuration. The project also integrates dual code tool support, enabling both Claude Code and Codex environment configuration, with consolidated template architecture for shared resources.
+CCX-Kit (formerly ZCF) is a CLI tool that automatically configures Claude Code, Codex, and Gemini CLI environments. Built with TypeScript and distributed as an npm package, it provides one-click setup including configuration files, API settings, MCP services, and AI workflows. The current version v1.0.0 features CCX proxy integration with built-in preset channels and model mapping, advanced i18next internationalization, enhanced engineering templates, intelligent IDE detection, comprehensive multi-platform support including Termux compatibility, sophisticated uninstallation capabilities with advanced conflict resolution, connectivity auto-detection and repair, and triple code tool support (Claude Code, Codex, Gemini CLI) with consolidated template architecture.
 
 ## Architecture Overview
 
-ZCF follows a modular CLI architecture with strict TypeScript typing, comprehensive i18next-based internationalization, and cross-platform support. The project is built using modern tooling including unbuild, Vitest, ESM-only configuration, and @antfu/eslint-config for code quality. The architecture emphasizes robust error handling, user-friendly interfaces, and extensive testing coverage with advanced tool integration including CCR proxy, Cometix status line, and CCusage analytics. Version 3.4.x introduces consolidated template architecture with shared resources in `templates/common/` for output styles, git workflows, and sixStep workflows, enabling code reuse between Claude Code and Codex.
+CCX-Kit follows a modular CLI architecture with strict TypeScript typing, comprehensive i18next-based internationalization, and cross-platform support. The project is built using modern tooling including unbuild, Vitest, ESM-only configuration, and @antfu/eslint-config for code quality. The architecture emphasizes robust error handling, user-friendly interfaces, and extensive testing coverage with advanced tool integration including CCX proxy with preset channels, Cometix status line, and CCusage analytics. The architecture supports triple code tool configuration (Claude Code, Codex, Gemini CLI) with consolidated template resources in `templates/common/`.
 
 ### Module Structure Diagram
 
 ```mermaid
 graph TD
-    A["🚀 ZCF Root (v3.4.3)"] --> B["src/commands"];
+    A["🚀 CCX-Kit Root (v1.0.0)"] --> B["src/commands"];
     A --> C["src/utils"];
     A --> D["src/i18n"];
     A --> E["src/types"];
@@ -25,7 +25,7 @@ graph TD
     B --> B1["init.ts - Full initialization"];
     B --> B2["menu.ts - Interactive UI"];
     B --> B3["update.ts - Workflow updates"];
-    B --> B4["ccr.ts - Router management"];
+    B --> B4["ccr.ts - CCX proxy management"];
     B --> B5["ccu.ts - Usage analysis"];
     B --> B6["check-updates.ts - Tool updates"];
     B --> B7["uninstall.ts - ZCF uninstallation"];
@@ -36,12 +36,12 @@ graph TD
     C --> C3["mcp.ts - MCP services"];
     C --> C4["platform.ts - Cross-platform support"];
     C --> C5["workflow-installer.ts - Workflow management"];
-    C --> C6["ccr/ - CCR integration"];
+    C --> C6["ccr/ - CCX proxy integration"];
     C --> C7["cometix/ - Status line tools"];
     C --> C8["tools/ - Tool integration"];
     C --> C9["uninstaller.ts - Advanced uninstaller"];
     C --> C10["trash.ts - Cross-platform trash"];
-    C --> C11["code-tools/ - Codex integration"];
+    C --> C11["code-tools/ - Codex & Gemini CLI integration"];
 
     D --> D1["locales/zh-CN/ - Chinese translations"];
     D --> D2["locales/en/ - English translations"];
@@ -85,9 +85,9 @@ graph TD
 |------------------------|--------------|---------------------------------------|-------------------------------------------------------|-------------------------------|
 | **Commands** | `src/commands/` | CLI command implementations with advanced interactive and non-interactive modes including comprehensive uninstallation and config switching | init.ts, menu.ts, update.ts, ccr.ts, ccu.ts, check-updates.ts, uninstall.ts, config-switch.ts | High - comprehensive test suites |
 | **Utilities** | `src/utils/` | Core functionality with enhanced configuration management, platform support, Codex integration, and advanced uninstallation capabilities | config.ts, installer.ts, platform.ts, workflow-installer.ts, ccr/, cometix/, code-tools/, uninstaller.ts, trash.ts | High - extensive unit tests |
-| **CCR Integration** | `src/utils/ccr/` | Claude Code Router proxy management and configuration | presets.ts, commands.ts, installer.ts, config.ts | High - comprehensive CCR tests |
+| **CCR Integration** | `src/utils/ccr/` | CCX proxy management, preset channels, connectivity detection, and channel testing | presets.ts, commands.ts, installer.ts, config.ts, connectivity.ts, channel-manager.ts, channel-test.ts | High - comprehensive CCX tests |
 | **Cometix Tools** | `src/utils/cometix/` | Status line tools and configuration management | errors.ts, common.ts, types.ts, commands.ts, installer.ts, menu.ts | High - extensive Cometix tests |
-| **Code Tools** | `src/utils/code-tools/` | Codex integration and dual code tool support | codex-config-detector.ts, codex-provider-manager.ts, codex-uninstaller.ts, codex-platform.ts, codex-config-switch.ts, codex-configure.ts, codex.ts | High - comprehensive Codex tests |
+| **Code Tools** | `src/utils/code-tools/` | Codex and Gemini CLI integration, dual code tool support | codex-config-detector.ts, codex-provider-manager.ts, codex-uninstaller.ts, codex-platform.ts, codex-config-switch.ts, codex-configure.ts, codex.ts, gemini-cli.ts | High - comprehensive Codex/Gemini tests |
 | **Internationalization** | `src/i18n/` | Advanced i18next multilingual support with namespace organization and complete uninstall translations | index.ts, locales/zh-CN/, locales/en/ | High - translation validation |
 | **Types** | `src/types/` | Comprehensive TypeScript type definitions including Claude Code and TOML config types | workflow.ts, config.ts, ccr.ts, claude-code-config.ts, toml-config.ts | Implicit through usage |
 | **Configuration** | `src/config/` | Centralized workflow and system configurations including API provider presets | workflows.ts, mcp-services.ts, api-providers.ts | High - config validation tests |
@@ -114,11 +114,11 @@ npx ccx-kit                    # Opens main menu with all options
 # Direct commands
 npx ccx-kit i                  # Full initialization
 npx ccx-kit u                  # Update workflows only
-npx ccx-kit ccr [--lang <en|zh-CN>]  # Claude Code Router management
+npx ccx-kit ccx [--lang <en|zh-CN>]  # CCX proxy management (preset channels, testing, connectivity fix)
 npx ccx-kit ccu [args...]      # Run ccusage with arguments
-npx ccx-kit check-updates [--lang <en|zh-CN>] [--code-type <claude-code|codex>]  # Check tool updates
+npx ccx-kit check-updates [--lang <en|zh-CN>] [--code-type <claude-code|codex|gemini-cli>]  # Check tool updates
 npx ccx-kit config-switch [target] [--code-type <claude-code|codex>]  # Switch configurations
-npx ccx-kit uninstall [--mode <complete|custom|interactive>] [--items <items>] [--lang <en|zh-CN>]  # ZCF uninstallation
+npx ccx-kit uninstall [--mode <complete|custom|interactive>] [--items <items>] [--lang <en|zh-CN>]  # Uninstallation
 
 # Config switch examples
 npx ccx-kit config-switch --list                    # List available configurations
@@ -384,6 +384,8 @@ graph TD
 8. **Advanced Tool Integration**: Comprehensive integration with CCR proxy, CCusage analytics, and Cometix status line tools
 9. **Sophisticated Uninstallation System**: Advanced uninstaller with conflict resolution, selective removal, and cross-platform trash integration
 10. **Dual Code Tool Architecture**: Simultaneous support for Claude Code and Codex environment configuration with shared template resources
+11. **Gemini CLI Integration**: Full @google/gemini-cli support through CCX proxy with native model names and substring-based routing
+12. **CCX Connectivity Auto-Fix**: Automatic detection of unreachable loopback addresses with network interface scanning and config repair for Windows/WSL environments
 
 ### Important Implementation Details
 
@@ -392,12 +394,12 @@ graph TD
 3. **Enhanced API Configuration**: Supports Auth Token (OAuth), API Key, and CCR Proxy authentication with comprehensive validation and API provider preset system (v3.3.3+)
 4. **API Provider Preset System**: Pre-configured settings for popular providers (302.AI, GLM, MiniMax, Kimi) simplifying configuration from 5+ prompts to just 2 (provider + API key)
 5. **Advanced Workflow System**: Modular workflow installation with sophisticated dependency resolution and conflict management
-6. **Advanced CCR Integration**: Claude Code Router proxy management with configuration validation and preset management
+6. **Advanced CCX Integration**: CCX proxy management with preset channels (DeepSeek, MiMo, GLM, Kimi Code, SiliconFlow, OpenRouter), built-in model mapping, channel testing with response validation, and connectivity auto-fix for Windows users
 7. **Intelligent Auto-Update System**: Automated tool updating for Claude Code, CCR, and CCometixLine with comprehensive version checking
 8. **Advanced Common Tools Workflow**: Enhanced workflow category with init-project command and comprehensive agent ecosystem
 9. **Consolidated Template System**: Shared templates architecture with `templates/common/` containing output-styles, git workflows, and sixStep workflows for code reuse
 10. **Advanced i18next Integration**: Sophisticated internationalization with namespace-based translation management and dynamic language switching
-11. **Comprehensive Tool Integration**: Advanced CCR, Cometix, and CCusage integration with version management and configuration validation
+11. **Comprehensive Tool Integration**: Advanced CCX, Cometix, and CCusage integration with version management, preset channel system, model mapping, and configuration validation
 12. **Sophisticated Uninstaller**: Advanced ZCF uninstaller with selective removal, conflict resolution, and cross-platform trash integration
 
 ### Testing Philosophy

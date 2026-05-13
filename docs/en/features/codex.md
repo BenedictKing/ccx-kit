@@ -146,6 +146,60 @@ npx zcf i -s -T codex -p 302ai -k "sk-xxx" \
   --api-fast-model "gpt-4"
 ```
 
+## CCX Proxy Integration
+
+Codex can connect to upstream AI providers through the CCX proxy. This is the recommended approach when you want centralized channel management across multiple code tools.
+
+### How It Works
+
+Codex communicates with CCX using the `responses` wire API (OpenAI Responses protocol). CCX receives requests at `/v1/responses` and forwards them to the configured upstream provider with model name mapping.
+
+### Configuration
+
+When using CCX proxy, Codex's `~/.codex/config.toml` is configured as follows:
+
+```toml
+[api]
+base_url = "http://127.0.0.1:3688/v1"
+wire_api = "responses"
+
+[auth]
+api_key = "sk-ccx-kit"
+requires_openai_auth = false
+```
+
+Key points:
+- **`base_url`** must include the `/v1` suffix (CCX serves the responses endpoint at `/v1/responses`)
+- **`api_key`** uses `OPENAI_API_KEY` format — set to the CCX proxy access key
+- **`requires_openai_auth = false`** disables OpenAI's native authentication since CCX handles auth with upstream providers
+- **`wire_api = "responses"`** tells Codex to use the OpenAI Responses API protocol
+
+### Model Name Routing
+
+CCX uses fuzzy mode to route model names from Codex to upstream models. When Codex sends a request with model name `gpt` or `mini`, CCX maps it to the actual upstream model based on the channel's `modelMapping` configuration.
+
+For example, with a DeepSeek channel configured:
+- `gpt` → `deepseek-v4-pro`
+- `mini` → `deepseek-v4-flash`
+
+### DeepSeek-Specific Note
+
+When using DeepSeek as the upstream provider for Codex, the channel requires `normalizeNonstandardChatRoles: true` in its configuration. This is automatically set when adding the DeepSeek (Codex) preset channel through the CCX menu.
+
+### Setup via CCX Menu
+
+```bash
+npx ccx-kit ccr
+# Select 7. Add Preset Channel
+# Choose DeepSeek (or other provider)
+# Choose the (Codex) variant — uses responses protocol
+# Enter API key
+```
+
+CCX will automatically configure Codex's `config.toml` to point at the proxy during initialization.
+
+> 💡 **Tip**: Use `npx ccx-kit ccr` → option 8 to test the channel after setup. Select the responses protocol channel and verify you get a successful response.
+
 ## MCP Service Integration
 
 ### Supported MCP Services

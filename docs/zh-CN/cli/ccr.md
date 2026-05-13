@@ -1,136 +1,130 @@
 ---
-title: CCR 代理管理
+title: CCX 代理管理
 ---
 
-# CCR 代理管理
+# CCX 代理管理
 
-`zcf ccr` 提供 Claude Code Router（CCR）的完整管理菜单，包括安装、配置、服务控制和 Web UI 访问等功能。
+`npx ccx-kit ccr` 提供 CCX 代理的完整管理菜单，包括安装、配置、服务控制、渠道管理和连通性修复等功能。
 
 ## 命令格式
 
 ```bash
-# 打开 CCR 管理菜单
-npx zcf ccr
+# 打开 CCX 管理菜单
+npx ccx-kit ccr
 
 # 或通过主菜单访问
-npx zcf
-# 然后选择 R. CCR 管理
+npx ccx-kit
+# 然后选择 R. CCX 管理
 ```
 
 ## 菜单选项
 
-运行 `zcf ccr` 后会显示以下菜单：
+运行 `npx ccx-kit ccr` 后会显示以下菜单（共 10 项）：
 
 ```
 ═══════════════════════════════════════════════════
-  CCR 管理菜单
+  CCX 管理菜单
 ═══════════════════════════════════════════════════
 
-  1. 初始化 CCR - 安装并配置 CCR
-  2. 启动 UI - 启动 CCR Web 界面
-  3. 检查状态 - 查看当前 CCR 服务状态
-  4. 重启服务 - 重启 CCR 服务
-  5. 启动服务 - 启动 CCR 服务
-  6. 停止服务 - 停止 CCR 服务
+  1. 初始化 CCX - 安装并配置 CCX
+  2. 启动 UI - 启动 CCX Web 界面
+  3. 检查状态 - 查看当前 CCX 服务状态
+  4. 重启服务 - 重启 CCX 服务
+  5. 启动服务 - 启动 CCX 服务
+  6. 停止服务 - 停止 CCX 服务
+  7. 添加预设渠道 - 一键添加内置模型映射的渠道
+  8. 测试渠道 - 验证渠道连通性
+  9. 升级 CCX - 检查并升级 CCX 版本
+  10. 修复连接地址 - 自动检测并修复 base URL
   0. 返回主菜单
 ```
 
 ## 功能详解
 
-### 1. 初始化 CCR
+### 1. 初始化 CCX
 
-**功能**：首次设置 CCR 或重新配置 CCR
+**功能**：首次设置 CCX 或重新配置 CCX
 
 **流程**：
-1. 自动检测是否已安装 CCR CLI 工具
-2. 如果未安装，自动安装 `@musistudio/claude-code-router`
-3. 引导配置向导：
-   - 选择提供商预设（302.AI、GLM、MiniMax、Kimi 等）
-   - 配置 API 密钥（如需要）
-   - 选择默认模型
-   - 创建配置文件 `~/.claude-code-router/config.json`
-4. 自动配置 Claude Code 使用 CCR 代理
-5. 备份现有配置（如果存在）
+1. 自动检测是否已安装 CCX
+2. 如果未安装，自动下载安装
+3. 创建配置文件 `~/.ccx/.env`（端口、访问密钥、Web UI 开关）
+4. 自动配置 Claude Code 使用 CCX 代理（更新 `settings.json`）
+5. 启动 CCX 服务
+6. 自动检测连通性并修复 base URL（如需要）
 
 **使用场景**：
-- 首次使用 CCR
-- 需要更换提供商或重新配置
+- 首次使用 CCX
+- 需要重新配置
 - 配置丢失需要重新设置
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 1
 # 按提示完成配置
 ```
 
 ### 2. 启动 UI
 
-**功能**：启动 CCR Web 管理界面
+**功能**：启动 CCX Web 管理界面
 
-**访问地址**：`http://localhost:3456/ui`（默认端口）
+**访问地址**：`http://localhost:3688/ui`（默认端口）
 
 **Web UI 功能**：
-- 📊 实时使用统计和成本分析
-- ⚙️ 路由规则配置
-- 🔧 模型管理（添加、编辑、删除）
-- 📈 详细的使用量统计
-- 🔄 服务控制（启动、停止、重启）
+- 实时使用统计和成本分析
+- 渠道管理（添加、编辑、删除）
+- 模型映射配置
+- 服务控制（启动、停止、重启）
 
 **前置条件**：
-- 必须先完成 CCR 初始化（选项 1）
-- 配置文件 `~/.claude-code-router/config.json` 必须存在
+- 必须先完成 CCX 初始化（选项 1）
+- 配置文件 `~/.ccx/.env` 必须存在
 
 **API 密钥**：
-- 启动 UI 时会显示 CCR API 密钥（默认：`sk-zcf-x-ccr`）
-- 使用此密钥登录 Web UI
+- 使用 CCX 访问密钥登录 Web UI（默认：`sk-ccx-kit`）
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 2
-# 等待服务启动后，访问 http://localhost:3456/ui
+# 等待服务启动后，访问 http://localhost:3688/ui
 ```
 
 ### 3. 检查状态
 
-**功能**：查看 CCR 服务当前运行状态
+**功能**：查看 CCX 服务当前运行状态
 
 **显示信息**：
 - 服务是否运行
 - 运行端口
-- 配置的提供商数量
-- 路由规则摘要
-
-**使用场景**：
-- 验证服务是否正常启动
-- 排查连接问题
-- 查看当前配置状态
+- PID
+- Web UI 地址
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 3
 ```
 
 ### 4. 重启服务
 
-**功能**：重启 CCR 服务，重新加载配置
+**功能**：重启 CCX 服务，重新加载配置
 
 **使用场景**：
 - 修改配置文件后需要重新加载
 - 服务异常需要重启
-- 端口冲突后需要重启
+- 添加新渠道后重启生效
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 4
 ```
 
 ### 5. 启动服务
 
-**功能**：启动 CCR 服务
+**功能**：启动 CCX 服务
 
 **使用场景**：
 - 服务停止后需要重新启动
@@ -138,179 +132,198 @@ npx zcf ccr
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 5
 ```
 
 ### 6. 停止服务
 
-**功能**：停止当前运行的 CCR 服务
+**功能**：停止当前运行的 CCX 服务
 
 **使用场景**：
-- 需要暂停 CCR 代理
+- 需要暂停 CCX 代理
 - 调试时需要停止服务
 - 更换配置前先停止服务
 
 **示例**：
 ```bash
-npx zcf ccr
+npx ccx-kit ccr
 # 选择 6
 ```
 
-## 路由规则配置
+### 7. 添加预设渠道
 
-CCR 支持灵活的路由规则配置，可以通过 Web UI 或配置文件设置。配置文件位于 `~/.claude-code-router/config.json`，使用 JSON 格式。
+**功能**：一键添加预配置的上游渠道，内置模型映射
 
-### 完整配置示例
+**流程**：
+1. 选择提供商（DeepSeek、MiMo、SiliconFlow、OpenRouter、智谱 GLM、Kimi Code、Kimi 开放平台）
+2. 如果提供商有多个变体，选择协议变体：
+   - `(Codex)` - Responses 协议，适用于 Codex
+   - `(Claude Code)` - Anthropic Messages 协议，适用于 Claude Code
+   - `(Gemini CLI)` - Gemini 协议，适用于 Gemini CLI
+3. 输入 API Key
+4. 自动添加渠道并测试连通性
 
-```json
-{
-  "LOG": true,
-  "HOST": "127.0.0.1",
-  "PORT": 3456,
-  "APIKEY": "sk-zcf-x-ccr",
-  "API_TIMEOUT_MS": "600000",
-  "PROXY_URL": "",
-  "Providers": [
-    {
-      "name": "openrouter",
-      "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
-      "api_key": "sk-xxx",
-      "models": [
-        "google/gemini-2.5-pro-preview",
-        "anthropic/claude-sonnet-4",
-        "anthropic/claude-3.5-sonnet"
-      ],
-      "transformer": {
-        "use": ["openrouter"]
-      }
-    },
-    {
-      "name": "deepseek",
-      "api_base_url": "https://api.deepseek.com/v1/chat/completions",
-      "api_key": "sk-xxx",
-      "models": ["deepseek-chat", "deepseek-reasoner"],
-      "transformer": {
-        "use": ["deepseek"],
-        "deepseek-chat": {
-          "use": ["tooluse"]
-        }
-      }
-    },
-    {
-      "name": "ollama",
-      "api_base_url": "http://localhost:11434/v1/chat/completions",
-      "api_key": "ollama",
-      "models": ["qwen2.5-coder:latest"],
-      "transformer": {
-        "use": ["ollama"]
-      }
-    },
-    {
-      "name": "gemini",
-      "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
-      "api_key": "sk-xxx",
-      "models": ["gemini-2.5-flash", "gemini-2.5-pro"],
-      "transformer": {
-        "use": ["gemini"]
-      }
-    }
-  ],
-  "Router": {
-    "default": "openrouter,google/gemini-2.5-pro-preview",
-    "background": "deepseek,deepseek-chat",
-    "think": "deepseek,deepseek-reasoner",
-    "longContext": "openrouter,anthropic/claude-sonnet-4",
-    "longContextThreshold": 60000,
-    "webSearch": "gemini,gemini-2.5-flash"
-  }
-}
+**预设渠道列表**：
+
+| 提供商 | 可用变体 | 模型映射 |
+|--------|---------|---------|
+| DeepSeek | Codex / Claude Code / Gemini CLI | gpt→deepseek-v4-pro, haiku→deepseek-v4-flash |
+| MiMo (小米) | 余额 (Anthropic) / 订阅 Plan (多集群, Codex/Anthropic) | → mimo-v2.5-pro |
+| SiliconFlow | chat (通用) | - |
+| OpenRouter | chat (通用) | - |
+| 智谱 GLM | Codex / Claude Code | gpt/haiku/opus/sonnet → glm-5.1 |
+| Kimi Code | Codex / Claude Code | → kimi-for-coding |
+| Kimi 开放平台 | chat (通用) | gpt → kimi-k2.6 |
+
+**示例**：
+```bash
+npx ccx-kit ccr
+# 选择 7
+# 选择 DeepSeek
+# 选择 DeepSeek (Codex) - Responses 协议
+# 输入 API Key
+# 自动测试连通性
 ```
 
-### 配置字段说明
+### 8. 测试渠道
 
-#### 基础配置
+**功能**：验证已添加渠道的连通性
+
+**测试方式**：
+- 向渠道发送 "Reply with exactly: pong" 测试提示
+- 验证模型响应中包含 "pong"
+- 显示响应延迟（毫秒）
+
+**支持的协议类型**：
+- `chat` - OpenAI Chat Completions (`/v1/chat/completions`)
+- `messages` - Anthropic Messages (`/v1/messages`)
+- `responses` - OpenAI Responses (`/v1/responses`)
+- `gemini` - Gemini (`/v1beta/models/{model}:generateContent`)
+
+**示例**：
+```bash
+npx ccx-kit ccr
+# 选择 8
+# 选择要测试的渠道
+# 确认测试模型
+# 查看测试结果
+```
+
+### 9. 升级 CCX
+
+**功能**：检查并升级 CCX 到最新版本
+
+**示例**：
+```bash
+npx ccx-kit ccr
+# 选择 9
+```
+
+### 10. 修复连接地址
+
+**功能**：自动检测并修复 base URL 连接问题
+
+**适用场景**：
+- Windows 下 `127.0.0.1` 无法连接
+- WSL 环境下需要使用宿主机 IP
+- 网络配置变更后连接失败
+
+**修复流程**：
+1. 检测 `127.0.0.1:3688` 是否可达
+2. 如果不可达，扫描本机所有 IPv4 网络接口
+3. 测试每个地址的连通性
+4. 找到可用地址后，自动更新以下配置：
+   - Claude Code `settings.json` → `ANTHROPIC_BASE_URL`
+   - Codex `config.toml` → `base_url`（带 `/v1` 后缀）
+   - Gemini CLI `.env` → `GOOGLE_GEMINI_BASE_URL`
+
+**示例**：
+```bash
+npx ccx-kit ccr
+# 选择 10
+# 自动检测并修复
+```
+
+## 配置文件
+
+### CCX 环境配置 (`~/.ccx/.env`)
+
+```bash
+PROXY_ACCESS_KEY=sk-ccx-kit
+PORT=3688
+ENABLE_WEB_UI=true
+```
 
 | 字段 | 类型 | 说明 | 默认值 |
 |------|------|------|--------|
-| `LOG` | boolean | 是否启用日志 | `true` |
-| `HOST` | string | 服务监听地址 | `127.0.0.1` |
-| `PORT` | number | 服务端口 | `3456` |
-| `APIKEY` | string | CCR API 密钥 | `sk-zcf-x-ccr` |
-| `API_TIMEOUT_MS` | string | API 超时时间（毫秒） | `600000` |
-| `PROXY_URL` | string | 代理 URL（可选） | `""` |
+| `PROXY_ACCESS_KEY` | string | CCX 访问密钥 | `sk-ccx-kit` |
+| `PORT` | number | 服务端口 | `3688` |
+| `ENABLE_WEB_UI` | boolean | 是否启用 Web UI | `true` |
 
-#### Providers 配置
+### 渠道配置 (`~/.ccx/.config/config.json`)
 
-`Providers` 是一个数组，每个 Provider 包含：
+渠道按协议类型分组存储：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `name` | string | 提供商名称（用于路由规则） |
-| `api_base_url` | string | API 基础 URL |
-| `api_key` | string | API 密钥（免费模型可使用 `sk-free`） |
-| `models` | string[] | 该提供商支持的模型列表 |
-| `transformer` | object | 可选的请求转换器（用于 API 兼容性） |
-
-#### Router 配置
-
-`Router` 定义了不同场景下的模型路由规则，格式为：`${providerName},${modelName}`
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `default` | string | 默认路由（格式：`provider,model`） |
-| `background` | string | 后台任务路由（可选） |
-| `think` | string | 思考任务路由（可选） |
-| `longContext` | string | 长上下文任务路由（可选） |
-| `longContextThreshold` | number | 长上下文的 token 阈值（可选） |
-| `webSearch` | string | 网页搜索任务路由（可选） |
-
-## 提供商预设
-
-ZCF 支持多个 CCR 提供商预设，简化配置流程：
-
-```bash
-npx zcf ccr
-# 选择 1. 初始化 CCR
-# 选择提供商预设
+```json
+{
+  "upstream": [...],
+  "chatUpstream": [...],
+  "responsesUpstream": [...],
+  "geminiUpstream": [...],
+  "imagesUpstream": [...],
+  "fuzzyModeEnabled": true,
+  "stripBillingHeader": true
+}
 ```
 
-支持的预设包括：
-- **302.AI**：企业级 AI 服务
-- **GLM**：智谱 AI
-- **MiniMax**：MiniMax AI 服务
-- **自定义**：配置自定义提供商
+每个渠道包含：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `name` | string | 渠道名称 |
+| `baseUrl` | string | 上游 API 地址 |
+| `apiKeys` | string[] | API 密钥列表 |
+| `serviceType` | string | 服务类型（openai/claude） |
+| `modelMapping` | object | 模型映射规则 |
+| `supportedModels` | string[] | 支持的模型列表 |
 
 ## 常见问题
 
-### Q: 提示"CCR 未配置"怎么办？
+### Q: 提示"CCX 未配置"怎么办？
 
-A: 需要先运行选项 1（初始化 CCR）完成配置。
+A: 需要先运行选项 1（初始化 CCX）完成配置。
 
 ### Q: Web UI 无法访问？
 
-A: 
+A:
 1. 确保已启动 UI（选项 2）
-2. 检查端口 3456 是否被占用
-3. 使用 API 密钥 `sk-zcf-x-ccr` 登录（或查看配置中的 `APIKEY`）
+2. 检查端口 3688 是否被占用：`lsof -i :3688`（macOS/Linux）或 `netstat -ano | findstr :3688`（Windows）
+3. 使用访问密钥 `sk-ccx-kit` 登录
 
-### Q: 如何修改路由规则？
+### Q: Windows 下 127.0.0.1 无法连接？
 
-A: 可以通过 Web UI 或直接编辑 `~/.claude-code-router/config.json` 文件，修改后重启服务。
+A: 使用选项 10（修复连接地址），CCX 会自动扫描网络接口并更新所有工具的配置。
 
-### Q: 服务启动失败？
+### Q: 渠道测试失败？
 
-A: 
-1. 检查配置文件格式是否正确
-2. 检查端口是否被占用：`lsof -i :3456`（macOS/Linux）或 `netstat -ano | findstr :3456`（Windows）
-3. 确认 `@musistudio/claude-code-router` 已正确安装
-4. 查看错误日志或使用 `ccr status` 命令
+A:
+1. 确认 CCX 服务已启动（选项 3 检查状态）
+2. 确认 API Key 正确
+3. 检查上游提供商是否可用
+4. 查看错误信息中的 HTTP 状态码
 
-### Q: 如何配置多个模型？
+### Q: 如何为不同工具添加渠道？
 
-A: 在 `Providers` 数组中添加多个提供商配置，然后在 `Router` 中指定不同场景使用的模型。
+A: 使用选项 7（添加预设渠道），选择提供商后会列出所有协议变体。选择对应工具的变体即可。
+
+### Q: Fuzzy Mode 是什么？
+
+A: 启用 `fuzzyModeEnabled` 后，CCX 会自动将请求中的模型名通过模型映射转换为实际模型名。例如 Codex 请求 `gpt-5.5` 时，CCX 会自动映射为 `deepseek-v4-pro`。
 
 ## 相关文档
 
-- [CCR 功能介绍](../features/ccr.md) - CCR 的核心优势
+- [CCX 功能介绍](../features/ccr.md) - CCX 的核心优势和预设渠道详情
+- [Codex 支持](../features/codex.md) - Codex 与 CCX 的集成
+- [Gemini CLI 支持](../features/gemini-cli.md) - Gemini CLI 与 CCX 的集成
 - [故障排除](../advanced/troubleshooting.md) - 解决常见问题
