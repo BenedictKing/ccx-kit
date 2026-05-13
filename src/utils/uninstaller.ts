@@ -510,6 +510,7 @@ export class CcxKitUninstaller {
         { path: join(homedir(), '.claude.json'), name: '~/.claude.json' },
         { path: join(homedir(), '.ccx'), name: '~/.ccx/' },
         { path: join(homedir(), '.local', 'bin', 'ccx'), name: '~/.local/bin/ccx' },
+        { path: join(homedir(), '.local', 'bin', 'claude'), name: '~/.local/bin/claude' },
       ]
 
       for (const dir of directoriesToRemove) {
@@ -551,6 +552,17 @@ export class CcxKitUninstaller {
             result.warnings.push(`Failed to uninstall ${pkg}: ${error.message}`)
           }
         }
+      }
+
+      // Try to uninstall Claude Code via Homebrew (macOS)
+      try {
+        const brewResult = await exec('brew', ['uninstall', '--cask', 'claude-code'])
+        if (brewResult.exitCode === 0) {
+          result.removed.push('claude-code (Homebrew cask)')
+        }
+      }
+      catch {
+        // Homebrew not available or claude-code not installed via brew - ignore
       }
     }
     catch (error: any) {

@@ -79,7 +79,7 @@
   "copyingProvider": "Copying provider: {{name}}",
   "providerCopied": "✔ Successfully copied provider: {{name}}",
   "providerCopyFailed": "❌ Failed to copy provider: {{error}}",
-  "providerModelPrompt": "Model name (e.g. gpt-5.2)",
+  "providerModelPrompt": "Model name (e.g. gpt-5.5)",
   "providerModelRequired": "Model name is required",
   "selectProvidersToDelete": "Select providers to delete (multiple)",
   "selectAtLeastOne": "Please select at least one provider",

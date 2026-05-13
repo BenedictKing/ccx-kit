@@ -532,12 +532,12 @@ export async function configureCodexDefaultModelFeature(): Promise<void> {
   if (currentModel) {
     // Display existing configuration
     console.log(`\n${ansis.blue(`ℹ ${i18n.t('configuration:existingModelConfig') || 'Existing model configuration'}`)}`)
-    const modelDisplay = currentModel === 'gpt-5.2'
-      ? 'GPT-5.2'
-      : currentModel === 'gpt-5.1-codex-max'
-        ? 'GPT-5.1-Codex-Max'
-        : currentModel === 'gpt-5.1-codex-mini'
-          ? 'GPT-5.1-Codex-Mini'
+    const modelDisplay = currentModel === 'gpt-5.5'
+      ? 'GPT-5.5'
+      : currentModel === 'gpt-5.4'
+        ? 'GPT-5.4'
+        : currentModel === 'gpt-5.3-codex'
+          ? 'GPT-5.3-Codex'
           : currentModel.charAt(0).toUpperCase() + currentModel.slice(1)
     console.log(ansis.gray(`  ${i18n.t('configuration:currentModel') || 'Current model'}: ${modelDisplay}\n`))
 
@@ -553,29 +553,29 @@ export async function configureCodexDefaultModelFeature(): Promise<void> {
     }
   }
 
-  const { model } = await inquirer.prompt<{ model: 'gpt-5.1-codex-max' | 'gpt-5.1-codex-mini' | 'gpt-5.2' | 'custom' }>({
+  const { model } = await inquirer.prompt<{ model: 'gpt-5.5' | 'gpt-5.4' | 'gpt-5.3-codex' | 'custom' }>({
     type: 'list',
     name: 'model',
     message: i18n.t('configuration:selectDefaultModel') || 'Select default model',
     choices: addNumbersToChoices([
       {
-        name: i18n.t('configuration:codexModelOptions.gpt51CodexMax'),
-        value: 'gpt-5.1-codex-max' as const,
+        name: i18n.t('configuration:codexModelOptions.gpt55'),
+        value: 'gpt-5.5' as const,
       },
       {
-        name: i18n.t('configuration:codexModelOptions.gpt51CodexMini'),
-        value: 'gpt-5.1-codex-mini' as const,
+        name: i18n.t('configuration:codexModelOptions.gpt54'),
+        value: 'gpt-5.4' as const,
       },
       {
-        name: i18n.t('configuration:codexModelOptions.gpt52'),
-        value: 'gpt-5.2' as const,
+        name: i18n.t('configuration:codexModelOptions.gpt53Codex'),
+        value: 'gpt-5.3-codex' as const,
       },
       {
         name: i18n.t('configuration:codexModelOptions.custom'),
         value: 'custom' as const,
       },
     ]),
-    default: currentModel ? ['gpt-5.1-codex-max', 'gpt-5.1-codex-mini', 'gpt-5.2', 'custom'].indexOf(currentModel as any) : 2, // Default to gpt-5.2
+    default: currentModel ? ['gpt-5.5', 'gpt-5.4', 'gpt-5.3-codex', 'custom'].indexOf(currentModel as any) : 0, // Default to gpt-5.5
   })
 
   if (!model) {

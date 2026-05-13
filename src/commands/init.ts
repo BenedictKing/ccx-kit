@@ -1262,7 +1262,7 @@ async function convertToCodexProvider(config: ApiConfigDefinition): Promise<Code
   const providerId = displayName.toLowerCase().replace(/[^a-z0-9]/g, '-')
 
   let baseUrl = config.url || API_DEFAULT_URL
-  let model = config.primaryModel || 'gpt-5.2'
+  let model = config.primaryModel || 'gpt-5.5'
   let wireApi = 'responses' as const
 
   if (config.provider && config.provider !== 'custom') {

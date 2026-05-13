@@ -164,7 +164,7 @@ async function handleAddProvider(): Promise<void> {
     wireApi: prefilledWireApi || 'responses',
     tempEnvKey: `${providerId.toUpperCase().replace(/-/g, '_')}_API_KEY`,
     requiresOpenaiAuth: true,
-    model: prefilledModel || 'gpt-5.2', // Use provider's default model or fallback
+    model: prefilledModel || 'gpt-5.5', // Use provider's default model or fallback
   }
 
   const result = await addProviderToExisting(provider, answers.apiKey.trim(), true)
@@ -266,7 +266,7 @@ async function handleEditProvider(providers: any[]): Promise<void> {
       type: 'input',
       name: 'model',
       message: i18n.t('codex:providerModelPrompt'),
-      default: provider.model || 'gpt-5.2',
+      default: provider.model || 'gpt-5.5',
       validate: (input: string) => !!input.trim() || i18n.t('codex:providerModelRequired'),
     },
   ])
@@ -369,7 +369,7 @@ async function handleCopyProvider(providers: any[]): Promise<void> {
       type: 'input',
       name: 'model',
       message: i18n.t('codex:providerModelPrompt'),
-      default: provider.model || 'gpt-5.2',
+      default: provider.model || 'gpt-5.5',
       validate: (input: string) => !!input.trim() || i18n.t('codex:providerModelRequired'),
     },
   ])
