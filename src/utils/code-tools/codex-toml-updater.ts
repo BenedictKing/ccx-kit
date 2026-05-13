@@ -13,7 +13,7 @@ import type { CodexMcpService, CodexProvider } from './codex'
 import { CODEX_CONFIG_FILE, CODEX_DIR } from '../../constants'
 import { ensureDir, exists, readFile, writeFile } from '../fs-operations'
 import { normalizeTomlPath } from '../platform'
-import { editToml, parseToml } from '../toml-edit'
+import { batchEditToml, editToml, parseToml } from '../toml-edit'
 
 /**
  * Update top-level TOML fields using regex-based replacement
@@ -282,6 +282,36 @@ export function batchUpdateCodexMcpServices(
   for (const service of services) {
     upsertCodexMcpService(service.id, service)
   }
+}
+
+/**
+ * Upsert fields under the `[features]` section in Codex config.
+ *
+ * Only sets keys that are NOT already present (user-authored values win).
+ * Preserves existing `[features]` entries and their inline comments.
+ *
+ * @param features - Map of feature flags to ensure exist (e.g. `{ goals: true }`)
+ */
+export function upsertCodexFeatures(features: Record<string, unknown>): void {
+  if (!exists(CODEX_CONFIG_FILE)) {
+    ensureDir(CODEX_DIR)
+    writeFile(CODEX_CONFIG_FILE, '')
+  }
+
+  const content = readFile(CODEX_CONFIG_FILE) || ''
+  const parsed = content ? parseToml(content) as any : {}
+  const existing = (parsed.features ?? {}) as Record<string, unknown>
+
+  // Skip keys the user has already set — preserve their intent.
+  const edits: Array<[string, unknown]> = Object.entries(features)
+    .filter(([key]) => !(key in existing))
+    .map(([key, value]) => [`features.${key}`, value])
+
+  if (edits.length === 0)
+    return
+
+  const updated = batchEditToml(content, edits)
+  writeFile(CODEX_CONFIG_FILE, updated)
 }
 
 /**

@@ -15,6 +15,9 @@ const CCX_GITHUB_REPO = 'BenedictKing/ccx'
 const CCX_INSTALL_DIR = join(homedir(), '.local', 'bin')
 const CCX_BINARY_NAME = platform() === 'win32' ? 'ccx.exe' : 'ccx'
 const CCX_BINARY_PATH = join(CCX_INSTALL_DIR, CCX_BINARY_NAME)
+// `ccx --version` is expected to return in milliseconds. Cap it so a
+// misbehaving binary (wrong arch, stuck startup) cannot wedge the installer.
+const VERSION_PROBE_TIMEOUT_MS = 5000
 
 /**
  * Map OS platform and architecture to CCX release asset name
@@ -64,7 +67,7 @@ export async function isCcxInstalled(): Promise<CcxInstallStatus> {
 
   // Fallback: check if ccx is in PATH
   try {
-    const result = await exec('ccx', ['--version'])
+    const result = await exec('ccx', ['--version'], { timeout: VERSION_PROBE_TIMEOUT_MS })
     const match = result.stdout.match(/(\d+\.\d+\.\d+)/)
     return {
       isInstalled: true,
@@ -82,14 +85,14 @@ export async function isCcxInstalled(): Promise<CcxInstallStatus> {
  */
 export async function getCcxVersion(): Promise<string | null> {
   try {
-    const result = await exec(CCX_BINARY_PATH, ['--version'])
+    const result = await exec(CCX_BINARY_PATH, ['--version'], { timeout: VERSION_PROBE_TIMEOUT_MS })
     const match = result.stdout.match(/(\d+\.\d+\.\d+)/)
     return match ? match[1] : null
   }
   catch {
     // Fallback: try ccx in PATH
     try {
-      const result = await exec('ccx', ['--version'])
+      const result = await exec('ccx', ['--version'], { timeout: VERSION_PROBE_TIMEOUT_MS })
       const match = result.stdout.match(/(\d+\.\d+\.\d+)/)
       return match ? match[1] : null
     }

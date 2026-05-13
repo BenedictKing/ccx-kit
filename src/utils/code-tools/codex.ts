@@ -1499,6 +1499,7 @@ async function applyCustomApiConfig(customApiConfig: NonNullable<CodexFullInitOp
 async function configureCodexCcxProxy(): Promise<boolean> {
   try {
     // Step 1: Check if CCX is installed
+    console.log(ansis.gray(`  ${i18n.t('codex:ccxCheckingInstall')}`))
     const { isCcxInstalled, installCcx } = await import('../ccx/installer')
     const installStatus = await isCcxInstalled()
     if (!installStatus.isInstalled) {
@@ -1511,6 +1512,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     let ccxConfig = readCcxEnv()
 
     // Step 3: Check if CCX is already running
+    console.log(ansis.gray(`  ${i18n.t('codex:ccxCheckingRunning')}`))
     const { isCcxRunning, startCcxService } = await import('../ccx/commands')
     const port = ccxConfig?.PORT || DEFAULT_CCX_PORT
     const running = await isCcxRunning(port)
@@ -1559,7 +1561,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     }
 
     // Step 5: Write provider to config.toml
-    const { upsertCodexProvider, updateCodexApiFields } = await import('./codex-toml-updater')
+    const { upsertCodexProvider, updateCodexApiFields, upsertCodexFeatures } = await import('./codex-toml-updater')
     upsertCodexProvider('ccx', ccxProvider)
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxProviderAdded')}`))
 
@@ -1574,7 +1576,17 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     })
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxSetAsDefault')}`))
 
-    // Step 8: Show tips
+    // Step 8: Enable recommended [features] flags for the CCX proxy flow.
+    // Only fills in keys the user has not already set, so any user overrides win.
+    upsertCodexFeatures({
+      streamable_shell: true,
+      skills: true,
+      unified_exec: true,
+      goals: true,
+    })
+    console.log(ansis.green(`✔ ${i18n.t('codex:ccxFeaturesEnabled')}`))
+
+    // Step 9: Show tips
     await showConfigurationTips(accessKey)
 
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxCodexConfigComplete')}`))

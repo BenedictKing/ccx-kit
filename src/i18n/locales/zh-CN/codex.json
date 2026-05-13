@@ -121,6 +121,8 @@
   "providerManager.unknownError": "未知错误",
   "envKeyMigrationComplete": "✔ 已完成 env_key 到 temp_env_key 的迁移",
   "apiModeCcx": "使用 CCX 代理",
+  "ccxCheckingInstall": "正在检查 CCX 安装状态...",
+  "ccxCheckingRunning": "正在检查 CCX 是否已在运行...",
   "ccxInstalling": "CCX 未安装，正在安装...",
   "ccxReusing": "检测到 CCX 已在运行，复用现有实例",
   "ccxConfiguringAndStarting": "正在配置并启动 CCX...",
@@ -129,6 +131,7 @@
   "ccxProviderAdded": "CCX 提供商已添加到 Codex 配置",
   "ccxAuthConfigured": "CCX 认证信息已配置",
   "ccxSetAsDefault": "CCX 已设置为默认提供商",
+  "ccxFeaturesEnabled": "已启用 Codex 推荐 features（streamable_shell / skills / unified_exec / goals）",
   "ccxCodexConfigComplete": "Codex CCX 代理配置完成",
   "ccxCodexConfigFailed": "Codex CCX 代理配置失败"
 }

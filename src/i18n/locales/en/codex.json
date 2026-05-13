@@ -121,6 +121,8 @@
   "providerManager.unknownError": "Unknown error",
   "envKeyMigrationComplete": "✔ env_key to temp_env_key migration completed",
   "apiModeCcx": "Use CCX Proxy",
+  "ccxCheckingInstall": "Checking CCX installation...",
+  "ccxCheckingRunning": "Checking if CCX is already running...",
   "ccxInstalling": "CCX not installed, installing...",
   "ccxReusing": "Detected CCX already running, reusing existing instance",
   "ccxConfiguringAndStarting": "Configuring and starting CCX...",
@@ -129,6 +131,7 @@
   "ccxProviderAdded": "CCX provider added to Codex configuration",
   "ccxAuthConfigured": "CCX authentication configured",
   "ccxSetAsDefault": "CCX set as default provider",
+  "ccxFeaturesEnabled": "Enabled recommended Codex features (streamable_shell / skills / unified_exec / goals)",
   "ccxCodexConfigComplete": "Codex CCX proxy configuration complete",
   "ccxCodexConfigFailed": "Codex CCX proxy configuration failed"
 }

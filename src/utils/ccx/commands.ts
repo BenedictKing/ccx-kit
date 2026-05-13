@@ -109,7 +109,7 @@ export async function startCcxService(): Promise<void> {
   if (!existsSync(CCX_BINARY_PATH)) {
     // Try PATH fallback
     try {
-      await exec('which', ['ccx'])
+      await exec('which', ['ccx'], { timeout: 3000 })
     }
     catch {
       throw new Error(i18n.t('ccx:ccxNotInstalled'))

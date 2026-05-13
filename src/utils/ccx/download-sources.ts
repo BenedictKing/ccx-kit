@@ -39,17 +39,30 @@ export async function downloadCcxFromSources(
   assetName: string,
   destPath: string,
 ): Promise<boolean> {
+  // Hard caps applied per-source to prevent infinite hangs:
+  // - connect-timeout: cap how long curl waits to establish TCP connection
+  // - max-time: cap the entire transfer (connect + transfer); a stalled
+  //   stream after a successful connect previously hung forever.
+  const CONNECT_TIMEOUT_SEC = 15
+  const MAX_TIME_SEC = 180
   for (const source of DOWNLOAD_SOURCES) {
     try {
       const url = source.getUrl(repo, tag, assetName)
-      await exec('curl', [
-        '-fL',
-        '--connect-timeout',
-        String(Math.ceil((source.timeout || 30000) / 1000)),
-        url,
-        '-o',
-        destPath,
-      ])
+      await exec(
+        'curl',
+        [
+          '-fL',
+          '--connect-timeout',
+          String(CONNECT_TIMEOUT_SEC),
+          '--max-time',
+          String(MAX_TIME_SEC),
+          url,
+          '-o',
+          destPath,
+        ],
+        // Outer guard in case curl itself wedges; leave headroom over --max-time.
+        { timeout: (MAX_TIME_SEC + 10) * 1000 },
+      )
       return true
     }
     catch {
