@@ -8,9 +8,14 @@ REPO="BenedictKing/ccx"
 CACHE_DIR="${CCX_KIT_CACHE_DIR:-$HOME/.local/share/ccx-kit-cache}"
 
 if [[ "$VERSION" == "latest" ]]; then
-    VERSION="$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name"' | sed 's/.*"v\(.*\)".*/\1/')" || {
-        echo "Failed to fetch latest version" >&2
-        exit 1
+    # Use tags API instead of releases API to get the latest version
+    # This ensures we get the newest tag even if no GitHub Release was created yet
+    VERSION="$(curl -fsSL "https://api.github.com/repos/$REPO/tags?per_page=1" | grep '"name"' | head -1 | sed 's/.*"v\(.*\)".*/\1/')" || {
+        echo "Failed to fetch latest version from tags API, trying releases API..." >&2
+        VERSION="$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name"' | sed 's/.*"v\(.*\)".*/\1/')" || {
+            echo "Failed to fetch latest version from all sources" >&2
+            exit 1
+        }
     }
     echo "Latest version: $VERSION"
 fi

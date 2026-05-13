@@ -2,9 +2,13 @@
  * Multi-source version fetching for CCX
  *
  * Provides fallback mechanism to fetch latest version from multiple sources:
- * 1. GitHub API (primary)
- * 2. GitHub Tags API (lightweight alternative)
- * 3. GitHub Raw Content (if VERSION file exists)
+ * 1. GitHub Tags API (primary) - Gets latest tag even if no release created
+ * 2. GitHub Releases API (fallback) - Gets latest official release
+ * 3. GitHub Raw Content (fallback) - Gets version from VERSION file if exists
+ *
+ * Note: Tags API is prioritized because new versions may be tagged before
+ * creating a GitHub Release, and release assets are available immediately
+ * after tagging.
  */
 
 import type { VersionSource } from '../../types/ccx'
@@ -12,15 +16,6 @@ import type { VersionSource } from '../../types/ccx'
 const CCX_GITHUB_REPO = 'BenedictKing/ccx'
 
 const VERSION_SOURCES: VersionSource[] = [
-  {
-    name: 'github-api',
-    url: `https://api.github.com/repos/${CCX_GITHUB_REPO}/releases/latest`,
-    parser: (data: any) => {
-      const tag = data.tag_name || ''
-      return tag.startsWith('v') ? tag.slice(1) : tag
-    },
-    timeout: 10000,
-  },
   {
     name: 'github-tags',
     url: `https://api.github.com/repos/${CCX_GITHUB_REPO}/tags?per_page=1`,
@@ -32,6 +27,15 @@ const VERSION_SOURCES: VersionSource[] = [
       return null
     },
     timeout: 8000,
+  },
+  {
+    name: 'github-api',
+    url: `https://api.github.com/repos/${CCX_GITHUB_REPO}/releases/latest`,
+    parser: (data: any) => {
+      const tag = data.tag_name || ''
+      return tag.startsWith('v') ? tag.slice(1) : tag
+    },
+    timeout: 10000,
   },
   {
     name: 'github-raw',
