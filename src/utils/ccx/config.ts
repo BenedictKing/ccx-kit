@@ -215,12 +215,18 @@ export async function configureCcxProxy(
 /**
  * Show configuration tips after setup
  */
-export async function showConfigurationTips(accessKey?: string): Promise<void> {
+export async function showConfigurationTips(accessKey?: string, codeType?: string): Promise<void> {
   ensureI18nInitialized()
+
+  const commandKey = codeType === 'codex'
+    ? 'ccx:useCodexCommand'
+    : codeType === 'gemini-cli'
+      ? 'ccx:useGeminiCommand'
+      : 'ccx:useClaudeCommand'
 
   console.log(ansis.bold.cyan(`\n📌 ${i18n.t('ccx:configTips')}:`))
   console.log(ansis.blue(`  • ${i18n.t('ccx:webUiTip')}`))
-  console.log(ansis.bold.yellow(`  • ${i18n.t('ccx:useClaudeCommand')}`))
+  console.log(ansis.bold.yellow(`  • ${i18n.t(commandKey)}`))
 
   if (accessKey) {
     console.log(ansis.bold.green(`  • ${i18n.t('ccx:accessKeyTip')}: ${accessKey}`))

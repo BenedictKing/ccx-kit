@@ -50,6 +50,8 @@
   "statusRunning": "Running",
   "stoppingCcx": "Stopping CCX...",
   "useClaudeCommand": "Please use the claude command to start Claude Code",
+  "useCodexCommand": "Please use the codex command to start Codex",
+  "useGeminiCommand": "Please use the gemini command to start Gemini CLI",
   "webUiOpened": "Web UI opened in browser",
   "webUiOpenFailed": "Could not open browser automatically. Please visit:",
   "webUiTip": "Use Web UI to manage provider and channel configuration",

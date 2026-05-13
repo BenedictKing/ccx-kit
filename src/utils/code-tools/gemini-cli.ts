@@ -280,7 +280,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     console.log(ansis.green(`✔ ${i18n.t('gemini-cli:envConfigured')}`))
 
     // Step 5: Show tips
-    await showConfigurationTips(accessKey)
+    await showConfigurationTips(accessKey, 'gemini-cli')
     console.log(ansis.green(`✔ ${i18n.t('gemini-cli:ccxConfigComplete')}`))
     return true
   }

@@ -50,6 +50,8 @@
   "statusRunning": "运行状态",
   "stoppingCcx": "正在停止 CCX...",
   "useClaudeCommand": "请使用 claude 命令启动 Claude Code",
+  "useCodexCommand": "请使用 codex 命令启动 Codex",
+  "useGeminiCommand": "请使用 gemini 命令启动 Gemini CLI",
   "webUiOpened": "Web UI 已在浏览器中打开",
   "webUiOpenFailed": "无法自动打开浏览器，请手动访问以下地址：",
   "webUiTip": "使用 Web UI 管理提供商和通道配置",
