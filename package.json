@@ -1,7 +1,7 @@
 {
   "name": "ccx-kit",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packageManager": "pnpm@11.1.1",
   "description": "CCX-Kit - One-click setup and management tool for CCX AI API proxy",
   "author": {
@@ -59,9 +59,6 @@
     "test:watch": "vitest watch",
     "update:deps": "pnpx taze major -r -w",
     "release": "pnpm build && pnpm publish --access public",
-    "prepare": "husky",
-    "commitlint": "commitlint",
-    "commitlint:check": "commitlint --from HEAD~1 --to HEAD --verbose",
     "docs:dev": "pnpm -F @ccx-kit/docs dev",
     "docs:build": "pnpm -F @ccx-kit/docs build",
     "docs:preview": "pnpm -F @ccx-kit/docs preview"
@@ -86,9 +83,6 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:build",
-    "@commitlint/cli": "catalog:tooling",
-    "@commitlint/config-conventional": "catalog:tooling",
-    "@commitlint/types": "catalog:tooling",
     "@types/fs-extra": "catalog:types",
     "@types/inquirer": "catalog:types",
     "@types/node": "catalog:types",
@@ -97,16 +91,9 @@
     "eslint": "catalog:build",
     "eslint-plugin-format": "catalog:build",
     "glob": "catalog:testing",
-    "husky": "catalog:tooling",
-    "lint-staged": "catalog:tooling",
     "tsx": "catalog:build",
     "typescript": "catalog:build",
     "unbuild": "catalog:build",
     "vitest": "catalog:testing"
-  },
-  "lint-staged": {
-    "*": [
-      "pnpm lint"
-    ]
   }
 }
