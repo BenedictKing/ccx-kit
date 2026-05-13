@@ -207,10 +207,11 @@ export async function configureApiFeature(): Promise<void> {
     type: 'list',
     name: 'mode',
     message: i18n.t('api:apiModePrompt'),
+    default: 'ccx',
     choices: addNumbersToChoices([
+      { name: `${i18n.t('api:apiModeCcx')} ${ansis.green(`[${i18n.t('installation:recommendedMethod')}]`)}`, value: 'ccx', short: i18n.t('api:apiModeCcx') },
       { name: i18n.t('api:apiModeOfficial'), value: 'official' },
       { name: i18n.t('api:apiModeCustom'), value: 'custom' },
-      { name: i18n.t('api:apiModeCcx'), value: 'ccx' },
       { name: i18n.t('api:apiModeSwitch'), value: 'switch' },
       { name: i18n.t('api:apiModeSkip'), value: 'skip' },
     ]),

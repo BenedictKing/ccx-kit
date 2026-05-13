@@ -362,11 +362,11 @@ export async function configureGeminiApi(options?: GeminiFullInitOptions): Promi
     name: 'mode',
     message: i18n.t('gemini-cli:apiModePrompt'),
     choices: addNumbersToChoices([
+      { name: `${i18n.t('gemini-cli:apiModeCcx')} ${ansis.green(`[${i18n.t('installation:recommendedMethod')}]`)}`, value: 'ccx', short: i18n.t('gemini-cli:apiModeCcx') },
       { name: i18n.t('gemini-cli:apiModeCustom'), value: 'custom' },
-      { name: i18n.t('gemini-cli:apiModeCcx'), value: 'ccx' },
       { name: i18n.t('common:skip'), value: 'skip' },
     ]),
-    default: 'custom',
+    default: 'ccx',
   }])
 
   if (mode === 'skip')

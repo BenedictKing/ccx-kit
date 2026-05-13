@@ -298,16 +298,17 @@ export async function init(options: InitOptions = {}): Promise<void> {
         default: 'ccx',
         choices: [
           {
+            name: `${i18n.t('api:useCcxProxy')} ${ansis.green(`[${i18n.t('installation:recommendedMethod')}]`)}`,
+            value: 'ccx',
+            short: i18n.t('api:useCcxProxy'),
+          },
+          {
             name: i18n.t('api:useOfficialLogin'),
             value: 'official',
           },
           {
             name: i18n.t('api:customApiConfig'),
             value: 'custom',
-          },
-          {
-            name: i18n.t('api:useCcxProxy'),
-            value: 'ccx',
           },
           {
             name: i18n.t('api:skipApi'),
@@ -888,7 +889,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
       else {
         const userChoice = await promptBoolean({
           message: i18n.t('mcp:configureMcp'),
-          defaultValue: true,
+          defaultValue: false,
         })
 
         shouldConfigureMcp = userChoice

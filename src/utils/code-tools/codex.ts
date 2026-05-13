@@ -1632,9 +1632,9 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
   const hasProviders = existingConfig?.providers && existingConfig.providers.length > 0
 
   const modeChoices = [
+    { name: `${i18n.t('codex:apiModeCcx')} ${ansis.green(`[${i18n.t('installation:recommendedMethod')}]`)}`, value: 'ccx', short: i18n.t('codex:apiModeCcx') },
     { name: i18n.t('codex:apiModeOfficial'), value: 'official' },
     { name: i18n.t('codex:apiModeCustom'), value: 'custom' },
-    { name: i18n.t('codex:apiModeCcx'), value: 'ccx' },
   ]
 
   // Add switch option if providers exist
@@ -1647,7 +1647,7 @@ export async function configureCodexApi(options?: CodexFullInitOptions): Promise
     name: 'mode',
     message: i18n.t('codex:apiModePrompt'),
     choices: addNumbersToChoices(modeChoices),
-    default: 'custom',
+    default: 'ccx',
   }])
 
   if (!mode) {
