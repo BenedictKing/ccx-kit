@@ -2,6 +2,7 @@ import type { InstallMethod } from '../types/config'
 import type { CodeType } from './platform'
 import * as nodeFs from 'node:fs'
 import { homedir } from 'node:os'
+import process from 'node:process'
 import ansis from 'ansis'
 import inquirer from 'inquirer'
 import ora from 'ora'
@@ -741,7 +742,15 @@ export async function executeInstallMethod(method: InstallMethod, codeType: Code
 
       case 'curl': {
         if (codeType === 'claude-code') {
-          await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
+          const result = await exec('bash', ['-c', 'curl -fsSL https://claude.ai/install.sh | bash'])
+          const stdout = result.stdout?.trim()
+          const stderr = result.stderr?.trim()
+          if (stdout) {
+            console.log(ansis.gray(`  curl install stdout: ${stdout.slice(-1000)}`))
+          }
+          if (stderr) {
+            console.log(ansis.gray(`  curl install stderr: ${stderr.slice(-1000)}`))
+          }
         }
         else {
           // Codex and Gemini CLI don't have curl install method, fallback to npm
@@ -835,6 +844,17 @@ export async function handleInstallFailure(codeType: CodeType, failedMethods: In
 /**
  * Installation verification result
  */
+export interface VerificationDiagnostics {
+  platform: string
+  pathEnv: string
+  lookupCommand: string
+  lookupStdout?: string
+  lookupStderr?: string
+  lookupExitCode?: number
+  lookupError?: string
+  checkedPaths: Array<{ path: string, exists: boolean }>
+}
+
 export interface VerificationResult {
   success: boolean
   commandPath: string | null
@@ -842,20 +862,32 @@ export interface VerificationResult {
   needsSymlink: boolean
   symlinkCreated: boolean
   error?: string
+  diagnostics?: VerificationDiagnostics
 }
 
 /**
  * Check if command is directly accessible via which/where (in standard PATH)
  * This is different from commandExists which also checks Homebrew Caskroom paths
  */
-async function isCommandInPath(command: string): Promise<boolean> {
-  try {
-    const cmd = getPlatform() === 'windows' ? 'where' : 'which'
-    const res = await exec(cmd, [command])
-    return res.exitCode === 0
+async function inspectCommandInPath(command: string): Promise<{ found: boolean, diagnostics: VerificationDiagnostics }> {
+  const lookupCommand = getPlatform() === 'windows' ? 'where' : 'which'
+  const diagnostics: VerificationDiagnostics = {
+    platform: getPlatform(),
+    pathEnv: process.env.PATH || '',
+    lookupCommand: `${lookupCommand} ${command}`,
+    checkedPaths: [],
   }
-  catch {
-    return false
+
+  try {
+    const res = await exec(lookupCommand, [command])
+    diagnostics.lookupExitCode = res.exitCode
+    diagnostics.lookupStdout = res.stdout?.trim()
+    diagnostics.lookupStderr = res.stderr?.trim()
+    return { found: res.exitCode === 0, diagnostics }
+  }
+  catch (error) {
+    diagnostics.lookupError = error instanceof Error ? error.message : String(error)
+    return { found: false, diagnostics }
   }
 }
 
@@ -867,11 +899,12 @@ export async function verifyInstallation(codeType: CodeType): Promise<Verificati
   const command = codeType === 'claude-code' ? 'claude' : codeType === 'codex' ? 'codex' : 'gemini'
 
   // Step 1: Check if command is accessible via which (directly in PATH)
-  // Use isCommandInPath instead of commandExists to avoid detecting Caskroom paths
+  // Use direct PATH inspection instead of commandExists to avoid detecting Caskroom paths
   // which would skip symlink creation
-  const commandInPath = await isCommandInPath(command)
+  const pathInspection = await inspectCommandInPath(command)
+  const { diagnostics } = pathInspection
 
-  if (commandInPath) {
+  if (pathInspection.found) {
     // Command found in PATH, verify it works
     const version = await detectInstalledVersion(codeType)
     return {
@@ -889,7 +922,9 @@ export async function verifyInstallation(codeType: CodeType): Promise<Verificati
     let foundPath: string | null = null
 
     for (const path of homebrewPaths) {
-      if (exists(path)) {
+      const pathExists = exists(path)
+      diagnostics.checkedPaths.push({ path, exists: pathExists })
+      if (pathExists) {
         foundPath = path
         break
       }
@@ -918,6 +953,7 @@ export async function verifyInstallation(codeType: CodeType): Promise<Verificati
         needsSymlink: true,
         symlinkCreated: false,
         error: symlinkResult.error,
+        diagnostics,
       }
     }
   }
@@ -931,7 +967,9 @@ export async function verifyInstallation(codeType: CodeType): Promise<Verificati
     ]
 
     for (const path of termuxPaths) {
-      if (exists(path)) {
+      const pathExists = exists(path)
+      diagnostics.checkedPaths.push({ path, exists: pathExists })
+      if (pathExists) {
         const version = await detectInstalledVersion(codeType)
         return {
           success: true,
@@ -951,6 +989,7 @@ export async function verifyInstallation(codeType: CodeType): Promise<Verificati
     needsSymlink: false,
     symlinkCreated: false,
     error: 'Command not found in any known location',
+    diagnostics,
   }
 }
 
@@ -1085,6 +1124,29 @@ export function displayVerificationResult(result: VerificationResult, codeType: 
     }
     if (result.error) {
       console.log(ansis.gray(`  ${result.error}`))
+    }
+    if (result.diagnostics) {
+      console.log(ansis.gray(`  Platform: ${result.diagnostics.platform}`))
+      console.log(ansis.gray(`  PATH: ${result.diagnostics.pathEnv || '(empty)'}`))
+      console.log(ansis.gray(`  Lookup: ${result.diagnostics.lookupCommand}`))
+      if (result.diagnostics.lookupExitCode !== undefined) {
+        console.log(ansis.gray(`  Lookup exit code: ${result.diagnostics.lookupExitCode}`))
+      }
+      if (result.diagnostics.lookupStdout) {
+        console.log(ansis.gray(`  Lookup stdout: ${result.diagnostics.lookupStdout}`))
+      }
+      if (result.diagnostics.lookupStderr) {
+        console.log(ansis.gray(`  Lookup stderr: ${result.diagnostics.lookupStderr}`))
+      }
+      if (result.diagnostics.lookupError) {
+        console.log(ansis.gray(`  Lookup error: ${result.diagnostics.lookupError}`))
+      }
+      if (result.diagnostics.checkedPaths.length > 0) {
+        console.log(ansis.gray('  Checked paths:'))
+        for (const checkedPath of result.diagnostics.checkedPaths) {
+          console.log(ansis.gray(`    ${checkedPath.exists ? 'found' : 'missing'} ${checkedPath.path}`))
+        }
+      }
     }
     if (result.needsSymlink && !result.symlinkCreated) {
       console.log(ansis.yellow(`  ${i18n.t('installation:manualSymlinkHint')}`))
