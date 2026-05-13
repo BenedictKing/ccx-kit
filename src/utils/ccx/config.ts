@@ -308,6 +308,15 @@ export async function setupCcxConfiguration(): Promise<boolean> {
       console.error(ansis.yellow(`⚠ ${i18n.t('ccx:failedToStartCcxService')}:`), error.message || error)
     }
 
+    // Verify connectivity and fix base URL if needed
+    try {
+      const { fixCcxBaseUrl } = await import('./connectivity')
+      await fixCcxBaseUrl()
+    }
+    catch {
+      // Non-critical: connectivity check failure should not block setup
+    }
+
     // Show configuration tips with access key
     await showConfigurationTips(config.PROXY_ACCESS_KEY)
 

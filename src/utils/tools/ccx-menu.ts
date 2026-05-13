@@ -296,6 +296,21 @@ async function handleAddPresetChannel(): Promise<void> {
   const result = await addPresetChannel(preset, [apiKey], variant)
   if (result.success) {
     console.log(ansis.green(i18n.t('ccx:presets.addSuccess')))
+
+    // Auto-test the newly added channel
+    const kind = variant?.kind || preset.kind || 'chat'
+    const defaultModel = preset.defaultModels?.[0] || 'deepseek-chat'
+    const config = readCcxEnv()
+    if (config?.PROXY_ACCESS_KEY) {
+      console.log(ansis.cyan(i18n.t('ccx:channel.testRunning')))
+      const testResult = await testChannel(kind, config.PORT || DEFAULT_CCX_PORT, config.PROXY_ACCESS_KEY, defaultModel)
+      if (testResult.success) {
+        console.log(ansis.green(i18n.t('ccx:channel.testSuccess', { latency: String(testResult.latency) })))
+      }
+      else {
+        console.log(ansis.yellow(i18n.t('ccx:channel.testFailed', { error: testResult.error || '' })))
+      }
+    }
   }
   else {
     console.log(ansis.red(i18n.t('ccx:presets.addFailed', { error: result.error || '' })))
