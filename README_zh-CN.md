@@ -10,15 +10,15 @@
   <img src="./src/assets/banner.webp" alt="Banner"/>
 
   <h1>
-    ZCF - Zero-Config Code Flow
+    CCX-Kit
   </h1>
 
   <p align="center">
     <a href="README.md">English</a> | <b>中文</b> | <a href="README_ja-JP.md">日本語</a> | <a href="CHANGELOG.md">更新日志</a>
 
-**✨ 完整文档**: [文档入口](https://zcf.ufomiao.com/zh-CN/)
+**✨ 完整文档**: [文档入口](https://github.com/BenedictKing/ccx-kit)
 
-> 零配置,一键搞定 Claude Code & Codex 环境设置 - 支持中英文双语配置、智能代理系统和个性化 AI 助手
+> 一键搞定 Claude Code & Codex 环境设置 - 支持中英文双语配置、智能代理系统和个性化 AI 助手
   </p>
 </div>
 
@@ -69,7 +69,7 @@ npx ccx-kit i -s -p 302ai -k "sk-xxx"
 
 ## 📖 完整文档
 
-- https://zcf.ufomiao.com/zh-CN/
+- https://github.com/BenedictKing/ccx-kit
 
 ## 💬 社区
 
@@ -159,16 +159,16 @@ npx ccx-kit i -s -p 302ai -k "sk-xxx"
 <!-- Badges -->
 
 [npm-version-src]: https://img.shields.io/npm/v/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/zcf
+[npm-version-href]: https://npmjs.com/package/ccx-kit
 [npm-downloads-src]: https://img.shields.io/npm/dm/ccx-kit?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/zcf
-[license-src]: https://img.shields.io/github/license/ufomiao/zcf.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/ufomiao/zcf/blob/main/LICENSE
+[npm-downloads-href]: https://npmjs.com/package/ccx-kit
+[license-src]: https://img.shields.io/github/license/BenedictKing/ccx-kit.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/BenedictKing/ccx-kit/blob/main/LICENSE
 [claude-code-src]: https://img.shields.io/badge/Claude-Code-1fa669?style=flat&colorA=080f12&colorB=1fa669
 [claude-code-href]: https://claude.ai/code
 [codecov-src]: https://codecov.io/gh/BenedictKing/ccx-kit/graph/badge.svg?token=HZI6K4Y7D7&style=flat&colorA=080f12&colorB=1fa669
 [codecov-href]: https://codecov.io/gh/BenedictKing/ccx-kit
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-1fa669?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/zcf
+[jsdocs-href]: https://www.jsdocs.io/package/ccx-kit
 [deepwiki-src]: https://img.shields.io/badge/Ask-DeepWiki-1fa669?style=flat&colorA=080f12&colorB=1fa669
 [deepwiki-href]: https://deepwiki.com/BenedictKing/ccx-kit
