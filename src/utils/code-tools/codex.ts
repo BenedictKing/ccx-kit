@@ -1554,9 +1554,9 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     const ccxProvider: CodexProvider = {
       id: 'ccx',
       name: 'CCX Proxy',
-      baseUrl: `http://127.0.0.1:${ccxPort}`,
+      baseUrl: `http://127.0.0.1:${ccxPort}/v1`,
       wireApi: 'responses',
-      tempEnvKey: 'CCX_API_KEY',
+      tempEnvKey: 'OPENAI_API_KEY',
       requiresOpenaiAuth: false,
     }
 
@@ -1566,7 +1566,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxProviderAdded')}`))
 
     // Step 6: Write auth file
-    writeAuthFile({ CCX_API_KEY: accessKey })
+    writeAuthFile({ OPENAI_API_KEY: accessKey })
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxAuthConfigured')}`))
 
     // Step 7: Set CCX as default provider

@@ -20,6 +20,7 @@ const presets: ChannelPreset[] = [
           gpt: 'deepseek-v4-pro',
           mini: 'deepseek-v4-flash',
         },
+        normalizeNonstandardChatRoles: true,
       },
       {
         id: 'deepseek-anthropic',

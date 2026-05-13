@@ -39,6 +39,7 @@ function buildUpstream(
     supportedModels: preset.defaultModels,
     ...(preset.customHeaders && { customHeaders: preset.customHeaders }),
     ...((variant?.modelMapping || preset.modelMapping) && { modelMapping: variant?.modelMapping || preset.modelMapping }),
+    ...(variant?.normalizeNonstandardChatRoles && { normalizeNonstandardChatRoles: true }),
   }
 }
 

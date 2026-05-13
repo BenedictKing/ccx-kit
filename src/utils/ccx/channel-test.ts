@@ -29,7 +29,7 @@ async function testChatEndpoint(options: TestOptions): Promise<ChannelTestResult
       body: JSON.stringify({
         model,
         messages: [{ role: 'user', content: TEST_PROMPT }],
-        max_tokens: 10,
+        max_tokens: 100,
       }),
       signal: controller.signal,
     })
@@ -76,7 +76,7 @@ async function testMessagesEndpoint(options: TestOptions): Promise<ChannelTestRe
       },
       body: JSON.stringify({
         model,
-        max_tokens: 10,
+        max_tokens: 100,
         messages: [{ role: 'user', content: TEST_PROMPT }],
       }),
       signal: controller.signal,
@@ -124,7 +124,7 @@ async function testResponsesEndpoint(options: TestOptions): Promise<ChannelTestR
       body: JSON.stringify({
         model,
         input: TEST_PROMPT,
-        max_output_tokens: 10,
+        max_output_tokens: 100,
       }),
       signal: controller.signal,
     })
@@ -170,7 +170,7 @@ async function testGeminiEndpoint(options: TestOptions): Promise<ChannelTestResu
       },
       body: JSON.stringify({
         contents: [{ parts: [{ text: TEST_PROMPT }] }],
-        generationConfig: { maxOutputTokens: 10 },
+        generationConfig: { maxOutputTokens: 100 },
       }),
       signal: controller.signal,
     })

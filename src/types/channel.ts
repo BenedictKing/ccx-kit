@@ -9,6 +9,7 @@ export interface ChannelPresetVariant {
   baseUrl: string
   description?: string
   modelMapping?: Record<string, string>
+  normalizeNonstandardChatRoles?: boolean
 }
 
 /**
@@ -51,6 +52,7 @@ export interface CcxUpstreamConfig {
   modelMapping?: Record<string, string>
   customHeaders?: Record<string, string>
   supportedModels?: string[]
+  normalizeNonstandardChatRoles?: boolean
 }
 
 /**
