@@ -51,3 +51,6 @@ ccx-kit-*.tgz
 docs/.vitepress/cache/**
 .serena/
 
+.claude/
+__pycache__/
+
