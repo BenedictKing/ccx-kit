@@ -222,8 +222,6 @@ export class ClaudeCodeConfigManager {
       // Clean model variables upfront; will re-set based on profile below
       clearModelEnv(settings.env)
 
-      let shouldRestartCcx = false
-
       if (profile.authType === 'api_key') {
         settings.env.ANTHROPIC_API_KEY = profile.apiKey
         delete settings.env.ANTHROPIC_AUTH_TOKEN
@@ -233,19 +231,18 @@ export class ClaudeCodeConfigManager {
         delete settings.env.ANTHROPIC_API_KEY
       }
       else if (profile.authType === 'ccx_proxy') {
-        const { readCcxEnv } = await import('./ccx/config')
+        const { DEFAULT_CCX_PORT, readCcxEnv } = await import('./ccx/config')
         const ccxConfig = readCcxEnv()
         if (!ccxConfig) {
           throw new Error(i18n.t('ccx:ccxNotConfigured') || 'CCX proxy configuration not found')
         }
 
-        const port = ccxConfig.PORT || 3000
+        const port = ccxConfig.PORT || DEFAULT_CCX_PORT
         const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
 
         settings.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${port}`
         settings.env.ANTHROPIC_AUTH_TOKEN = apiKey
         delete settings.env.ANTHROPIC_API_KEY
-        shouldRestartCcx = true
       }
 
       if (profile.authType !== 'ccx_proxy') {
@@ -283,11 +280,6 @@ export class ClaudeCodeConfigManager {
       const { setPrimaryApiKey, addCompletedOnboarding } = await import('./claude-config')
       setPrimaryApiKey()
       addCompletedOnboarding()
-
-      if (shouldRestartCcx) {
-        const { restartCcxService } = await import('./ccx/commands')
-        await restartCcxService()
-      }
     }
     catch (error) {
       const reason = error instanceof Error ? error.message : String(error)
@@ -758,6 +750,7 @@ export class ClaudeCodeConfigManager {
    * Ensure CCX profile exists
    */
   private static async ensureCcxProfileExists(ccxConfig: CcxConfig | null): Promise<void> {
+    const { DEFAULT_CCX_PORT } = await import('./ccx/config')
     const config = this.readConfig() || this.createEmptyConfig()
     const ccxProfileId = 'ccx-proxy'
     const existingCcxProfile = config.profiles[ccxProfileId]
@@ -776,7 +769,7 @@ export class ClaudeCodeConfigManager {
       return
     }
 
-    const port = ccxConfig.PORT || 3000
+    const port = ccxConfig.PORT || DEFAULT_CCX_PORT
     const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
     const baseUrl = `http://127.0.0.1:${port}`
 

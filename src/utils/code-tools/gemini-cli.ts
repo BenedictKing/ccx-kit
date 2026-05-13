@@ -234,12 +234,12 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     }
 
     // Step 2: Read or create CCX config
-    const { readCcxEnv, createDefaultCcxConfig, writeCcxEnv, ensureCcxConfigDir, showConfigurationTips } = await import('../ccx/config')
+    const { DEFAULT_CCX_PORT, readCcxEnv, createDefaultCcxConfig, writeCcxEnv, ensureCcxConfigDir, showConfigurationTips } = await import('../ccx/config')
     let ccxConfig = readCcxEnv()
 
     // Step 3: Start CCX if not running
     const { isCcxRunning, startCcxService } = await import('../ccx/commands')
-    const port = ccxConfig?.PORT || 3688
+    const port = ccxConfig?.PORT || DEFAULT_CCX_PORT
     const running = await isCcxRunning(port)
 
     if (running) {
@@ -268,7 +268,7 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     }
 
     const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
-    const ccxPort = ccxConfig.PORT || 3688
+    const ccxPort = ccxConfig.PORT || DEFAULT_CCX_PORT
 
     // Step 4: Write Gemini .env
     const envConfig: GeminiEnvConfig = {

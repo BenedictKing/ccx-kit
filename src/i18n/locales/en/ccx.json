@@ -57,22 +57,22 @@
   "apiKeyApprovalFailed": "Failed to manage CCX API key approval status",
 
   "ccxMenuOptions.addPresetChannel": "Add Preset Channel",
-  "ccxMenuDescriptions.addPresetChannel": "Select a common upstream provider and configure API Key",
+  "ccxMenuDescriptions.addPresetChannel": "Select an upstream provider and configure its API key",
   "ccxMenuOptions.testChannel": "Test Channel",
   "ccxMenuDescriptions.testChannel": "Select a channel and run end-to-end connectivity test",
   "ccxMenuOptions.upgradeCcx": "Upgrade CCX",
   "ccxMenuDescriptions.upgradeCcx": "Check for new version and auto-upgrade",
 
   "presets.selectPrompt": "Select a channel preset to add:",
-  "presets.enterApiKey": "Enter API Key:",
-  "presets.enterApiKeyHint": "Get your key at: {url}",
+  "presets.enterApiKey": "Enter upstream provider API key:",
+  "presets.enterApiKeyHint": "Get upstream API key at: {url}",
   "presets.selectVariant": "Select variant (protocol/region):",
   "presets.addSuccess": "Channel added successfully!",
   "presets.addFailed": "Failed to add channel: {error}",
 
   "channel.startingCcx": "CCX not running, attempting to start...",
   "channel.addSuccess": "Channel added via API successfully",
-  "channel.addSuccessFile": "Channel written to config file (restart CCX to apply)",
+  "channel.addSuccessFile": "Channel written to config file (CCX will reload automatically)",
   "channel.apiFailedFallback": "API call failed, falling back to file mode...",
   "channel.selectChannel": "Select channel to test:",
   "channel.selectModel": "Select test model:",
@@ -110,11 +110,6 @@
   "statusSummary.running": "running",
   "statusSummary.stopped": "stopped",
   "statusSummary.pid": "PID",
-
-  "accessKeyPrompt.title": "Current access key: {key}",
-  "accessKeyPrompt.keepExisting": "Keep existing key",
-  "accessKeyPrompt.setNew": "Set new key",
-  "accessKeyPrompt.enterNewKey": "Enter new access key (leave empty for default):",
 
   "settingsDiff.title": "The following settings.json changes will be made:",
   "settingsDiff.confirm": "Apply these changes?",

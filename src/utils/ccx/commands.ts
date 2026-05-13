@@ -7,7 +7,7 @@ import ansis from 'ansis'
 import { join } from 'pathe'
 import { exec } from 'tinyexec'
 import { ensureI18nInitialized, i18n } from '../../i18n'
-import { readCcxEnv } from './config'
+import { DEFAULT_CCX_PORT, readCcxEnv } from './config'
 
 const CCX_DIR = join(homedir(), '.ccx')
 const CCX_PID_FILE = join(CCX_DIR, 'ccx.pid')
@@ -57,7 +57,7 @@ function isProcessRunning(pid: number): boolean {
  */
 export async function isCcxRunning(port?: number): Promise<boolean> {
   const config = readCcxEnv()
-  const targetPort = port || config?.PORT || 3688
+  const targetPort = port || config?.PORT || DEFAULT_CCX_PORT
 
   try {
     const controller = new AbortController()
@@ -80,7 +80,7 @@ export async function isCcxRunning(port?: number): Promise<boolean> {
  */
 export async function getCcxStatus(): Promise<CcxServiceStatus> {
   const config = readCcxEnv()
-  const port = config?.PORT || 3688
+  const port = config?.PORT || DEFAULT_CCX_PORT
   const running = await isCcxRunning(port)
   const pid = readPid()
 
@@ -208,7 +208,7 @@ export async function openCcxWebUi(): Promise<void> {
   ensureI18nInitialized()
 
   const config = readCcxEnv()
-  const port = config?.PORT || 3688
+  const port = config?.PORT || DEFAULT_CCX_PORT
   const url = `http://localhost:${port}`
 
   console.log(ansis.cyan(`\n🖥️  ${i18n.t('ccx:openingWebUi')}`))

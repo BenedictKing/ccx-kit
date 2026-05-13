@@ -57,22 +57,22 @@
   "apiKeyApprovalFailed": "CCX API密钥批准状态管理失败",
 
   "ccxMenuOptions.addPresetChannel": "添加预设渠道",
-  "ccxMenuDescriptions.addPresetChannel": "从内置列表选择常见上游并配置 API Key",
+  "ccxMenuDescriptions.addPresetChannel": "从内置列表选择上游服务商并配置其 API Key",
   "ccxMenuOptions.testChannel": "测试渠道",
   "ccxMenuDescriptions.testChannel": "选择渠道并进行端到端连通性测试",
   "ccxMenuOptions.upgradeCcx": "升级 CCX",
   "ccxMenuDescriptions.upgradeCcx": "检查新版本并自动升级",
 
   "presets.selectPrompt": "选择要添加的渠道预设：",
-  "presets.enterApiKey": "请输入 API Key：",
-  "presets.enterApiKeyHint": "申请地址：{url}",
+  "presets.enterApiKey": "请输入上游服务商 API Key：",
+  "presets.enterApiKeyHint": "上游 API Key 申请地址：{url}",
   "presets.selectVariant": "选择变体（协议/地区）：",
   "presets.addSuccess": "渠道添加成功！",
   "presets.addFailed": "渠道添加失败：{error}",
 
   "channel.startingCcx": "CCX 未运行，正在尝试启动...",
   "channel.addSuccess": "渠道已通过 API 添加成功",
-  "channel.addSuccessFile": "渠道已写入配置文件（需重启 CCX 生效）",
+  "channel.addSuccessFile": "渠道已写入配置文件（CCX 会自动重载）",
   "channel.apiFailedFallback": "API 调用失败，回退到文件模式...",
   "channel.selectChannel": "选择要测试的渠道：",
   "channel.selectModel": "选择测试模型：",
@@ -110,11 +110,6 @@
   "statusSummary.running": "运行中",
   "statusSummary.stopped": "已停止",
   "statusSummary.pid": "PID",
-
-  "accessKeyPrompt.title": "当前访问密钥：{key}",
-  "accessKeyPrompt.keepExisting": "保留现有密钥",
-  "accessKeyPrompt.setNew": "设置新密钥",
-  "accessKeyPrompt.enterNewKey": "输入新的访问密钥（留空使用默认值）：",
 
   "settingsDiff.title": "以下 settings.json 将被修改：",
   "settingsDiff.confirm": "是否应用这些更改？",

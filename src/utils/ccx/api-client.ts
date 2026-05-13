@@ -1,5 +1,5 @@
 import type { CcxUpstreamConfig } from '../../types/channel'
-import { readCcxEnv } from './config'
+import { DEFAULT_CCX_PORT, readCcxEnv } from './config'
 
 interface CcxApiClientOptions {
   port?: number
@@ -15,7 +15,7 @@ export class CcxApiClient {
 
   constructor(options: CcxApiClientOptions = {}) {
     const config = readCcxEnv()
-    const port = options.port || config?.PORT || 3688
+    const port = options.port || config?.PORT || DEFAULT_CCX_PORT
     this.apiKey = options.apiKey || config?.PROXY_ACCESS_KEY || 'sk-ccx-kit'
     this.baseUrl = `http://127.0.0.1:${port}`
   }

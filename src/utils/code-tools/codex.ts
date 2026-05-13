@@ -1507,12 +1507,12 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     }
 
     // Step 2: Read existing CCX config or create default
-    const { readCcxEnv, createDefaultCcxConfig, writeCcxEnv, ensureCcxConfigDir, showConfigurationTips } = await import('../ccx/config')
+    const { DEFAULT_CCX_PORT, readCcxEnv, createDefaultCcxConfig, writeCcxEnv, ensureCcxConfigDir, showConfigurationTips } = await import('../ccx/config')
     let ccxConfig = readCcxEnv()
 
     // Step 3: Check if CCX is already running
     const { isCcxRunning, startCcxService } = await import('../ccx/commands')
-    const port = ccxConfig?.PORT || 3000
+    const port = ccxConfig?.PORT || DEFAULT_CCX_PORT
     const running = await isCcxRunning(port)
 
     if (running) {
@@ -1546,7 +1546,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     }
 
     const accessKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
-    const ccxPort = ccxConfig.PORT || 3000
+    const ccxPort = ccxConfig.PORT || DEFAULT_CCX_PORT
 
     // Step 4: Build Codex provider config
     const ccxProvider: CodexProvider = {

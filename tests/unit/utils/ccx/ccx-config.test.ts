@@ -1,3 +1,5 @@
+import { writeFileSync } from 'node:fs'
+import inquirer from 'inquirer'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as ccxConfig from '../../../../src/utils/ccx/config'
 
@@ -11,20 +13,19 @@ vi.mock('node:fs', () => ({
 vi.mock('../../../../src/utils/json-config')
 vi.mock('../../../../src/utils/claude-config')
 vi.mock('../../../../src/utils/config')
+vi.mock('../../../../src/utils/ccx/commands', () => ({
+  startCcxService: vi.fn(),
+}))
 vi.mock('../../../../src/i18n', () => ({
   ensureI18nInitialized: vi.fn(),
   i18n: {
-    t: vi.fn((key: string, opts?: any) => {
+    t: vi.fn((key: string) => {
       const translations: Record<string, string> = {
         'ccx:statusSummary.notConfigured': 'not configured',
         'ccx:settingsDiff.title': 'Settings changes:',
         'ccx:settingsDiff.confirm': 'Apply changes?',
         'ccx:settingsDiff.skipped': 'Skipped',
         'ccx:settingsDiff.willBeRemoved': '(will be removed)',
-        'ccx:accessKeyPrompt.title': `Current key: ${opts?.key || ''}`,
-        'ccx:accessKeyPrompt.keepExisting': 'Keep existing key',
-        'ccx:accessKeyPrompt.setNew': 'Set new key',
-        'ccx:accessKeyPrompt.enterNewKey': 'Enter new key:',
         'ccx:existingCcxConfig': 'Found existing config',
         'ccx:overwriteCcxConfig': 'Overwrite?',
         'ccx:keepingExistingConfig': 'Keeping existing',
@@ -48,7 +49,7 @@ vi.mock('../../../../src/utils/toggle-prompt', () => ({
   promptBoolean: vi.fn(),
 }))
 
-const { formatMaskedKey, configureCcxProxy } = ccxConfig
+const { configureCcxProxy, formatMaskedKey, setupCcxConfiguration } = ccxConfig
 
 describe('formatMaskedKey', () => {
   it('should mask a normal key showing first 5 and last 2 chars', () => {
@@ -66,6 +67,49 @@ describe('formatMaskedKey', () => {
 
   it('should mask exactly 8-char key', () => {
     expect(formatMaskedKey('12345678')).toBe('12345****78')
+  })
+})
+
+describe('setupCcxConfiguration', () => {
+  let existsSync: any
+  let readFileSync: any
+  let promptBoolean: any
+  let writeJsonConfig: any
+
+  beforeEach(async () => {
+    vi.clearAllMocks()
+    const fs = await import('node:fs')
+    existsSync = vi.mocked(fs.existsSync)
+    readFileSync = vi.mocked(fs.readFileSync)
+    const togglePrompt = await import('../../../../src/utils/toggle-prompt')
+    promptBoolean = vi.mocked(togglePrompt.promptBoolean)
+    const jsonConfig = await import('../../../../src/utils/json-config')
+    writeJsonConfig = vi.mocked(jsonConfig.writeJsonConfig)
+    vi.mocked(jsonConfig.readJsonConfig).mockReturnValue({ env: {} })
+  })
+
+  it('should preserve existing proxy access key without prompting for manual key input', async () => {
+    existsSync.mockReturnValue(true)
+    readFileSync.mockReturnValue('PROXY_ACCESS_KEY=sk-existing-key\nPORT=3688\nENABLE_WEB_UI=true\n')
+    promptBoolean.mockResolvedValue(true)
+
+    const result = await setupCcxConfiguration()
+
+    expect(result).toBe(true)
+    expect(inquirer.prompt).not.toHaveBeenCalled()
+    expect(writeFileSync).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('PROXY_ACCESS_KEY=sk-existing-key'),
+      'utf-8',
+    )
+    expect(writeJsonConfig).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        env: expect.objectContaining({
+          ANTHROPIC_AUTH_TOKEN: 'sk-existing-key',
+        }),
+      }),
+    )
   })
 })
 

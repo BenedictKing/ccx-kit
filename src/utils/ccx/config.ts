@@ -3,7 +3,6 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { homedir } from 'node:os'
 import ansis from 'ansis'
 import dayjs from 'dayjs'
-import inquirer from 'inquirer'
 import { join } from 'pathe'
 import { SETTINGS_FILE } from '../../constants'
 import { ensureI18nInitialized, i18n } from '../../i18n'
@@ -11,6 +10,8 @@ import { addCompletedOnboarding, setPrimaryApiKey } from '../claude-config'
 import { backupExistingConfig } from '../config'
 import { readJsonConfig, writeJsonConfig } from '../json-config'
 import { promptBoolean } from '../toggle-prompt'
+
+export const DEFAULT_CCX_PORT = 3688
 
 const CCX_CONFIG_DIR = join(homedir(), '.ccx')
 const CCX_ENV_FILE = join(CCX_CONFIG_DIR, '.env')
@@ -39,7 +40,7 @@ export function ensureCcxConfigDir(): void {
 export function createDefaultCcxConfig(): CcxConfig {
   return {
     PROXY_ACCESS_KEY: 'sk-ccx-kit',
-    PORT: 3688,
+    PORT: DEFAULT_CCX_PORT,
     ENABLE_WEB_UI: true,
   }
 }
@@ -73,7 +74,7 @@ export function readCcxEnv(): CcxConfig | null {
           config.PROXY_ACCESS_KEY = value
           break
         case 'PORT':
-          config.PORT = Number.parseInt(value, 10) || 3688
+          config.PORT = Number.parseInt(value, 10) || DEFAULT_CCX_PORT
           break
         case 'ENABLE_WEB_UI':
           config.ENABLE_WEB_UI = value.toLowerCase() !== 'false'
@@ -139,7 +140,7 @@ export async function configureCcxProxy(
 ): Promise<void> {
   const settings = readJsonConfig<any>(SETTINGS_FILE) || {}
 
-  const port = ccxConfig.PORT || 3688
+  const port = ccxConfig.PORT || DEFAULT_CCX_PORT
   const apiKey = ccxConfig.PROXY_ACCESS_KEY || 'sk-ccx-kit'
 
   if (!settings.env) {
@@ -276,47 +277,13 @@ export async function setupCcxConfiguration(): Promise<boolean> {
     }
 
     // Create config, preserving existing access key if reconfiguring
-    let config: CcxConfig
-    if (existingConfig) {
-      // Prompt user to keep existing key or set a new one
-      const maskedKey = formatMaskedKey(existingConfig.PROXY_ACCESS_KEY)
-      console.log(ansis.blue(`ℹ ${i18n.t('ccx:accessKeyPrompt.title', { key: maskedKey })}`))
-
-      const { keyChoice } = await inquirer.prompt<{ keyChoice: string }>({
-        type: 'list',
-        name: 'keyChoice',
-        message: i18n.t('ccx:accessKeyPrompt.title', { key: maskedKey }),
-        choices: [
-          { name: i18n.t('ccx:accessKeyPrompt.keepExisting'), value: 'keep' },
-          { name: i18n.t('ccx:accessKeyPrompt.setNew'), value: 'new' },
-        ],
-        default: 'keep',
-      })
-
-      if (keyChoice === 'keep') {
-        config = {
+    const config: CcxConfig = existingConfig
+      ? {
           PROXY_ACCESS_KEY: existingConfig.PROXY_ACCESS_KEY,
-          PORT: existingConfig.PORT || 3688,
+          PORT: existingConfig.PORT || DEFAULT_CCX_PORT,
           ENABLE_WEB_UI: existingConfig.ENABLE_WEB_UI ?? true,
         }
-      }
-      else {
-        const { newKey } = await inquirer.prompt<{ newKey: string }>({
-          type: 'password',
-          name: 'newKey',
-          message: i18n.t('ccx:accessKeyPrompt.enterNewKey'),
-          mask: '*',
-        })
-        config = {
-          ...createDefaultCcxConfig(),
-          PROXY_ACCESS_KEY: newKey || 'sk-ccx-kit',
-        }
-      }
-    }
-    else {
-      // First-time setup, use default
-      config = createDefaultCcxConfig()
-    }
+      : createDefaultCcxConfig()
 
     // Write CCX config
     writeCcxEnv(config)

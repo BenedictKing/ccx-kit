@@ -10,7 +10,7 @@ import {
   startCcxService,
   stopCcxService,
 } from '../ccx/commands'
-import { configureCcxFeature, formatMaskedKey, readCcxEnv } from '../ccx/config'
+import { configureCcxFeature, DEFAULT_CCX_PORT, formatMaskedKey, readCcxEnv } from '../ccx/config'
 import { installCcx, isCcxInstalled } from '../ccx/installer'
 import { getAllPresets } from '../ccx/presets'
 import { checkAndUpgradeCcx } from '../ccx/upgrade'
@@ -43,7 +43,7 @@ export async function displayCcxStatusSummary(): Promise<void> {
 
     // Config line
     if (config) {
-      const port = config.PORT || 3688
+      const port = config.PORT || DEFAULT_CCX_PORT
       const maskedKey = formatMaskedKey(config.PROXY_ACCESS_KEY)
       const webUi = config.ENABLE_WEB_UI ? i18n.t('ccx:statusSummary.on') : i18n.t('ccx:statusSummary.off')
       console.log(`  ${ansis.gray(`${i18n.t('ccx:statusSummary.config')}:`)}     ${i18n.t('ccx:statusSummary.port')} ${port} | ${i18n.t('ccx:statusSummary.key')} ${maskedKey} | ${i18n.t('ccx:statusSummary.webUi')}: ${webUi}`)
@@ -298,24 +298,45 @@ async function handleAddPresetChannel(): Promise<void> {
  * Handle testing a channel
  */
 async function handleTestChannel(): Promise<void> {
-  const channels = await listChannels('chat')
+  const config = readCcxEnv()
+  if (!config?.PROXY_ACCESS_KEY) {
+    console.log(ansis.yellow(`\n⚠️  ${i18n.t('ccx:ccxNotConfigured')}`))
+    console.log(ansis.cyan(`   ${i18n.t('ccx:pleaseInitFirst')}\n`))
+    return
+  }
 
-  if (channels.length === 0) {
+  const channelKinds = ['chat', 'messages', 'responses', 'gemini', 'images']
+  const availableGroups = []
+
+  for (const kind of channelKinds) {
+    const channels = await listChannels(kind)
+    if (channels.length > 0) {
+      availableGroups.push({ kind, channels })
+    }
+  }
+
+  if (availableGroups.length === 0) {
     console.log(ansis.yellow(i18n.t('ccx:channel.noChannels')))
     return
   }
 
-  const { channelIndex } = await inquirer.prompt<{ channelIndex: number }>({
+  const { selected } = await inquirer.prompt<{ selected: { kind: string, index: number } }>({
     type: 'list',
-    name: 'channelIndex',
+    name: 'selected',
     message: i18n.t('ccx:channel.selectChannel'),
-    choices: channels.map((ch, i) => ({
-      name: `${ch.name} (${ch.baseUrl})`,
-      value: i,
-    })),
+    choices: availableGroups.flatMap(group => group.channels.map((ch, i) => ({
+      name: `[${group.kind}] ${ch.name} (${ch.baseUrl})`,
+      value: { kind: group.kind, index: i },
+    }))),
   })
 
-  const channel = channels[channelIndex]
+  const channels = availableGroups.find(group => group.kind === selected.kind)?.channels || []
+  const channel = channels[selected.index]
+  if (!channel) {
+    console.log(ansis.yellow(i18n.t('ccx:channel.noChannels')))
+    return
+  }
+
   const defaultModel = channel.supportedModels?.[0] || 'deepseek-chat'
 
   const { model } = await inquirer.prompt<{ model: string }>({
@@ -325,12 +346,11 @@ async function handleTestChannel(): Promise<void> {
     default: defaultModel,
   })
 
-  const config = readCcxEnv()
-  const port = config?.PORT || 3688
-  const apiKey = channel.apiKeys?.[0] || config?.PROXY_ACCESS_KEY || ''
+  const port = config.PORT || DEFAULT_CCX_PORT
+  const apiKey = config.PROXY_ACCESS_KEY
 
   console.log(ansis.cyan(i18n.t('ccx:channel.testRunning')))
-  const result = await testChannel('chat', port, apiKey, model)
+  const result = await testChannel(selected.kind, port, apiKey, model)
 
   if (result.success) {
     console.log(ansis.green(i18n.t('ccx:channel.testSuccess', { latency: String(result.latency) })))

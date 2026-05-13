@@ -707,15 +707,15 @@ export async function init(options: InitOptions = {}): Promise<void> {
             }
           }
 
-          // Create default skip configuration (empty providers - user configures in UI)
-          const defaultCcxConfig = createDefaultCcxConfig()
+          // Create default skip configuration, preserving existing proxy settings if present
+          const ccxConfig = existingCcxConfig || createDefaultCcxConfig()
 
           // Write CCX config
-          writeCcxEnv(defaultCcxConfig)
+          writeCcxEnv(ccxConfig)
           console.log(ansis.green(`✔ ${i18n.t('ccx:ccxConfigSuccess')}`))
 
           // Configure proxy in settings.json
-          await configureCcxProxy(defaultCcxConfig, { skipConfirm: true })
+          await configureCcxProxy(ccxConfig, { skipConfirm: true })
           console.log(ansis.green(`✔ ${i18n.t('ccx:proxyConfigSuccess')}`))
 
           // Add onboarding flag

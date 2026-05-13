@@ -9,7 +9,7 @@
 export interface CcxConfig {
   /** Access key for the proxy, default: 'sk-ccx-kit' */
   PROXY_ACCESS_KEY: string
-  /** Port number, default: 3000 */
+  /** Port number, default: 3688 */
   PORT: number
   /** Enable Web UI management interface, default: true */
   ENABLE_WEB_UI: boolean

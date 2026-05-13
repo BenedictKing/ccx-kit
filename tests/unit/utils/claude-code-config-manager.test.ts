@@ -89,6 +89,7 @@ afterAll(() => {
 // Mock dependencies
 const mockReadCcxEnv = vi.fn()
 vi.mock('../../../src/utils/ccx/config', () => ({
+  DEFAULT_CCX_PORT: 3688,
   readCcxEnv: mockReadCcxEnv,
 }))
 
@@ -315,7 +316,7 @@ describe('claudeCodeConfigManager', () => {
       expect(mockRestartCcxService).not.toHaveBeenCalled()
     })
 
-    it('ccx_proxy 模式应该读取CCX配置并触发重启', async () => {
+    it('ccx_proxy 模式应该读取CCX配置且不重启CCX', async () => {
       mockReadCcxEnv.mockReturnValue({
         PROXY_ACCESS_KEY: 'sk-ccx-kit',
         PORT: 7000,
@@ -337,7 +338,7 @@ describe('claudeCodeConfigManager', () => {
       expect(writtenSettings.env.ANTHROPIC_AUTH_TOKEN).toBe('sk-ccx-kit')
       expect(mockSetPrimaryApiKey).toHaveBeenCalled()
       expect(mockAddCompletedOnboarding).toHaveBeenCalled()
-      expect(mockRestartCcxService).toHaveBeenCalled()
+      expect(mockRestartCcxService).not.toHaveBeenCalled()
     })
 
     it('ccx_proxy 模式缺少配置时应该抛出错误', async () => {
