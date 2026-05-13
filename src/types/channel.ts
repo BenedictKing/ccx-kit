@@ -8,6 +8,7 @@ export interface ChannelPresetVariant {
   serviceType: string
   baseUrl: string
   description?: string
+  modelMapping?: Record<string, string>
 }
 
 /**
@@ -24,6 +25,7 @@ export interface ChannelPreset {
   defaultModels: string[]
   apiKeyHint: string
   customHeaders?: Record<string, string>
+  modelMapping?: Record<string, string>
   variants?: ChannelPresetVariant[]
 }
 

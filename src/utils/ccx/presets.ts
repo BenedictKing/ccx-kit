@@ -4,20 +4,44 @@ const presets: ChannelPreset[] = [
   {
     id: 'deepseek',
     name: 'DeepSeek',
-    kind: 'chat',
-    serviceType: 'openai',
-    baseUrl: 'https://api.deepseek.com',
     description: 'DeepSeek AI - 高性能推理模型',
     website: 'https://platform.deepseek.com',
-    defaultModels: ['deepseek-chat', 'deepseek-reasoner'],
+    defaultModels: ['deepseek-v4-pro', 'deepseek-v4-flash'],
     apiKeyHint: 'https://platform.deepseek.com/api-keys',
+    variants: [
+      {
+        id: 'deepseek-openai',
+        name: 'DeepSeek (OpenAI 协议 / Codex)',
+        kind: 'chat',
+        serviceType: 'openai',
+        baseUrl: 'https://api.deepseek.com',
+        description: 'OpenAI 兼容协议，适用于 Codex',
+        modelMapping: {
+          gpt: 'deepseek-v4-pro',
+          mini: 'deepseek-v4-flash',
+        },
+      },
+      {
+        id: 'deepseek-anthropic',
+        name: 'DeepSeek (Anthropic 协议 / Claude Code)',
+        kind: 'messages',
+        serviceType: 'claude',
+        baseUrl: 'https://api.deepseek.com/anthropic',
+        description: 'Anthropic 兼容协议，适用于 Claude Code',
+        modelMapping: {
+          haiku: 'deepseek-v4-flash',
+          opus: 'deepseek-v4-pro',
+          sonnet: 'deepseek-v4-pro',
+        },
+      },
+    ],
   },
   {
     id: 'mimo',
     name: 'MiMo (小米)',
     description: '小米 MiMo AI - 支持多地区集群',
     website: 'https://mimo.xiaomi.com',
-    defaultModels: ['mimo-vl-pro'],
+    defaultModels: ['mimo-v2.5-pro'],
     apiKeyHint: 'https://mimo.xiaomi.com',
     variants: [
       {
@@ -27,6 +51,11 @@ const presets: ChannelPreset[] = [
         serviceType: 'claude',
         baseUrl: 'https://api.xiaomimimo.com/anthropic',
         description: '余额用户，Anthropic 兼容协议',
+        modelMapping: {
+          haiku: 'mimo-v2.5-pro',
+          opus: 'mimo-v2.5-pro',
+          sonnet: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-cn-openai',
@@ -35,6 +64,10 @@ const presets: ChannelPreset[] = [
         serviceType: 'openai',
         baseUrl: 'https://token-plan-cn.xiaomimimo.com/v1',
         description: '订阅 Plan 中国集群，OpenAI 兼容协议',
+        modelMapping: {
+          gpt: 'mimo-v2.5-pro',
+          mini: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-sgp-openai',
@@ -43,6 +76,10 @@ const presets: ChannelPreset[] = [
         serviceType: 'openai',
         baseUrl: 'https://token-plan-sgp.xiaomimimo.com/v1',
         description: '订阅 Plan 新加坡集群，OpenAI 兼容协议',
+        modelMapping: {
+          gpt: 'mimo-v2.5-pro',
+          mini: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-ams-openai',
@@ -51,6 +88,10 @@ const presets: ChannelPreset[] = [
         serviceType: 'openai',
         baseUrl: 'https://token-plan-ams.xiaomimimo.com/v1',
         description: '订阅 Plan 欧洲集群，OpenAI 兼容协议',
+        modelMapping: {
+          gpt: 'mimo-v2.5-pro',
+          mini: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-cn-anthropic',
@@ -59,6 +100,11 @@ const presets: ChannelPreset[] = [
         serviceType: 'claude',
         baseUrl: 'https://token-plan-cn.xiaomimimo.com/anthropic',
         description: '订阅 Plan 中国集群，Anthropic 兼容协议',
+        modelMapping: {
+          haiku: 'mimo-v2.5-pro',
+          opus: 'mimo-v2.5-pro',
+          sonnet: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-sgp-anthropic',
@@ -67,6 +113,11 @@ const presets: ChannelPreset[] = [
         serviceType: 'claude',
         baseUrl: 'https://token-plan-sgp.xiaomimimo.com/anthropic',
         description: '订阅 Plan 新加坡集群，Anthropic 兼容协议',
+        modelMapping: {
+          haiku: 'mimo-v2.5-pro',
+          opus: 'mimo-v2.5-pro',
+          sonnet: 'mimo-v2.5-pro',
+        },
       },
       {
         id: 'mimo-plan-ams-anthropic',
@@ -75,6 +126,11 @@ const presets: ChannelPreset[] = [
         serviceType: 'claude',
         baseUrl: 'https://token-plan-ams.xiaomimimo.com/anthropic',
         description: '订阅 Plan 欧洲集群，Anthropic 兼容协议',
+        modelMapping: {
+          haiku: 'mimo-v2.5-pro',
+          opus: 'mimo-v2.5-pro',
+          sonnet: 'mimo-v2.5-pro',
+        },
       },
     ],
   },
@@ -103,24 +159,87 @@ const presets: ChannelPreset[] = [
   {
     id: 'zhipu',
     name: '智谱 GLM',
-    kind: 'chat',
-    serviceType: 'openai',
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
     description: '智谱 AI - GLM 系列模型',
     website: 'https://open.bigmodel.cn',
-    defaultModels: ['glm-4-flash', 'glm-4-plus'],
+    defaultModels: ['glm-5.1'],
     apiKeyHint: 'https://open.bigmodel.cn/usercenter/apikeys',
+    variants: [
+      {
+        id: 'zhipu-coding-openai',
+        name: '智谱 GLM Coding (OpenAI 协议 / Codex)',
+        kind: 'chat',
+        serviceType: 'openai',
+        baseUrl: 'https://open.bigmodel.cn/api/coding/paas/v4#',
+        description: 'Coding 端点，OpenAI 兼容协议，适用于 Codex',
+        modelMapping: {
+          gpt: 'glm-5.1',
+          mini: 'glm-5.1',
+        },
+      },
+      {
+        id: 'zhipu-coding-anthropic',
+        name: '智谱 GLM Coding (Claude Code)',
+        kind: 'messages',
+        serviceType: 'openai',
+        baseUrl: 'https://open.bigmodel.cn/api/coding/paas/v4#',
+        description: 'Coding 端点，适用于 Claude Code',
+        modelMapping: {
+          haiku: 'glm-5.1',
+          opus: 'glm-5.1',
+          sonnet: 'glm-5.1',
+        },
+      },
+    ],
+  },
+  {
+    id: 'kimi-code',
+    name: 'Kimi Code',
+    description: 'Kimi Code - 会员订阅制编码模型',
+    website: 'https://kimi.moonshot.cn',
+    defaultModels: ['kimi-for-coding'],
+    apiKeyHint: 'Kimi Code 控制台获取 API Key',
+    variants: [
+      {
+        id: 'kimi-code-openai',
+        name: 'Kimi Code (OpenAI 协议 / Codex)',
+        kind: 'chat',
+        serviceType: 'openai',
+        baseUrl: 'https://api.kimi.com/coding/v1',
+        description: 'OpenAI 兼容协议，适用于 Codex',
+        modelMapping: {
+          gpt: 'kimi-for-coding',
+          mini: 'kimi-for-coding',
+        },
+      },
+      {
+        id: 'kimi-code-anthropic',
+        name: 'Kimi Code (Anthropic 协议 / Claude Code)',
+        kind: 'messages',
+        serviceType: 'claude',
+        baseUrl: 'https://api.kimi.com/coding/',
+        description: 'Anthropic 兼容协议，适用于 Claude Code',
+        modelMapping: {
+          haiku: 'kimi-for-coding',
+          opus: 'kimi-for-coding',
+          sonnet: 'kimi-for-coding',
+        },
+      },
+    ],
   },
   {
     id: 'moonshot',
-    name: 'Moonshot Kimi',
+    name: 'Kimi 开放平台',
     kind: 'chat',
     serviceType: 'openai',
     baseUrl: 'https://api.moonshot.cn/v1',
-    description: 'Moonshot AI - Kimi 长上下文模型',
+    description: 'Kimi 开放平台 - 按量付费',
     website: 'https://platform.moonshot.cn',
-    defaultModels: ['moonshot-v1-8k', 'moonshot-v1-128k'],
+    defaultModels: ['kimi-k2.6'],
     apiKeyHint: 'https://platform.moonshot.cn/console/api-keys',
+    modelMapping: {
+      gpt: 'kimi-k2.6',
+      mini: 'kimi-k2.6',
+    },
   },
 ]
 

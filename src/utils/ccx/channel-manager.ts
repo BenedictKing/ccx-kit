@@ -38,6 +38,7 @@ function buildUpstream(
     website: preset.website,
     supportedModels: preset.defaultModels,
     ...(preset.customHeaders && { customHeaders: preset.customHeaders }),
+    ...((variant?.modelMapping || preset.modelMapping) && { modelMapping: variant?.modelMapping || preset.modelMapping }),
   }
 }
 
