@@ -35,6 +35,18 @@ const presets: ChannelPreset[] = [
           sonnet: 'deepseek-v4-pro',
         },
       },
+      {
+        id: 'deepseek-gemini',
+        name: 'DeepSeek (Gemini CLI)',
+        kind: 'gemini',
+        serviceType: 'openai',
+        baseUrl: 'https://api.deepseek.com',
+        description: 'Gemini 协议入口，适用于 @google/gemini-cli',
+        modelMapping: {
+          pro: 'deepseek-v4-pro',
+          flash: 'deepseek-v4-flash',
+        },
+      },
     ],
   },
   {

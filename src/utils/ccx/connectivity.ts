@@ -127,4 +127,18 @@ export async function fixCcxBaseUrl(): Promise<void> {
   catch {
     // Codex may not be installed
   }
+
+  // Update Gemini CLI .env
+  try {
+    const { readGeminiEnv, writeGeminiEnv } = await import('../code-tools/gemini-cli')
+    const env = readGeminiEnv()
+    if (env) {
+      env.GOOGLE_GEMINI_BASE_URL = claudeUrl
+      writeGeminiEnv(env)
+      console.log(ansis.green(`✔ ${i18n.t('ccx:connectivity.updatedGemini', { url: claudeUrl })}`))
+    }
+  }
+  catch {
+    // Gemini CLI may not be configured
+  }
 }

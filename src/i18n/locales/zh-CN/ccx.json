@@ -132,5 +132,6 @@
   "connectivity.fixFailed": "无法找到可用的 CCX 连接地址",
   "connectivity.loopbackOk": "127.0.0.1 连接正常，无需修复",
   "connectivity.updatedClaude": "已更新 Claude Code 配置：{{url}}",
-  "connectivity.updatedCodex": "已更新 Codex 配置：{{url}}"
+  "connectivity.updatedCodex": "已更新 Codex 配置：{{url}}",
+  "connectivity.updatedGemini": "已更新 Gemini CLI 配置：{{url}}"
 }

@@ -3,7 +3,7 @@ import ansis from 'ansis'
 import inquirer from 'inquirer'
 import semver from 'semver'
 import { x } from 'tinyexec'
-import { GEMINI_DIR } from '../../constants'
+import { GEMINI_DIR, GEMINI_SETTINGS_FILE } from '../../constants'
 import { ensureI18nInitialized, i18n } from '../../i18n'
 import { ensureDir, exists, readFile, writeFile } from '../fs-operations'
 import { installGeminiCli, isGeminiCliInstalled } from '../installer'
@@ -223,6 +223,17 @@ export async function runGeminiUpdate(force = false, skipPrompt = false): Promis
 /**
  * Configure Gemini CLI to use CCX proxy
  */
+async function configureGeminiSettings(): Promise<void> {
+  const { readJsonConfig, writeJsonConfig } = await import('../json-config')
+  const settings = readJsonConfig<any>(GEMINI_SETTINGS_FILE) || {}
+  settings.security = settings.security || {}
+  settings.security.auth = settings.security.auth || {}
+  settings.security.auth.selectedType = 'gemini-api-key'
+  settings.model = settings.model || {}
+  settings.model.name = 'pro'
+  writeJsonConfig(GEMINI_SETTINGS_FILE, settings)
+}
+
 async function configureGeminiCcxProxy(): Promise<boolean> {
   try {
     // Step 1: Check / install CCX
@@ -274,9 +285,11 @@ async function configureGeminiCcxProxy(): Promise<boolean> {
     const envConfig: GeminiEnvConfig = {
       ...readGeminiEnv(),
       GEMINI_API_KEY: accessKey,
-      GOOGLE_GEMINI_BASE_URL: `http://localhost:${ccxPort}`,
+      GEMINI_MODEL: 'pro',
+      GOOGLE_GEMINI_BASE_URL: `http://127.0.0.1:${ccxPort}`,
     }
     writeGeminiEnv(envConfig)
+    await configureGeminiSettings()
     console.log(ansis.green(`✔ ${i18n.t('gemini-cli:envConfigured')}`))
 
     // Step 5: Show tips

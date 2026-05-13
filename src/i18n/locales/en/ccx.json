@@ -132,5 +132,6 @@
   "connectivity.fixFailed": "Could not find a working CCX connection address",
   "connectivity.loopbackOk": "127.0.0.1 connection is working, no fix needed",
   "connectivity.updatedClaude": "Updated Claude Code config: {{url}}",
-  "connectivity.updatedCodex": "Updated Codex config: {{url}}"
+  "connectivity.updatedCodex": "Updated Codex config: {{url}}",
+  "connectivity.updatedGemini": "Updated Gemini CLI config: {{url}}"
 }

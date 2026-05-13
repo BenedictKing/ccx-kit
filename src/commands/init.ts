@@ -460,10 +460,18 @@ export async function init(options: InitOptions = {}): Promise<void> {
     // Handle Gemini CLI initialization
     if (codeToolType === 'gemini-cli') {
       const { runGeminiCliFullInit } = await import('../utils/code-tools/gemini-cli')
+      const apiMode = options.apiType === 'ccx_proxy' || options.apiType === 'ccr_proxy'
+        ? 'ccx'
+        : options.apiType === 'api_key'
+          ? 'custom'
+          : options.apiType === 'skip'
+            ? 'skip'
+            : options.skipPrompt ? 'skip' : undefined
 
       const resolvedAiOutputLang = await runGeminiCliFullInit({
         aiOutputLang: options.aiOutputLang,
         skipPrompt: options.skipPrompt,
+        apiMode,
       })
 
       updateAppConfig({
