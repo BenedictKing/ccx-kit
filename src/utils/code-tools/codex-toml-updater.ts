@@ -93,6 +93,39 @@ export function updateTopLevelTomlField(
  * @param fields.modelProvider - Model provider name (string or null to remove)
  * @param fields.modelProviderCommented - Whether to comment out model_provider field
  */
+/**
+ * Upsert raw top-level fields (no quoting) only if they don't already exist.
+ * Use for numeric values, arrays, or other non-string TOML literals.
+ */
+export function upsertTopLevelRawFields(fields: Record<string, string>): void {
+  if (!exists(CODEX_CONFIG_FILE)) {
+    ensureDir(CODEX_DIR)
+    writeFile(CODEX_CONFIG_FILE, '')
+  }
+
+  let content = readFile(CODEX_CONFIG_FILE) || ''
+  const firstSectionMatch = content.match(/^\[/m)
+  const topLevelEnd = firstSectionMatch?.index ?? content.length
+  const topLevel = content.slice(0, topLevelEnd)
+
+  const additions: string[] = []
+  for (const [field, rawValue] of Object.entries(fields)) {
+    const fieldRegex = new RegExp(`^(#\\s*)?${field}\\s*=`, 'm')
+    if (!fieldRegex.test(topLevel)) {
+      additions.push(`${field} = ${rawValue}`)
+    }
+  }
+
+  if (additions.length === 0)
+    return
+
+  const insertPoint = topLevelEnd
+  const before = content.slice(0, insertPoint).trimEnd()
+  const after = content.slice(insertPoint)
+  content = `${before}\n${additions.join('\n')}\n${after.startsWith('\n') ? '' : '\n'}${after}`
+  writeFile(CODEX_CONFIG_FILE, content)
+}
+
 export function updateCodexApiFields(fields: {
   model?: string | null
   modelProvider?: string | null

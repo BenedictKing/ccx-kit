@@ -1583,15 +1583,29 @@ async function configureCodexCcxProxy(): Promise<boolean> {
       skills: true,
       unified_exec: true,
       goals: true,
+      memories: true,
+      multi_agent: true,
+      child_agents_md: true,
+      steer: true,
+      prevent_idle_sleep: true,
     })
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxFeaturesEnabled')}`))
 
-    // Step 8b: Set sandbox and approval defaults for autonomous local work
+    // Step 8b: Set sandbox, approval, and model defaults for autonomous local work
     const { updateTopLevelTomlField } = await import('./codex-toml-updater')
     let tomlContent = readFile(CODEX_CONFIG_FILE) || ''
     tomlContent = updateTopLevelTomlField(tomlContent, 'sandbox_mode', 'workspace-write')
     tomlContent = updateTopLevelTomlField(tomlContent, 'approval_policy', 'on-request')
+    tomlContent = updateTopLevelTomlField(tomlContent, 'personality', 'pragmatic')
     writeFile(CODEX_CONFIG_FILE, tomlContent)
+
+    // Step 8c: Set numeric/array top-level fields (only if not already present)
+    const { upsertTopLevelRawFields } = await import('./codex-toml-updater')
+    upsertTopLevelRawFields({
+      project_doc_fallback_filenames: '["CLAUDE.md"]',
+      model_context_window: '1000000',
+      model_auto_compact_token_limit: '500000',
+    })
 
     // Step 9: Show tips
     await showConfigurationTips(accessKey, 'codex')
