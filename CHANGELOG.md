@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.2] - 2026-05-14
 
 ### Fixed
 
@@ -11,6 +11,27 @@
 - Fix CCX port fallback using 3000 instead of project default 3688 in Gemini CCX proxy config
 - Fix `runGeminiCliFullInit` overwriting existing `aiOutputLang` with default `'en'`
 - Implement Gemini CLI uninstall (was TODO placeholder)
+- Fix Gemini native model names with CCX substring routing
+- Fix Codex CCX integration and channel test issues
+- Fix Codex CCX kind to use 'responses' for Codex variants instead of 'chat'
+- Fix correct tool command display in config tips based on code type
+- Fix CCX proxy key flow and channel testing clarity
+- Fix CCX prioritize tags API over releases API for version detection
+- Fix CCX use ANTHROPIC_AUTH_TOKEN for proxy and set onboarding on install
+
+### Added
+
+- Add Gemini CLI support for CCX proxy flow
+- Add CCX connectivity detection and base URL auto-fix
+- Add CCX auto-verify connectivity after init and auto-test after adding channel
+- Add CCX model mapping to channel presets with dual-protocol variants
+- Add CCX model response content validation in channel test
+- Add CCX status display, access key preservation, and config diff confirmation
+- Add code tool selection prompt upfront before entering menu
+- Add Codex sandbox_mode and approval_policy defaults
+- Add Codex default models update to gpt-5.5/5.4/5.3-codex
+- Add URL-path-based download caching for CCX and Claude Code
+- Add diagnostics to installation verification failure
 
 ### Changed
 
@@ -22,8 +43,12 @@
   - Version checking: `npm view` → GitHub API
   - Default port: 3456 → 3000, default key: `sk-zcf-x-ccr` → `sk-zcf-x-ccx`
 - Rename all `ccr_proxy` auth type references to `ccx_proxy` (backward compatible: `ccr_proxy` still accepted in input)
+- Rename project from ZCF to CCX-Kit throughout documentation
 - Update all i18n translations (14 locale files) from CCR to CCX terminology
 - Update CLI command from `zcf ccr` to `zcf ccx`
+- Prioritize CCX proxy in API mode and default MCP to no
+- Remove MCP from full-init flow, keep standalone entry
+- Remove husky, commitlint, and lint-staged
 
 ### Removed
 
