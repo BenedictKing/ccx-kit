@@ -7,7 +7,6 @@
 [![Ask DeepWiki][deepwiki-src]][deepwiki-href]
 
 <div align="center">
-  <img src="./src/assets/banner.webp" alt="Banner"/>
 
   <h1>
     CCX-Kit
