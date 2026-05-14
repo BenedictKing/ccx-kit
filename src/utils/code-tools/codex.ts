@@ -1586,6 +1586,13 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     })
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxFeaturesEnabled')}`))
 
+    // Step 8b: Set sandbox and approval defaults for autonomous local work
+    const { updateTopLevelTomlField } = await import('./codex-toml-updater')
+    let tomlContent = readFile(CODEX_CONFIG_FILE) || ''
+    tomlContent = updateTopLevelTomlField(tomlContent, 'sandbox_mode', 'workspace-write')
+    tomlContent = updateTopLevelTomlField(tomlContent, 'approval_policy', 'on-request')
+    writeFile(CODEX_CONFIG_FILE, tomlContent)
+
     // Step 9: Show tips
     await showConfigurationTips(accessKey, 'codex')
 
