@@ -1604,6 +1604,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     tomlContent = updateTopLevelTomlField(tomlContent, 'approval_policy', 'on-request')
     tomlContent = updateTopLevelTomlField(tomlContent, 'personality', 'pragmatic')
     tomlContent = updateTopLevelTomlField(tomlContent, 'model_reasoning_effort', 'xhigh')
+    tomlContent = updateTopLevelTomlField(tomlContent, 'review_model', 'gpt-5.5')
     writeFile(CODEX_CONFIG_FILE, tomlContent)
 
     // Step 8c: Set numeric/array top-level fields (only if not already present)
@@ -1620,6 +1621,8 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     const parsed = (await import('../toml-edit')).parseToml(memContent) as any
     if (!parsed.memories) {
       const memEdits: Array<[string, unknown]> = [
+        ['memories.consolidation_model', 'gpt-5.5'],
+        ['memories.extract_model', 'gpt-5.5'],
         ['memories.max_raw_memories_for_consolidation', 512],
         ['memories.max_unused_days', 30],
         ['memories.max_rollout_age_days', 45],
