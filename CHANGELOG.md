@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.3] - 2026-05-14
+
+### Added
+
+- Add Codex review_model and memories model defaults (gpt-5.5)
+- Expand Codex default config to match best practices for better UX
+
+### Changed
+
+- Remove banner image and .zcf plan history from repo
+
+---
+
 ## [1.0.2] - 2026-05-14
 
 ### Fixed
