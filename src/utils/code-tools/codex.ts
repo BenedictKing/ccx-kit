@@ -1579,15 +1579,21 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     // Step 8: Enable recommended [features] flags for the CCX proxy flow.
     // Only fills in keys the user has not already set, so any user overrides win.
     upsertCodexFeatures({
+      shell_tool: true,
       streamable_shell: true,
+      apply_patch_freeform: true,
+      shell_snapshot: true,
+      undo: true,
       skills: true,
       unified_exec: true,
       goals: true,
       memories: true,
+      sqlite: true,
       multi_agent: true,
       child_agents_md: true,
       steer: true,
       prevent_idle_sleep: true,
+      fast_mode: false,
     })
     console.log(ansis.green(`✔ ${i18n.t('codex:ccxFeaturesEnabled')}`))
 
@@ -1597,6 +1603,7 @@ async function configureCodexCcxProxy(): Promise<boolean> {
     tomlContent = updateTopLevelTomlField(tomlContent, 'sandbox_mode', 'workspace-write')
     tomlContent = updateTopLevelTomlField(tomlContent, 'approval_policy', 'on-request')
     tomlContent = updateTopLevelTomlField(tomlContent, 'personality', 'pragmatic')
+    tomlContent = updateTopLevelTomlField(tomlContent, 'model_reasoning_effort', 'xhigh')
     writeFile(CODEX_CONFIG_FILE, tomlContent)
 
     // Step 8c: Set numeric/array top-level fields (only if not already present)
@@ -1606,6 +1613,20 @@ async function configureCodexCcxProxy(): Promise<boolean> {
       model_context_window: '1000000',
       model_auto_compact_token_limit: '500000',
     })
+
+    // Step 8d: Configure [memories] section
+    const { batchEditToml } = await import('../toml-edit')
+    let memContent = readFile(CODEX_CONFIG_FILE) || ''
+    const parsed = (await import('../toml-edit')).parseToml(memContent) as any
+    if (!parsed.memories) {
+      const memEdits: Array<[string, unknown]> = [
+        ['memories.max_raw_memories_for_consolidation', 512],
+        ['memories.max_unused_days', 30],
+        ['memories.max_rollout_age_days', 45],
+      ]
+      memContent = batchEditToml(memContent, memEdits)
+      writeFile(CODEX_CONFIG_FILE, memContent)
+    }
 
     // Step 9: Show tips
     await showConfigurationTips(accessKey, 'codex')
